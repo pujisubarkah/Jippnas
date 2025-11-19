@@ -1,0 +1,7 @@
+@import "tailwindcss";
+/* Global font */
+body { font-family: 'Poppins', 'sans-serif'; }
+
+/* Ensure navbar and buttons inherit Poppins even when external components apply fonts */
+nav, nav * { font-family: 'Poppins', 'sans-serif' !important; }
+.btn, .btn * { font-family: 'Poppins', 'sans-serif' !important; }
