@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-gradient-to-br from-blue-50 via-sky-50 to-amber-50 text-blue-800 w-full border-t border-blue-200 shadow-inner relative overflow-hidden">
+  <footer class="bg-linear-to-br from-blue-50 via-sky-50 to-amber-50 text-blue-800 w-full border-t border-blue-200 shadow-inner relative overflow-hidden">
     <!-- ornaments -->
     <div class="pointer-events-none absolute inset-0">
       <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-blue-200/30 blur-2xl"></div>
@@ -22,7 +22,7 @@
         <div class="w-full lg:w-3/4 p-4">
           <h5 class="text-center font-extrabold text-2xl md:text-3xl my-4 text-blue-800 relative">
             Pemangku Kepentingan JIPPNAS
-            <span class="block mx-auto mt-2 h-1 w-32 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-300 rounded-full"></span>
+            <span class="block mx-auto mt-2 h-1 w-32 bg-linear-to-r from-amber-300 via-amber-400 to-amber-300 rounded-full"></span>
           </h5>
 
           <!-- Swiper for logos -->
@@ -114,7 +114,7 @@
         </div>
       </div>
     </div>
-    <div class="w-full bg-gradient-to-r from-blue-700 to-blue-800">
+    <div class="w-full bg-linear-to-r from-blue-700 to-blue-800">
       <div class="max-w-7xl mx-auto">
         <div class="flex">
           <div class="w-full text-center lg:text-left pt-2 pb-2 mb-2 lg:mb-0">

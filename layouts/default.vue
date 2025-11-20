@@ -7,7 +7,7 @@
     <Footer />
     <!-- Go To Top -->
     <button
-      class="fixed bottom-6 right-6 z-[60] rounded-full p-3 md:p-4 shadow-lg bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white border border-amber-300/60 hover:from-blue-600 hover:to-blue-800 hover:shadow-xl transition duration-300 transform"
+      class="fixed bottom-6 right-6 z-60 rounded-full p-3 md:p-4 shadow-lg bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white border border-amber-300/60 hover:from-blue-600 hover:to-blue-800 hover:shadow-xl transition duration-300 transform"
       :class="showToTop ? 'opacity-100 scale-100 pointer-events-auto' : 'opacity-0 scale-90 pointer-events-none'"
       @click="goToTop"
       aria-label="Kembali ke atas"

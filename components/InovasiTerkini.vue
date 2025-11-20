@@ -1,12 +1,12 @@
 <template>
   <ClientOnly>
-    <div class="container-fluid bg-top py-12 relative">
+    <div class="container-fluid bg-top relative">
       <div class="container mx-auto px-4">
         <div class="w-full pt-2">
           <div class="flex justify-center">
             <h2 class="relative text-4xl md:text-5xl font-extrabold text-white tracking-wide pb-3">
               Inovasi Terkini
-              <span class="absolute left-1/2 -translate-x-1/2 -bottom-1 h-1 w-32 bg-gradient-to-r from-amber-300 via-amber-400 to-amber-200 rounded-full"></span>
+              <span class="absolute left-1/2 -translate-x-1/2 -bottom-1 h-1 w-32 bg-linear-to-r from-amber-300 via-amber-400 to-amber-200 rounded-full"></span>
             </h2>
           </div>
           <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
@@ -61,9 +61,9 @@
       </div>
       <!-- ornament circles -->
       <div class="pointer-events-none absolute inset-0">
-        <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-gradient-to-br from-amber-200/40 to-transparent blur-xl"></div>
-        <div class="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-gradient-to-tr from-blue-300/30 to-transparent blur-2xl"></div>
-        <div class="absolute top-1/2 left-12 w-40 h-40 rounded-full bg-gradient-to-tr from-sky-200/30 to-transparent blur-xl"></div>
+        <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-linear-to-br from-amber-200/40 to-transparent blur-xl"></div>
+        <div class="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-linear-to-tr from-blue-300/30 to-transparent blur-2xl"></div>
+        <div class="absolute top-1/2 left-12 w-40 h-40 rounded-full bg-linear-to-tr from-sky-200/30 to-transparent blur-xl"></div>
       </div>
     </div>
   </ClientOnly>
@@ -113,8 +113,7 @@ const innovations = [
 .bg-top {
   position: relative;
   overflow: hidden;
-  background:
-    linear-gradient(135deg, #1e3a8a 0%, #1d4ed8 45%, #0ea5e9 80%);
+  background: url('/vektor.jpg') no-repeat top center / contain;
 }
 .bg-top::before,
 .bg-top::after {

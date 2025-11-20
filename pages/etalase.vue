@@ -1,5 +1,7 @@
 <template>
   <div class="bg-white">
+    <InovasiUnggulan />
+    <Sdgs />
     <div class="container mx-auto px-4 py-8">
       <div class="bg-white rounded-lg shadow-lg p-8">
         <h1 class="text-4xl font-bold text-gray-800 mb-6">Etalase Inovasi</h1>
@@ -27,5 +29,6 @@
 </template>
 
 <script setup>
-// No need to import Navbar anymore
+import InovasiUnggulan from '~/components/InovasiUnggulan.vue';
+import Sdgs from '~/components/Sdgs.client';
 </script>

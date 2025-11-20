@@ -1,7 +1,7 @@
 <template>
-  <nav class="bg-gradient-to-r from-blue-50 via-sky-50 to-amber-50/50 backdrop-blur-sm shadow-[0_4px_16px_-4px_rgba(30,64,175,0.25)] font-sans border-b border-blue-300/70 relative">
+  <nav class="bg-linear-to-r from-blue-50 via-sky-50 to-amber-50/50 backdrop-blur-sm shadow-[0_4px_16px_-4px_rgba(30,64,175,0.25)] font-sans border-b border-blue-300/70 relative">
     <!-- decorative gold line -->
-    <div class="absolute inset-x-0 bottom-0 h-[3px] bg-gradient-to-r from-transparent via-amber-300/60 to-transparent pointer-events-none"></div>
+    <div class="absolute inset-x-0 bottom-0 h-[3px] bg-linear-to-r from-transparent via-amber-300/60 to-transparent pointer-events-none"></div>
     <div class="container mx-auto px-4">
       <div class="flex flex-wrap justify-center items-center mt-2 py-4">
         <!-- Logo (underline if home active) -->
@@ -53,7 +53,7 @@
         <div class="w-full md:w-1/4 text-center">
           <div class="flex justify-center items-center my-1 space-x-3">
             <button
-              class="btn bg-gradient-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl hover:from-blue-600 hover:via-blue-600 hover:to-blue-800 transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group"
+              class="btn bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl hover:from-blue-600 hover:via-blue-600 hover:to-blue-800 transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group"
               id="myBtnReg"
             >
               <svg class="h-5 w-5 transition duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -62,7 +62,7 @@
               <span class="tracking-wide">Daftar</span>
             </button>
             <button
-              class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-gradient-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg hover:from-amber-50 hover:to-amber-100 transition-all duration-300 font-medium flex items-center gap-2 group"
+              class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-linear-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg hover:from-amber-50 hover:to-amber-100 transition-all duration-300 font-medium flex items-center gap-2 group"
               id="myBtnLog"
             >
               <svg class="h-5 w-5 text-blue-600 transition duration-300 group-hover:text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -104,7 +104,7 @@
                 :active="isActive(item.href)"
               />
               <span
-                class="absolute left-0 right-0 -bottom-2 mx-auto h-[3px] bg-gradient-to-r from-amber-300 to-amber-400 rounded-full transition-all duration-300"
+                class="absolute left-0 right-0 -bottom-2 mx-auto h-[3px] bg-linear-to-r from-amber-300 to-amber-400 rounded-full transition-all duration-300"
                 :class="isActive(item.href) ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'"
               ></span>
             </li>
