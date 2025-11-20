@@ -30,21 +30,21 @@
               <swiper-slide>
                 <img
                   src="https://jippnas.menpan.go.id/storage/images/about/logo_pk/1/348262/5wWanmehg7HkxlRVZC7kGMSCXZA3zhJri269WmM7.png"
-                  alt="Stakeholder 1"
+                  alt="Kementerian PANRB"
                   class="h-20 w-auto rounded mx-auto object-contain"
                 />
               </swiper-slide>
               <swiper-slide>
                 <img
                   src="https://jippnas.menpan.go.id/storage/images/about/logo_pk/1/841371/fiuy9phJzYfw4fdhcnBMNlKwkiS2Vr8Wv1ClqvRQ.png"
-                  alt="Stakeholder 2"
+                  alt="Kemendagri"
                   class="h-20 w-auto rounded mx-auto object-contain"
                 />
               </swiper-slide>
               <swiper-slide>
                 <img
-                  src="https://jippnas.menpan.go.id/storage/images/about/logo_pk/1/676419/b8zQExdzTmqyJR95M76N84ld4iCecopLSwNDMiNz.jpg"
-                  alt="Stakeholder 3"
+                  src="/lanri.png"
+                  alt="LAN RI"
                   class="h-20 w-auto rounded mx-auto object-contain"
                 />
               </swiper-slide>

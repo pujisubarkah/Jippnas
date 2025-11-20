@@ -1,6 +1,6 @@
 <template>
   <div class="min-h-screen flex flex-col">
-    <Navbar />
+    <Navbar class="sticky top-0 z-50" />
     <main class="grow">
       <NuxtPage />
     </main>
