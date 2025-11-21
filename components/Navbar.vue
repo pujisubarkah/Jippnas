@@ -52,26 +52,48 @@
         <!-- Buttons -->
         <div class="w-full md:w-1/4 text-center">
           <div class="flex justify-center items-center my-1 space-x-3">
-            <button
-              class="btn bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl hover:from-blue-600 hover:via-blue-600 hover:to-blue-800 transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group"
-              id="myBtnReg"
-              @click="showRegisterModal = true"
-            >
-              <svg class="h-5 w-5 transition duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
-              </svg>
-              <span class="tracking-wide">Daftar</span>
-            </button>
-            <button
-              class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-linear-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg hover:from-amber-50 hover:to-amber-100 transition-all duration-300 font-medium flex items-center gap-2 group"
-              id="myBtnLog"
-              @click="showLoginModal = true"
-            >
-              <svg class="h-5 w-5 text-blue-600 transition duration-300 group-hover:text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
-              </svg>
-              <span class="tracking-wide">Masuk</span>
-            </button>
+            <!-- Show login/register buttons when not logged in -->
+            <template v-if="!isLoggedIn">
+              <button
+                class="btn bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl hover:from-blue-600 hover:via-blue-600 hover:to-blue-800 transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group"
+                id="myBtnReg"
+                @click="showRegisterModal = true"
+              >
+                <svg class="h-5 w-5 transition duration-300 group-hover:scale-110" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+                </svg>
+                <span class="tracking-wide">Daftar</span>
+              </button>
+              <button
+                class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-linear-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg hover:from-amber-50 hover:to-amber-100 transition-all duration-300 font-medium flex items-center gap-2 group"
+                id="myBtnLog"
+                @click="showLoginModal = true"
+              >
+                <svg class="h-5 w-5 text-blue-600 transition duration-300 group-hover:text-amber-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+                </svg>
+                <span class="tracking-wide">Masuk</span>
+              </button>
+            </template>
+
+            <!-- Show user info and logout when logged in -->
+            <template v-else>
+              <div class="flex items-center gap-3">
+                <div class="text-right">
+                  <p class="text-sm font-medium text-blue-800">{{ user.name }}</p>
+                  <p class="text-xs text-blue-600">{{ user.email }}</p>
+                </div>
+                <button
+                  @click="handleLogout"
+                  class="btn border-2 border-red-400 rounded-full px-4 py-2 text-red-700 bg-linear-to-r from-white to-red-50/40 shadow-md hover:shadow-lg hover:from-red-50 hover:to-red-100 transition-all duration-300 font-medium flex items-center gap-2"
+                >
+                  <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                  </svg>
+                  <span class="tracking-wide">Keluar</span>
+                </button>
+              </div>
+            </template>
           </div>
         </div>
 
@@ -348,6 +370,9 @@
 const menuOpen = ref(false);
 const toggleMenu = () => (menuOpen.value = !menuOpen.value);
 
+// Auth composable
+const { isLoggedIn, user, logout } = useAuth();
+
 // Login modal state
 const showLoginModal = ref(false);
 const loginForm = ref({
@@ -367,9 +392,28 @@ const registerForm = ref({
 const handleLogin = () => {
   // Handle login logic here
   console.log('Login attempt:', loginForm.value);
-  // For now, just close the modal
-  showLoginModal.value = false;
-  loginForm.value = { email: '', password: '' };
+
+  // Mock authentication - in real app, this would call an API
+  if (loginForm.value.email && loginForm.value.password) {
+    const userData = {
+      id: 1,
+      name: 'User Demo',
+      email: loginForm.value.email
+    };
+
+    // Use auth composable
+    const { login } = useAuth();
+    login(userData);
+
+    // Close modal and reset form
+    showLoginModal.value = false;
+    loginForm.value = { email: '', password: '' };
+
+    // Show success message
+    alert('Login berhasil!');
+  } else {
+    alert('Harap isi semua field!');
+  }
 };
 
 const handleGoogleLogin = () => {
@@ -381,14 +425,40 @@ const handleGoogleLogin = () => {
 const handleRegister = () => {
   // Handle register logic here
   console.log('Register attempt:', registerForm.value);
-  // For now, just close the modal
-  showRegisterModal.value = false;
-  registerForm.value = { name: '', email: '', password: '' };
+
+  // Mock registration - in real app, this would call an API
+  if (registerForm.value.name && registerForm.value.email && registerForm.value.password) {
+    const userData = {
+      id: Date.now(), // Mock ID
+      name: registerForm.value.name,
+      email: registerForm.value.email
+    };
+
+    // Use auth composable
+    const { login } = useAuth();
+    login(userData);
+
+    // Close modal and reset form
+    showRegisterModal.value = false;
+    registerForm.value = { name: '', email: '', password: '' };
+
+    // Show success message
+    alert('Registrasi berhasil!');
+  } else {
+    alert('Harap isi semua field!');
+  }
 };
 
 const handleGoogleRegister = () => {
   // Handle Google register logic here
   console.log('Google register attempt');
+};
+
+// Logout handler
+const handleLogout = () => {
+  const { logout } = useAuth();
+  logout();
+  alert('Anda telah logout!');
 };
 
 const linksTerkait = [

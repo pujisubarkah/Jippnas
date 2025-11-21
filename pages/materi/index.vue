@@ -14,15 +14,10 @@
         <h2 class="text-lg sm:text-xl font-semibold text-blue-800 mb-2 line-clamp-2">{{ materi.title }}</h2>
         <p class="text-blue-600 mb-2 text-sm sm:text-base">{{ materi.category }}</p>
         <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base line-clamp-3">{{ materi.description }}</p>
-        <div class="flex items-center mb-2">
-          <span class="text-xs text-gray-500 mr-2">Progress:</span>
-          <progress class="progress progress-info w-20 sm:w-32 flex-1" :value="materi.progress" max="100"></progress>
-          <span class="text-xs text-gray-500 ml-2">{{ materi.progress }}%</span>
-        </div>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-          <span class="btn btn-primary rounded-full px-3 sm:px-4 text-xs sm:text-sm pointer-events-none text-center">
-            {{ materi.progress === 0 ? 'Mulai Belajar' : 'Lanjutkan' }}
-          </span>
+          <button class="btn btn-primary rounded-full px-3 sm:px-4 text-xs sm:text-sm text-center">
+            Pelajari Materi
+          </button>
           <span class="text-xs text-gray-400 text-center sm:text-right">Mentor: {{ materi.mentor }}</span>
         </div>
       </div>
@@ -55,7 +50,6 @@ const materiList = [
     title: 'Digitalisasi Layanan Publik',
     category: 'Teknologi Informasi',
     description: 'Penerapan aplikasi dan sistem digital untuk mempermudah akses layanan publik, seperti e-Government dan layanan online.',
-    progress: 0,
     mentor: 'Dinas Kominfo',
     img: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=400&q=80',
   },
@@ -64,7 +58,6 @@ const materiList = [
     title: 'Sistem Antrean Online',
     category: 'Administrasi',
     description: 'Inovasi dalam pengelolaan antrean layanan publik secara digital untuk meningkatkan efisiensi dan kenyamanan masyarakat.',
-    progress: 40,
     mentor: 'Dinas Kependudukan',
     img: 'https://images.unsplash.com/photo-1519125323398-675f0ddb6308?auto=format&fit=crop&w=400&q=80',
   },
@@ -73,7 +66,6 @@ const materiList = [
     title: 'Transparansi Data Publik',
     category: 'Teknologi Informasi',
     description: 'Pengembangan portal data terbuka untuk meningkatkan transparansi dan akuntabilitas layanan publik.',
-    progress: 100,
     mentor: 'Bappeda',
     img: 'https://images.unsplash.com/photo-1461749280684-dccba630e2f6?auto=format&fit=crop&w=400&q=80',
   },
@@ -82,7 +74,6 @@ const materiList = [
     title: 'Layanan Kesehatan Digital',
     category: 'Kesehatan',
     description: 'Pemanfaatan telemedicine dan aplikasi kesehatan untuk memperluas jangkauan layanan kesehatan masyarakat.',
-    progress: 20,
     mentor: 'Puskesmas Digital',
     img: 'https://images.unsplash.com/photo-1503676382389-4809596d5290?auto=format&fit=crop&w=400&q=80',
   },
@@ -91,7 +82,6 @@ const materiList = [
     title: 'Inovasi Pendidikan Publik',
     category: 'Pendidikan',
     description: 'Penggunaan platform pembelajaran daring untuk meningkatkan kualitas pendidikan di sekolah negeri.',
-    progress: 60,
     mentor: 'Dinas Pendidikan',
     img: 'https://images.unsplash.com/photo-1465101046530-73398c7f28ca?auto=format&fit=crop&w=400&q=80',
   },
@@ -100,7 +90,6 @@ const materiList = [
     title: 'Transportasi Terintegrasi',
     category: 'Transportasi',
     description: 'Integrasi sistem transportasi publik untuk memudahkan mobilitas masyarakat dan mengurangi kemacetan.',
-    progress: 80,
     mentor: 'Dinas Perhubungan',
     img: 'https://images.unsplash.com/photo-1465101178521-c1a4c8a16d78?auto=format&fit=crop&w=400&q=80',
   },
