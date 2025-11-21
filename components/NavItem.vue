@@ -2,6 +2,7 @@
   <li>
     <a
       :href="href"
+      @click="$emit('click')"
       :class="[
         'link link-hover flex items-center space-x-1 transition duration-300',
         active ? 'text-blue-800 font-semibold' : 'text-blue-800 hover:text-blue-700'
@@ -57,6 +58,8 @@
 </template>
 
 <script setup>
+defineEmits(['click']);
+
 defineProps({
   icon: String,
   label: String,

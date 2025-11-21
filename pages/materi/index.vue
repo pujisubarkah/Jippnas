@@ -1,44 +1,44 @@
 <template>
-  <section class="container mx-auto py-8 px-4">
-    <h1 class="text-3xl font-bold text-blue-700 mb-6">Materi Pembelajaran</h1>
-    <div class="flex flex-col md:flex-row md:items-center mb-6 gap-4">
-      <input type="search" class="input input-bordered w-full md:w-1/3" placeholder="Cari materi..." v-model="search" />
-      <select class="select select-bordered w-full md:w-1/4" v-model="filter">
+  <section class="container mx-auto py-4 sm:py-8 px-4">
+    <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-4 sm:mb-6">Materi Pembelajaran</h1>
+    <div class="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
+      <input type="search" class="input input-bordered w-full sm:w-1/2 lg:w-1/3 text-sm sm:text-base" placeholder="Cari materi..." v-model="search" />
+      <select class="select select-bordered w-full sm:w-1/3 lg:w-1/4 text-sm sm:text-base" v-model="filter">
         <option value="">Semua Kategori</option>
         <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
     </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-      <div v-for="materi in pagedMateri" :key="materi.id" @click="goToMateri(materi.id)" class="card bg-white shadow-md border border-blue-100 rounded-xl p-5 flex flex-col hover:bg-blue-50 transition-all cursor-pointer">
-        <img :src="materi.img" alt="Gambar Materi" class="w-full h-40 object-cover rounded-lg mb-3 bg-blue-50" />
-        <h2 class="text-xl font-semibold text-blue-800 mb-2">{{ materi.title }}</h2>
-        <p class="text-blue-600 mb-2">{{ materi.category }}</p>
-        <p class="text-gray-700 mb-4">{{ materi.description }}</p>
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+      <div v-for="materi in pagedMateri" :key="materi.id" @click="goToMateri(materi.id)" class="card bg-white shadow-md border border-blue-100 rounded-lg sm:rounded-xl p-4 sm:p-5 flex flex-col hover:bg-blue-50 transition-all cursor-pointer">
+        <img :src="materi.img" alt="Gambar Materi" class="w-full h-32 sm:h-40 object-cover rounded-lg mb-3 bg-blue-50" />
+        <h2 class="text-lg sm:text-xl font-semibold text-blue-800 mb-2 line-clamp-2">{{ materi.title }}</h2>
+        <p class="text-blue-600 mb-2 text-sm sm:text-base">{{ materi.category }}</p>
+        <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base line-clamp-3">{{ materi.description }}</p>
         <div class="flex items-center mb-2">
           <span class="text-xs text-gray-500 mr-2">Progress:</span>
-          <progress class="progress progress-info w-32" :value="materi.progress" max="100"></progress>
+          <progress class="progress progress-info w-20 sm:w-32 flex-1" :value="materi.progress" max="100"></progress>
           <span class="text-xs text-gray-500 ml-2">{{ materi.progress }}%</span>
         </div>
-        <div class="flex items-center justify-between mt-auto">
-          <span class="btn btn-primary rounded-full px-4 pointer-events-none">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
+          <span class="btn btn-primary rounded-full px-3 sm:px-4 text-xs sm:text-sm pointer-events-none text-center">
             {{ materi.progress === 0 ? 'Mulai Belajar' : 'Lanjutkan' }}
           </span>
-          <span class="text-xs text-gray-400">Mentor: {{ materi.mentor }}</span>
+          <span class="text-xs text-gray-400 text-center sm:text-right">Mentor: {{ materi.mentor }}</span>
         </div>
       </div>
     </div>
-    <div v-if="totalPages > 1" class="flex justify-center mt-8 gap-2">
-      <button class="btn btn-sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">Sebelumnya</button>
+    <div v-if="totalPages > 1" class="flex flex-wrap justify-center mt-6 sm:mt-8 gap-1 sm:gap-2">
+      <button class="btn btn-sm text-xs sm:text-sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">Sebelumnya</button>
       <button
         v-for="page in totalPages"
         :key="page"
-        class="btn btn-sm"
+        class="btn btn-sm text-xs sm:text-sm"
         :class="currentPage === page ? 'btn-info text-white' : 'btn-outline'"
         @click="goToPage(page)"
       >
         {{ page }}
       </button>
-      <button class="btn btn-sm" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Berikutnya</button>
+      <button class="btn btn-sm text-xs sm:text-sm" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Berikutnya</button>
     </div>
   </section>
 </template>
@@ -143,5 +143,21 @@ function goToMateri(id) {
 }
 .card:hover {
   box-shadow: 0 8px 24px -8px rgba(30,64,175,0.15);
+}
+
+.line-clamp-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+}
+
+.line-clamp-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
 }
 </style>
