@@ -1,7 +1,5 @@
 <template>
-  <nav class="bg-linear-to-r from-blue-50 via-sky-50 to-amber-50/50 backdrop-blur-sm shadow-[0_4px_16px_-4px_rgba(30,64,175,0.25)] font-sans border-b border-blue-300/70 relative">
-    <!-- decorative gold line -->
-    <div class="absolute inset-x-0 bottom-0 h-[3px] bg-linear-to-r from-transparent via-amber-300/60 to-transparent pointer-events-none"></div>
+  <nav class="fixed top-0 left-0 right-0 w-full flex justify-between items-center px-4 sm:px-10 py-3 bg-[#C2E7F6] shadow-lg backdrop-blur-md font-poppins z-9999999 border-b-4 border-yellow-600">
     <div class="container mx-auto px-4">
       <div class="flex flex-wrap justify-center items-center mt-2 py-4">
         <!-- Logo (underline if home active) -->
@@ -129,7 +127,7 @@
               </svg>
             </button>
           </div>
-          <ul class="flex flex-col lg:flex-row lg:flex-wrap justify-center mt-12 lg:mt-4 mb-4 lg:mb-0 space-y-4 lg:space-y-0 lg:space-x-6 text-blue-700 font-medium tracking-wide px-4 lg:px-0">
+          <ul class="flex flex-col lg:flex-row lg:flex-wrap justify-center mt-12 lg:mt-4 mb-4 lg:mb-0 space-y-4 lg:space-y-0 lg:space-x-6 text-blue-700 font-medium tracking-wide px-4 lg:px-0 text-2xl">
             <!-- dynamic NavItems with underline -->
             <li
               v-for="item in navItems"

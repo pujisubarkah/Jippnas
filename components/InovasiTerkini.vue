@@ -113,7 +113,9 @@ const innovations = [
 .bg-top {
   position: relative;
   overflow: hidden;
-  background: url('/vektor.jpg') no-repeat top center / contain;
+  background: url('/vektor.jpg') no-repeat center 0%;
+  background-size: 100% auto;
+  min-height: 80vh;
 }
 .bg-top::before,
 .bg-top::after {
