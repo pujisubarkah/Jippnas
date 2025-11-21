@@ -110,8 +110,8 @@
             </li>
 
             <!-- dropdowns (tanpa underline khusus) -->
+            <NavDropdown label="Knowledge Center" :items="menuKnowledge" />
             <NavDropdown label="Tautan Terkait" :items="linksTerkait" />
-            <NavItem icon="info" label="Tentang JIPPNAS" href="/tentang" :active="isActive('/tentang')" />
             <NavDropdown label="Bantuan" :items="menuBantuan" />
           </ul>
         </div>
@@ -121,10 +121,6 @@
 </template>
 
 <script setup>
-import { ref, computed } from "vue";
-import { useRoute } from "vue-router";
-import NavItem from "./NavItem.vue";
-import NavDropdown from "./NavDropdown.vue";
 
 const menuOpen = ref(false);
 const toggleMenu = () => (menuOpen.value = !menuOpen.value);
@@ -141,6 +137,12 @@ const menuBantuan = [
   { label: "UNDUHAN", href: "/unduhan" },
   { label: "FAQ", href: "/faq" },
   { label: "HUBUNGI KAMI", href: "/kontak" }
+];
+
+const menuKnowledge = [
+  { label: "LMS", href: "/materi" },
+  { label: "Forum Diskusi", href: "/forum" },
+  { label: "Event/Webinar", href: "/event" }
 ];
 
 const navItems = [
