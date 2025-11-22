@@ -7,7 +7,7 @@
           <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
           </svg>
-          Kembali ke Daftar Materi
+          Kembali ke Daftar Course
         </button>
       </div>
     </div>
@@ -16,7 +16,7 @@
     <div class="container mx-auto px-4 py-8">
       <!-- Header Image -->
       <div class="relative mb-8">
-        <img :src="materi.img" alt="Gambar Materi" class="w-full h-64 sm:h-80 object-cover rounded-2xl shadow-lg" />
+        <img :src="materi.img" alt="Gambar Course" class="w-full h-64 sm:h-80 object-cover rounded-2xl shadow-lg" />
         <div class="absolute top-6 left-6">
           <span class="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-full shadow-lg">
             {{ materi.category }}
@@ -57,13 +57,13 @@
 
       <!-- Description -->
       <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Tentang Materi Ini</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-4">Tentang Course Ini</h2>
         <p class="text-gray-700 leading-relaxed text-lg">{{ materi.descriptionLong }}</p>
       </div>
 
-      <!-- Materi Information -->
+      <!-- Course Information -->
       <div class="bg-blue-50 rounded-2xl p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-semibold text-blue-800 mb-6">Informasi Materi</h2>
+        <h2 class="text-2xl font-semibold text-blue-800 mb-6">Informasi Course</h2>
         <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
           <div class="flex items-center gap-4">
             <div class="p-3 bg-blue-100 rounded-xl">
@@ -83,8 +83,8 @@
               </svg>
             </div>
             <div>
-              <p class="text-sm font-medium text-gray-800">Tipe Materi</p>
-              <p class="text-sm text-gray-600">Materi Pembelajaran</p>
+              <p class="text-sm font-medium text-gray-800">Tipe Course</p>
+              <p class="text-sm text-gray-600">Course Pembelajaran</p>
             </div>
           </div>
           <div class="flex items-center gap-4">
@@ -127,7 +127,7 @@
 
       <!-- Course Content Preview -->
       <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8 mb-8">
-        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Konten Materi</h2>
+        <h2 class="text-2xl font-semibold text-gray-800 mb-6">Konten Course</h2>
         <div class="space-y-4">
           <div class="flex items-center gap-4 p-4 bg-blue-50 rounded-xl">
             <div class="p-3 bg-blue-100 rounded-xl">
@@ -164,16 +164,16 @@
       <div class="bg-white rounded-2xl shadow-sm p-6 sm:p-8">
         <div class="flex flex-col sm:flex-row gap-4">
           <button
-            @click="enrollInMateri"
+            @click="enrollInCourse"
             class="flex-1 bg-blue-600 text-white py-4 px-8 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-semibold text-lg flex items-center justify-center gap-3 shadow-lg"
           >
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
             </svg>
-            Ikuti Materi Ini
+            Ikuti Course Ini
           </button>
           <button
-            @click="shareMateri"
+            @click="shareCourse"
             class="flex-1 sm:flex-none border-2 border-gray-300 text-gray-700 py-4 px-8 rounded-xl hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 transition-colors font-semibold text-lg flex items-center justify-center gap-3"
           >
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -283,7 +283,7 @@ const materi = materiData.find(m => m.id == materiId);
 if (!materi) {
   throw createError({
     statusCode: 404,
-    statusMessage: 'Materi tidak ditemukan'
+    statusMessage: 'Course tidak ditemukan'
   });
 }
 
@@ -299,7 +299,7 @@ const learningObjectives = [
 ];
 
 function goBack() {
-  router.push('/materi');
+  router.push('/course');
 }
 
 function toggleBookmark() {
@@ -307,23 +307,23 @@ function toggleBookmark() {
   // In real app, this would save to user's bookmarks
 }
 
-function enrollInMateri() {
+function enrollInCourse() {
   const { isLoggedIn } = useAuth();
 
   if (!isLoggedIn.value) {
     // Redirect to login if not logged in
-    alert('Silakan login terlebih dahulu untuk mengikuti materi ini.');
+    alert('Silakan login terlebih dahulu untuk mengikuti course ini.');
     // In a real app, you might want to show login modal or redirect to login page
     // For now, we'll just show an alert
     return;
   }
 
   // If logged in, redirect to learning page
-  alert(`Berhasil mendaftar materi: ${materi.title}\n\nAnda akan diarahkan ke halaman pembelajaran.`);
-  router.push(`/materi/${materiId}/learn`);
+  alert(`Berhasil mendaftar course: ${materi.title}\n\nAnda akan diarahkan ke halaman pembelajaran.`);
+  router.push(`/course/${materiId}/learn`);
 }
 
-function shareMateri() {
+function shareCourse() {
   if (navigator.share) {
     navigator.share({
       title: materi.title,
@@ -339,7 +339,7 @@ function shareMateri() {
 
 // Set page title
 useHead({
-  title: `${materi.title} - Materi Pembelajaran`,
+  title: `${materi.title} - Course Pembelajaran`,
   meta: [
     { name: 'description', content: materi.descriptionLong }
   ]

@@ -3,7 +3,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
   const { isLoggedIn } = useAuth()
 
   // Protected routes that require authentication
-  const protectedRoutes = ['/dashboard', '/materi']
+  const protectedRoutes = ['/dashboard', '/course']
 
   // Check if the current route is protected
   const isProtectedRoute = protectedRoutes.some(route =>

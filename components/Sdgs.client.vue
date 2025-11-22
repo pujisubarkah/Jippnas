@@ -1,25 +1,25 @@
 <template>
   <div class="p-6">
     <div>
-      <div class="grid grid-cols-1 gap-3">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div
           v-for="sdg in sdgsData"
           :key="sdg.id"
-          class="bg-linear-to-r from-blue-50 to-blue-100 p-4 rounded-xl border border-blue-200 hover:shadow-md transition-all duration-300 cursor-pointer transform hover:scale-105"
+          class="bg-white p-4 rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105 flex flex-col items-center text-center"
         >
-          <div class="flex items-center gap-4">
+          <div class="flex flex-col items-center gap-2">
             <div class="relative">
-              <img :src="`/sdgs/${sdg.id}.png`" :alt="`SDG ${sdg.id}`" class="w-12 h-12 rounded-lg shadow-md border-2 border-white" />
+              <img :src="`/sdgs/${sdg.id}.png`" :alt="`SDG ${sdg.id}`" class="w-16 h-16 rounded-lg shadow-md border-2 border-white" />
               <div class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
                 {{ sdg.id }}
               </div>
             </div>
-            <div class="flex-1">
-              <h4 class="font-semibold text-blue-800 text-sm">{{ sdg.title }}</h4>
-              <p class="text-blue-600 font-bold">{{ sdg.count }} produk</p>
+            <div class="flex-1 text-center">
+              <h4 class="font-semibold text-blue-800 text-sm mb-1">{{ sdg.title }}</h4>
+              <p class="text-blue-600 font-bold text-xs">{{ sdg.count }} produk</p>
             </div>
-            <div class="text-right">
-              <div class="w-16 bg-blue-200 rounded-full h-2">
+            <div class="w-full">
+              <div class="w-full bg-blue-200 rounded-full h-2">
                 <div class="bg-blue-600 h-2 rounded-full transition-all duration-500" :style="{ width: sdg.width }"></div>
               </div>
             </div>

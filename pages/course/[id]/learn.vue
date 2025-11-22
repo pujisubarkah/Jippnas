@@ -2,11 +2,11 @@
   <div class="min-h-screen bg-gray-50">
     <div class="container mx-auto px-4 py-8">
       <h1 class="text-3xl font-bold text-blue-800 mb-4">Halaman Pembelajaran</h1>
-      <p class="text-gray-600 mb-4">Materi ID: {{ materiId }}</p>
-      <p class="text-gray-600 mb-8">Materi Title: {{ materi?.title || 'Loading...' }}</p>
+      <p class="text-gray-600 mb-4">Course ID: {{ materiId }}</p>
+      <p class="text-gray-600 mb-8">Course Title: {{ materi?.title || 'Loading...' }}</p>
 
       <button @click="goBack" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700">
-        Kembali ke Detail Materi
+        Kembali ke Detail Course
       </button>
     </div>
   </div>
@@ -40,7 +40,7 @@ const materi = materiData.find(m => m.id == materiId)
 if (!materi) {
   throw createError({
     statusCode: 404,
-    statusMessage: 'Materi tidak ditemukan'
+    statusMessage: 'Course tidak ditemukan'
   })
 }
 
@@ -62,26 +62,26 @@ const modules = ref([
     completed: true,
     unlocked: true,
     content: `
-      <h3>Apa itu e-Government?</h3>
-      <p>e-Government atau electronic government adalah penggunaan teknologi informasi dan komunikasi untuk memberikan layanan pemerintah kepada masyarakat. Tujuan utamanya adalah meningkatkan efisiensi, transparansi, dan aksesibilitas layanan publik.</p>
+      &lt;h3&gt;Apa itu e-Government?&lt;/h3&gt;
+      &lt;p&gt;e-Government atau electronic government adalah penggunaan teknologi informasi dan komunikasi untuk memberikan layanan pemerintah kepada masyarakat. Tujuan utamanya adalah meningkatkan efisiensi, transparansi, dan aksesibilitas layanan publik.&lt;/p&gt;
 
-      <h3>Manfaat e-Government:</h3>
-      <ul>
-        <li>Mengurangi birokrasi dan waktu pelayanan</li>
-        <li>Meningkatkan transparansi dan akuntabilitas</li>
-        <li>Memudahkan akses layanan 24/7</li>
-        <li>Mengurangi biaya operasional</li>
-        <li>Meningkatkan kepuasan masyarakat</li>
-      </ul>
+      &lt;h3&gt;Manfaat e-Government:&lt;/h3&gt;
+      &lt;ul&gt;
+        &lt;li&gt;Mengurangi birokrasi dan waktu pelayanan&lt;/li&gt;
+        &lt;li&gt;Meningkatkan transparansi dan akuntabilitas&lt;/li&gt;
+        &lt;li&gt;Memudahkan akses layanan 24/7&lt;/li&gt;
+        &lt;li&gt;Mengurangi biaya operasional&lt;/li&gt;
+        &lt;li&gt;Meningkatkan kepuasan masyarakat&lt;/li&gt;
+      &lt;/ul&gt;
 
-      <h3>Komponen Utama:</h3>
-      <ol>
-        <li>Infrastruktur teknologi</li>
-        <li>Portal layanan online</li>
-        <li>Sistem database terintegrasi</li>
-        <li>Keamanan data dan privasi</li>
-        <li>Pendidikan dan literasi digital</li>
-      </ol>
+      &lt;h3&gt;Komponen Utama:&lt;/h3&gt;
+      &lt;ol&gt;
+        &lt;li&gt;Infrastruktur teknologi&lt;/li&gt;
+        &lt;li&gt;Portal layanan online&lt;/li&gt;
+        &lt;li&gt;Sistem database terintegrasi&lt;/li&gt;
+        &lt;li&gt;Keamanan data dan privasi&lt;/li&gt;
+        &lt;li&gt;Pendidikan dan literasi digital&lt;/li&gt;
+      &lt;/ol&gt;
     `
   },
   {
@@ -205,19 +205,19 @@ function completeCourse() {
   })
 
   // Redirect to dashboard or show completion modal
-  alert('Selamat! Anda telah menyelesaikan materi ini.')
+  alert('Selamat! Anda telah menyelesaikan course ini.')
   router.push('/dashboard')
 }
 
 function goBack() {
-  router.push(`/materi/${materiId}`)
+  router.push(`/course/${materiId}`)
 }
 
 // Set page title
 useHead({
   title: `Belajar - ${materi.title}`,
   meta: [
-    { name: 'description', content: `Halaman pembelajaran untuk materi ${materi.title}` }
+    { name: 'description', content: `Halaman pembelajaran untuk course ${materi.title}` }
   ]
 })
 </script>
@@ -254,6 +254,6 @@ useHead({
 }
 
 .prose ol li {
-  list-style-type: decimal;
+	list-style-type: decimal;
 }
 </style>

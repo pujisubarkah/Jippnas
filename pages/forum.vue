@@ -13,12 +13,14 @@
 
     <!-- Content -->
     <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6 grid grid-cols-1 lg:grid-cols-4 gap-6">
+      
       <!-- Sidebar Kategori -->
       <aside class="lg:col-span-1">
         <div class="bg-white p-4 rounded-lg shadow-sm">
           <h2 class="font-semibold mb-4">Kategori</h2>
           <ul class="space-y-2">
-            <li v-for="category in categories" :key="category.id" class="p-2 rounded hover:bg-blue-50 cursor-pointer flex justify-between items-center">
+            <li v-for="category in categories" :key="category.id"
+                class="p-2 rounded hover:bg-blue-50 cursor-pointer flex justify-between items-center">
               <span>{{ category.name }}</span>
               <span class="text-xs text-gray-500">{{ category.threads }}</span>
             </li>
@@ -28,7 +30,8 @@
 
       <!-- Thread List -->
       <section class="lg:col-span-3 space-y-4">
-        <!-- Tombol Mulai Diskusi -->
+
+        <!-- Tombol Buat Diskusi -->
         <div class="flex justify-end mb-4">
           <button @click="showNewThread = true"
             class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
@@ -36,72 +39,100 @@
           </button>
         </div>
 
+        <!-- Daftar Thread -->
         <div v-for="thread in threads" :key="thread.id" class="bg-white rounded-lg shadow-sm p-4 hover:shadow-md transition relative">
           <div class="flex items-start space-x-4">
+
+            <!-- Votes -->
             <div class="flex flex-col items-center text-gray-400 text-sm">
               <button class="hover:text-blue-600">▲</button>
               <span>{{ thread.votes }}</span>
               <button class="hover:text-red-500">▼</button>
             </div>
+
+            <!-- Konten Thread -->
             <div class="flex-1">
               <h3 class="text-lg font-semibold text-gray-900 hover:text-blue-600 cursor-pointer">
                 {{ thread.title }}
                 <span v-if="thread.isSticky" class="ml-2 px-2 py-0.5 text-xs font-semibold bg-yellow-100 text-yellow-800 rounded">📌 Sticky</span>
                 <span v-if="thread.isLocked" class="ml-2 px-2 py-0.5 text-xs font-semibold bg-red-100 text-red-800 rounded">🔒 Locked</span>
               </h3>
+
               <div class="text-sm text-gray-500 mt-1 flex space-x-4">
                 <span>oleh {{ thread.author }}</span>
-                <span>{{ thread.replies }} balasan</span>
-                <span>{{ thread.views }} dilihat</span>
+                <span>{{ thread.replies.length }} balasan</span>
               </div>
 
-              <!-- Replies Preview -->
-              <div v-if="thread.replies && thread.replies.length" class="mt-3 pl-4 border-l border-gray-200 space-y-2">
+              <!-- Reply Preview -->
+              <div v-if="thread.replies.length" class="mt-3 pl-4 border-l border-gray-200 space-y-2">
                 <div v-for="reply in thread.replies" :key="reply.id" class="text-gray-700 text-sm">
                   <strong>{{ reply.name }}:</strong> {{ reply.content }}
                 </div>
               </div>
 
-              <button @click="replyingTo = thread.id" class="mt-2 text-sm text-blue-600 hover:underline">Balas</button>
+              <button @click="replyingTo = thread.id"
+                class="mt-2 text-sm text-blue-600 hover:underline">Balas</button>
 
               <!-- Reply Form -->
               <div v-if="replyingTo === thread.id" class="mt-2">
-                <input v-model="replyForm.content" placeholder="Tulis balasan..." class="w-full p-2 border border-gray-300 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
-                <button @click="addReply(thread.id)" class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Kirim</button>
+                <input v-model="replyForm.content" placeholder="Tulis balasan..."
+                  class="w-full p-2 border border-gray-300 rounded mb-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+                <button @click="addReply(thread.id)"
+                  class="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700">Kirim</button>
+              </div>
+
+              <!-- Like/Dislike for thread -->
+              <div class="flex gap-4 mt-3">
+                <button @click="likeThread(thread.id)" class="flex items-center gap-1 text-green-600 hover:text-green-800">
+                  <ThumbsUp :size="20" />
+                  <span>{{ thread.likes || 0 }}</span>
+                </button>
+                <button @click="dislikeThread(thread.id)" class="flex items-center gap-1 text-red-600 hover:text-red-800">
+                  <ThumbsDown :size="20" />
+                  <span>{{ thread.dislikes || 0 }}</span>
+                </button>
               </div>
             </div>
+
+
           </div>
         </div>
+
       </section>
     </main>
 
-    <!-- Modal Form Diskusi Baru -->
+    <!-- Modal New Thread -->
     <div v-if="showNewThread" class="fixed inset-0 z-50 flex items-center justify-center bg-black/40">
       <div class="bg-white rounded-lg shadow-lg w-full max-w-md p-6 relative">
         <h2 class="text-xl font-bold mb-4">Buat Diskusi Baru</h2>
         <form @submit.prevent="addThread" class="flex flex-col gap-4">
           <input v-model="newThread.title" type="text" placeholder="Judul Diskusi" required
-            class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400" />
+            class="border border-gray-300 rounded px-3 py-2" />
           <select v-model="newThread.category" required
-            class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400">
+            class="border border-gray-300 rounded px-3 py-2">
             <option disabled value="">Pilih Kategori</option>
             <option v-for="category in categories" :key="category.id" :value="category.name">{{ category.name }}</option>
           </select>
           <textarea v-model="newThread.content" placeholder="Isi diskusi..." required
-            class="border border-gray-300 rounded px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-400 resize-none min-h-[100px]"></textarea>
+            class="border border-gray-300 rounded px-3 py-2 resize-none min-h-[100px]"></textarea>
           <div class="flex justify-end gap-2">
-            <button type="button" @click="showNewThread = false" class="px-4 py-2 border border-gray-300 rounded hover:bg-gray-50">Batal</button>
-            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Buat Diskusi</button>
+            <button type="button" @click="showNewThread = false" class="px-4 py-2 border rounded">Batal</button>
+            <button type="submit" class="px-4 py-2 bg-blue-600 text-white rounded">Buat Diskusi</button>
           </div>
         </form>
       </div>
     </div>
+
   </div>
 </template>
 
 <script setup>
 import { ref } from 'vue';
+import { ThumbsUp, ThumbsDown } from 'lucide-vue-next';
 
+/* ================================
+   DATA
+================================= */
 const categories = ref([
   { id: 1, name: 'Diskusi Umum', threads: 245 },
   { id: 2, name: 'Teknologi', threads: 189 },
@@ -116,6 +147,8 @@ const threads = ref([
     votes: 12,
     replies: [{ id: 1, name: 'Ahmad', content: 'Bagus sekali!' }],
     views: 456,
+    likes: 0,
+    dislikes: 0,
     isSticky: false,
     isLocked: false
   },
@@ -126,16 +159,24 @@ const threads = ref([
     votes: 34,
     replies: [],
     views: 892,
+    likes: 0,
+    dislikes: 0,
     isSticky: true,
     isLocked: false
   },
 ]);
 
+/* =================================
+   LIKE / DISLIKE TRACKER PER USER
+=================================== */
+const userVotes = ref({}); 
+// { threadId: 'like' | 'dislike' }
+
+/* =================================
+   REPLY FORM
+=================================== */
 const replyingTo = ref(null);
 const replyForm = ref({ content: '' });
-
-const showNewThread = ref(false);
-const newThread = ref({ title: '', category: '', content: '' });
 
 function addReply(threadId) {
   const thread = threads.value.find(t => t.id === threadId);
@@ -146,18 +187,67 @@ function addReply(threadId) {
   replyingTo.value = null;
 }
 
+/* =================================
+   NEW THREAD
+=================================== */
+const showNewThread = ref(false);
+const newThread = ref({ title: '', category: '', content: '' });
+
 function addThread() {
   threads.value.unshift({
     id: Date.now(),
     title: newThread.value.title,
     author: 'User',
-    votes: 0,
     replies: [],
     views: 0,
+    votes: 0,
+    likes: 0,
+    dislikes: 0,
     isSticky: false,
     isLocked: false
   });
   newThread.value = { title: '', category: '', content: '' };
   showNewThread.value = false;
 }
+
+/* =================================
+   LIKE / DISLIKE SYSTEM (TOGGLE)
+=================================== */
+function likeThread(threadId) {
+  const thread = threads.value.find(t => t.id === threadId);
+  if (!thread) return;
+
+  if (userVotes.value[threadId] === 'dislike') {
+    thread.dislikes--;
+  }
+
+  if (userVotes.value[threadId] === 'like') {
+    thread.likes--;
+    delete userVotes.value[threadId];
+  } else {
+    thread.likes++;
+    userVotes.value[threadId] = 'like';
+  }
+}
+
+function dislikeThread(threadId) {
+  const thread = threads.value.find(t => t.id === threadId);
+  if (!thread) return;
+
+  if (userVotes.value[threadId] === 'like') {
+    thread.likes--;
+  }
+
+  if (userVotes.value[threadId] === 'dislike') {
+    thread.dislikes--;
+    delete userVotes.value[threadId];
+  } else {
+    thread.dislikes++;
+    userVotes.value[threadId] = 'dislike';
+  }
+}
 </script>
+
+<style>
+/* Tambahan jika butuh */
+</style>

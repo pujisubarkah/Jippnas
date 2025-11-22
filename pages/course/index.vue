@@ -1,22 +1,22 @@
 <template>
   <section class="container mx-auto py-4 sm:py-8 px-4">
-    <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-4 sm:mb-6">Materi Pembelajaran</h1>
+    <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-4 sm:mb-6">Course Pembelajaran</h1>
     <div class="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
-      <input type="search" class="input input-bordered w-full sm:w-1/2 lg:w-1/3 text-sm sm:text-base" placeholder="Cari materi..." v-model="search" />
+      <input type="search" class="input input-bordered w-full sm:w-1/2 lg:w-1/3 text-sm sm:text-base" placeholder="Cari course..." v-model="search" />
       <select class="select select-bordered w-full sm:w-1/3 lg:w-1/4 text-sm sm:text-base" v-model="filter">
         <option value="">Semua Kategori</option>
         <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
     </div>
     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-      <div v-for="materi in pagedMateri" :key="materi.id" @click="goToMateri(materi.id)" class="card bg-white shadow-md border border-blue-100 rounded-lg sm:rounded-xl p-4 sm:p-5 flex flex-col hover:bg-blue-50 transition-all cursor-pointer">
-        <img :src="materi.img" alt="Gambar Materi" class="w-full h-32 sm:h-40 object-cover rounded-lg mb-3 bg-blue-50" />
+      <div v-for="materi in pagedMateri" :key="materi.id" @click="goToCourse(materi.id)" class="card bg-white shadow-md border border-blue-100 rounded-lg sm:rounded-xl p-4 sm:p-5 flex flex-col hover:bg-blue-50 transition-all cursor-pointer">
+        <img :src="materi.img" alt="Gambar Course" class="w-full h-32 sm:h-40 object-cover rounded-lg mb-3 bg-blue-50" />
         <h2 class="text-lg sm:text-xl font-semibold text-blue-800 mb-2 line-clamp-2">{{ materi.title }}</h2>
         <p class="text-blue-600 mb-2 text-sm sm:text-base">{{ materi.category }}</p>
         <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base line-clamp-3">{{ materi.description }}</p>
         <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
           <button class="btn btn-primary rounded-full px-3 sm:px-4 text-xs sm:text-sm text-center">
-            Pelajari Materi
+            Pelajari Course
           </button>
           <span class="text-xs text-gray-400 text-center sm:text-right">Mentor: {{ materi.mentor }}</span>
         </div>
@@ -121,8 +121,8 @@ function goToPage(page) {
   }
 }
 
-function goToMateri(id) {
-  navigateTo(`/materi/${id}`);
+function goToCourse(id) {
+  navigateTo(`/course/${id}`);
 }
 </script>
 

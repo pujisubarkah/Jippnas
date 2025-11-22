@@ -371,6 +371,16 @@ const toggleMenu = () => (menuOpen.value = !menuOpen.value);
 // Auth composable
 const { isLoggedIn, user, logout } = useAuth();
 
+import { watch } from 'vue';
+
+// Watch login state and update UI immediately
+watch(isLoggedIn, (val) => {
+  if (val) {
+    showLoginModal.value = false;
+    loginForm.value = { email: '', password: '' };
+  }
+});
+
 // Login modal state
 const showLoginModal = ref(false);
 const loginForm = ref({
@@ -387,28 +397,25 @@ const registerForm = ref({
 });
 
 // Login handlers
-const handleLogin = () => {
-  // Handle login logic here
-  console.log('Login attempt:', loginForm.value);
+import { useRouter } from 'vue-router';
+const router = useRouter();
+import { useLogin } from '~/composables/useLogin';
+const { handleLogin: apiLogin, user: apiUser, error: loginError, loading: loginLoading } = useLogin();
 
-  // Mock authentication - in real app, this would call an API
+const handleLogin = async () => {
   if (loginForm.value.email && loginForm.value.password) {
-    const userData = {
-      id: 1,
-      name: 'User Demo',
-      email: loginForm.value.email
-    };
-
-    // Use auth composable
-    const { login } = useAuth();
-    login(userData);
-
-    // Close modal and reset form
-    showLoginModal.value = false;
-    loginForm.value = { email: '', password: '' };
-
-    // Show success message
-    alert('Login berhasil!');
+    await apiLogin({ email: loginForm.value.email, password: loginForm.value.password });
+    if (apiUser.value && apiUser.value.role) {
+      // Use auth composable
+      const { login } = useAuth();
+      login(apiUser.value);
+      showLoginModal.value = false;
+      loginForm.value = { email: '', password: '' };
+      alert('Login berhasil!');
+      router.push(`/${apiUser.value.role}`);
+    } else {
+      alert(loginError.value || 'Login gagal!');
+    }
   } else {
     alert('Harap isi semua field!');
   }
@@ -474,7 +481,7 @@ const menuBantuan = [
 ];
 
 const menuKnowledge = [
-  { label: "LMS", href: "/materi" },
+  { label: "LMS", href: "/course" },
   { label: "Forum Diskusi", href: "/forum" },
   { label: "Event/Webinar", href: "/event" }
 ];

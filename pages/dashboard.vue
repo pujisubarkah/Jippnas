@@ -113,7 +113,7 @@
           </svg>
           <h3 class="text-lg font-medium text-gray-600 mb-2">Belum ada materi yang sedang dipelajari</h3>
           <p class="text-gray-500 mb-4">Mulai pelajaran pertama Anda untuk melihat progress di sini</p>
-          <NuxtLink to="/materi" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
+          <NuxtLink to="/course" class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors font-medium">
             Jelajahi Materi
           </NuxtLink>
         </div>
@@ -248,7 +248,7 @@ function goBack() {
 
 function continueLearning(course) {
   // Navigate to the learning page for this course
-  router.push(`/materi/${course.id}/learn`)
+  router.push(`/course/${course.id}/learn`)
 }
 
 // Set page title
