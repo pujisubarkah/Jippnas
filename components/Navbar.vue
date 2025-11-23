@@ -401,6 +401,7 @@ import { useRouter } from 'vue-router';
 const router = useRouter();
 import { useLogin } from '~/composables/useLogin';
 const { handleLogin: apiLogin, user: apiUser, error: loginError, loading: loginLoading } = useLogin();
+import { toast } from 'vue-sonner';
 
 const handleLogin = async () => {
   if (loginForm.value.email && loginForm.value.password) {
@@ -411,13 +412,42 @@ const handleLogin = async () => {
       login(apiUser.value);
       showLoginModal.value = false;
       loginForm.value = { email: '', password: '' };
-      alert('Login berhasil!');
-      router.push(`/${apiUser.value.role}`);
+      toast.success('🎉 Login Berhasil!', {
+        description: 'Selamat datang kembali!',
+        duration: 4000
+      });
+      router.push(`/${apiUser.value.role}/dashboard`);
     } else {
-      alert(loginError.value || 'Login gagal!');
+      toast.error(loginError.value || 'Login gagal!', {
+        position: 'top-right',
+        timeout: 5000,
+        closeOnClick: true,
+        pauseOnFocusLoss: true,
+        pauseOnHover: true,
+        draggable: true,
+        draggablePercent: 0.6,
+        showCloseButtonOnHover: false,
+        hideProgressBar: false,
+        closeButton: 'button',
+        icon: true,
+        rtl: false
+      });
     }
   } else {
-    alert('Harap isi semua field!');
+    toast.warning('Harap isi semua field!', {
+      position: 'top-right',
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: false,
+      hideProgressBar: false,
+      closeButton: 'button',
+      icon: true,
+      rtl: false
+    });
   }
 };
 
@@ -448,9 +478,35 @@ const handleRegister = () => {
     registerForm.value = { name: '', email: '', password: '' };
 
     // Show success message
-    alert('Registrasi berhasil!');
+    toast.success('Registrasi berhasil!', {
+      position: 'top-right',
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: false,
+      hideProgressBar: false,
+      closeButton: 'button',
+      icon: true,
+      rtl: false
+    });
   } else {
-    alert('Harap isi semua field!');
+    toast.warning('Harap isi semua field!', {
+      position: 'top-right',
+      timeout: 3000,
+      closeOnClick: true,
+      pauseOnFocusLoss: true,
+      pauseOnHover: true,
+      draggable: true,
+      draggablePercent: 0.6,
+      showCloseButtonOnHover: false,
+      hideProgressBar: false,
+      closeButton: 'button',
+      icon: true,
+      rtl: false
+    });
   }
 };
 
@@ -463,7 +519,20 @@ const handleGoogleRegister = () => {
 const handleLogout = () => {
   const { logout } = useAuth();
   logout();
-  alert('Anda telah logout!');
+  toast.info('Anda telah logout!', {
+    position: 'top-right',
+    timeout: 3000,
+    closeOnClick: true,
+    pauseOnFocusLoss: true,
+    pauseOnHover: true,
+    draggable: true,
+    draggablePercent: 0.6,
+    showCloseButtonOnHover: false,
+    hideProgressBar: false,
+    closeButton: 'button',
+    icon: true,
+    rtl: false
+  });
 };
 
 const linksTerkait = [

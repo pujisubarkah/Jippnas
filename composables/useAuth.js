@@ -23,6 +23,7 @@ export const useAuth = () => {
       localStorage.removeItem('user')
       localStorage.removeItem('isLoggedIn')
     }
+    checkAuth(); // Force state update for SWR-like behavior
   }
 
   // Check if user is logged in on app load

@@ -13,9 +13,9 @@
 <script setup>
 import Sidebar from '~/components/Sidebar.vue';
 import Header from '~/components/Header.vue';
-import { useRoute } from 'vue-router';
-const route = useRoute();
-const role = route.params.slug === 'admin' ? 'admin' : 'user';
+import { useAuth } from '~/composables/useAuth';
+const { user } = useAuth();
+const role = user?.role || 'user';
 </script>
 
 <style scoped>
