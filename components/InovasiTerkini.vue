@@ -2,15 +2,15 @@
   <ClientOnly>
     <div class="container-fluid bg-top relative">
       <div class="container mx-auto px-4">
-        <div class="w-full pt-2">
+        <div class="w-full pt-8 md:pt-12 pb-8 md:pb-12">
           <div class="flex justify-center">
             <h2 class="relative text-4xl md:text-5xl font-extrabold text-white tracking-wide pb-3">
               Inovasi Terkini
               <span class="absolute left-1/2 -translate-x-1/2 -bottom-1 h-1 w-32 bg-linear-to-r from-amber-300 via-amber-400 to-amber-200 rounded-full"></span>
             </h2>
           </div>
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div class="lg:col-span-8">
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-6 md:mt-8">
+            <div class="lg:col-span-8 pb-2">
               <div class="our-news">
                 <swiper
                   :slides-per-view="1"

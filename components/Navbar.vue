@@ -1,9 +1,88 @@
 <template>
-  <nav class="fixed top-0 left-0 right-0 w-full flex justify-between items-center px-4 sm:px-10 py-3 bg-[#C2E7F6] shadow-lg backdrop-blur-md font-poppins z-9999999 border-b-4 border-yellow-600">
-    <div class="container mx-auto px-4">
-      <div class="flex flex-wrap justify-center items-center mt-2 py-4">
-        <!-- Logo (underline if home active) -->
-        <div class="w-full md:w-1/4 text-left relative">
+  <nav class="fixed top-0 left-0 right-0 w-full bg-[#C2E7F6] shadow-lg font-poppins z-9999999 border-b-4 border-yellow-600 py-2 lg:py-3">
+    <div class="container mx-auto px-4 sm:px-5 lg:px-6">
+      <!-- MOBILE COMPACT BAR -->
+      <div class="flex items-center justify-between md:hidden">
+        <img
+          src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
+          class="h-10 object-contain rounded-md"
+          alt="Logo"
+        />
+        <div class="flex items-center gap-2">
+          <button
+            @click="toggleMobileSearch"
+            class="p-2 rounded-full bg-white/70 hover:bg-white shadow-sm text-blue-600"
+            aria-label="Toggle Search"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+          </button>
+          <template v-if="!isLoggedIn">
+            <button
+              @click="showLoginModal = true"
+              class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-white text-blue-700 text-xs font-medium shadow-sm hover:shadow-md"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1"/>
+              </svg>
+              <span>Masuk</span>
+            </button>
+            <button
+              @click="showRegisterModal = true"
+              class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-600 text-white text-xs font-medium shadow-sm hover:bg-blue-700"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/>
+              </svg>
+              <span>Daftar</span>
+            </button>
+          </template>
+          <template v-else>
+            <button
+              @click="handleLogout"
+              class="flex items-center gap-1 px-3 py-1.5 rounded-full bg-red-50 text-red-600 text-xs font-medium shadow-sm hover:bg-red-100"
+            >
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+              </svg>
+              <span>Keluar</span>
+            </button>
+          </template>
+          <button
+            class="p-2 rounded-full bg-white/70 hover:bg-white shadow-sm text-blue-700"
+            @click="toggleMenu"
+            aria-label="Menu"
+          >
+            <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h8m-8 6h16'"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- MOBILE SEARCH COLLAPSIBLE -->
+      <div v-if="showMobileSearch" class="md:hidden mt-3 mb-2">
+        <div class="relative">
+          <input
+            class="w-full bg-white border border-blue-300 rounded-full pl-9 pr-3 py-2 text-xs shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400"
+            type="search"
+            placeholder="Cari Inovasi"
+            aria-label="Search Mobile"
+          />
+          <svg
+            class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-600"
+            fill="none" viewBox="0 0 24 24" stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      </div>
+
+      <!-- DESKTOP ORIGINAL TOP SECTION -->
+      <div class="hidden md:flex flex-wrap justify-center items-center mt-2 py-4 gap-4 md:gap-6">
+        <!-- Logo -->
+        <div class="w-full md:w-1/4 text-left mb-4 md:mb-0 pr-2 md:pr-4">
           <img
             src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
             class="my-1 max-h-16 object-contain rounded-lg transition hover:opacity-90"
@@ -12,10 +91,10 @@
         </div>
 
         <!-- Search -->
-        <div class="w-full md:w-5/12 text-center px-4">
+        <div class="w-full md:w-5/12 text-center px-4 md:px-6 mb-4 md:mb-0">
           <form
             action="https://jippnas.menpan.go.id/searchs"
-            class="form-group mt-1"
+            class="form-group"
             id="filter_form"
             method="post"
             enctype="multipart/form-data"
@@ -23,7 +102,7 @@
             <input type="hidden" name="_token" value="TOKEN_DIISI_SERVER" />
             <div class="relative">
               <input
-                class="input input-bordered bg-white text-blue-800 caret-blue-600 border border-blue-300 w-full pl-11 pr-4 py-2.5 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 hover:shadow-md transition-colors duration-200 placeholder:text-blue-600/80 placeholder:font-medium"
+                class="input input-bordered bg-white text-blue-800 caret-blue-600 border border-blue-300 w-full pl-11 pr-4 py-2.5 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-amber-400 hover:shadow-md transition-colors duration-200 placeholder:text-blue-600/80 placeholder:font-medium text-sm"
                 type="search"
                 id="mySearch"
                 name="search"
@@ -36,24 +115,19 @@
                 viewBox="0 0 24 24"
                 stroke="currentColor"
               >
-                <path
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  stroke-width="2"
-                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
-                />
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
           </form>
         </div>
 
-        <!-- Buttons -->
-        <div class="w-full md:w-1/4 text-center">
-          <div class="flex justify-center items-center my-1 space-x-3">
+        <!-- Auth Buttons -->
+        <div class="w-full md:w-1/4 text-center mb-2 md:mb-0 px-2 md:px-4">
+          <div class="flex justify-center items-center space-x-3">
             <!-- Show login/register buttons when not logged in -->
             <template v-if="!isLoggedIn">
               <button
-                class="btn bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl hover:from-blue-600 hover:via-blue-600 hover:to-blue-800 transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group"
+                class="btn bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 text-white rounded-full px-6 py-2.5 shadow-lg hover:shadow-xl transition-all duration-300 font-medium border border-amber-300/60 flex items-center gap-2 group text-sm"
                 id="myBtnReg"
                 @click="showRegisterModal = true"
               >
@@ -63,7 +137,7 @@
                 <span class="tracking-wide">Daftar</span>
               </button>
               <button
-                class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-linear-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg hover:from-amber-50 hover:to-amber-100 transition-all duration-300 font-medium flex items-center gap-2 group"
+                class="btn border-2 border-amber-400 rounded-full px-6 py-2.5 text-blue-700 bg-linear-to-r from-white to-amber-50/40 shadow-md hover:shadow-lg transition-all duration-300 font-medium flex items-center gap-2 group text-sm"
                 id="myBtnLog"
                 @click="showLoginModal = true"
               >
@@ -73,17 +147,15 @@
                 <span class="tracking-wide">Masuk</span>
               </button>
             </template>
-
-            <!-- Show user info and logout when logged in -->
             <template v-else>
               <div class="flex items-center gap-3">
                 <div class="text-right">
-                  <p class="text-sm font-medium text-blue-800">{{ user.name }}</p>
-                  <p class="text-xs text-blue-600">{{ user.email }}</p>
+                  <p class="text-xs font-medium text-blue-800 truncate">{{ user.name }}</p>
+                  <p class="text-[11px] text-blue-600 truncate">{{ user.email }}</p>
                 </div>
                 <button
                   @click="handleLogout"
-                  class="btn border-2 border-red-400 rounded-full px-4 py-2 text-red-700 bg-linear-to-r from-white to-red-50/40 shadow-md hover:shadow-lg hover:from-red-50 hover:to-red-100 transition-all duration-300 font-medium flex items-center gap-2"
+                  class="btn border-2 border-red-400 rounded-full px-4 py-2 text-red-700 bg-linear-to-r from-white to-red-50/40 shadow-md hover:shadow-lg transition-all duration-300 font-medium flex items-center gap-2 text-xs"
                 >
                   <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
@@ -95,9 +167,9 @@
           </div>
         </div>
 
-        <!-- Mobile Toggle -->
+        <!-- Mobile Toggle (tetap di baris atas) -->
         <button
-          class="btn btn-ghost lg:hidden mt-2 rounded-full text-blue-700 hover:bg-blue-100/70 hover:ring-1 hover:ring-amber-300/60 transition-all"
+          class="btn btn-ghost lg:hidden mt-1 rounded-full text-blue-700 hover:bg-blue-100/70"
           type="button"
           @click="toggleMenu"
         >
@@ -105,60 +177,66 @@
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="menuOpen ? 'M6 18L18 6M6 6l12 12' : 'M4 6h16M4 12h8m-8 6h16'"/>
           </svg>
         </button>
+      </div>
 
-        <!-- Navigation Menu -->
-        <div
-          class="w-full lg:flex lg:justify-center lg:mt-4"
-          :class="{
-            'hidden': !menuOpen,
-            'block': menuOpen,
-            'fixed inset-0 z-50 bg-white/95 backdrop-blur-sm lg:relative lg:inset-auto lg:bg-transparent lg:backdrop-blur-none': menuOpen && window.innerWidth < 1024
-          }"
-          id="navbarSupportedContent"
+      <!-- DESKTOP MENU -->
+      <div class="hidden lg:block pb-3 pt-1">
+        <ul
+          class="flex flex-nowrap items-center gap-6 xl:gap-8 px-1 xl:px-2 text-blue-700 font-medium tracking-wide text-sm xl:text-base whitespace-nowrap"
         >
-          <div class="lg:hidden absolute top-4 right-4">
-            <button
-              v-if="menuOpen"
-              class="btn btn-ghost rounded-full text-blue-700 hover:bg-blue-100/70"
-              @click="toggleMenu"
-            >
-              <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
-              </svg>
-            </button>
-          </div>
-          <ul class="flex flex-col lg:flex-row lg:flex-wrap justify-center mt-12 lg:mt-4 mb-4 lg:mb-0 space-y-4 lg:space-y-0 lg:space-x-6 text-blue-700 font-medium tracking-wide px-4 lg:px-0 text-2xl">
-            <!-- dynamic NavItems with underline -->
-            <li
-              v-for="item in navItems"
-              :key="item.href"
-              class="relative px-1 text-center lg:text-left"
-            >
-              <NavItem
-                :icon="item.icon"
-                :label="item.label"
-                :href="item.href"
-                :active="isActive(item.href)"
-                @click="menuOpen = false"
-              />
-              <span
-                class="absolute left-0 right-0 -bottom-2 mx-auto h-[3px] bg-linear-to-r from-amber-300 to-amber-400 rounded-full transition-all duration-300"
-                :class="isActive(item.href) ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'"
-              ></span>
-            </li>
-
-            <!-- dropdowns (tanpa underline khusus) -->
-            <li class="text-center lg:text-left">
-              <NavDropdown label="Knowledge Center" :items="menuKnowledge" />
-            </li>
-            <li class="text-center lg:text-left">
+          <li
+            v-for="item in navItems"
+            :key="item.href"
+            class="relative flex-shrink-0"
+          >
+            <NavItem
+              :icon="item.icon"
+              :label="item.label"
+              :href="item.href"
+              :active="isActive(item.href)"
+            />
+            <span
+              class="absolute left-0 right-0 -bottom-2 mx-auto h-[3px] bg-linear-to-r from-amber-300 to-amber-400 rounded-full transition-all duration-300"
+              :class="isActive(item.href) ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'"
+            ></span>
+          </li>
+          <li class="flex-shrink-0">
+            <NavDropdown label="Knowledge Center" :items="menuKnowledge" />
+          </li>
+            <li class="flex-shrink-0">
               <NavDropdown label="Tautan Terkait" :items="linksTerkait" />
             </li>
-            <li class="text-center lg:text-left">
+            <li class="flex-shrink-0">
               <NavDropdown label="Bantuan" :items="menuBantuan" />
             </li>
-          </ul>
-        </div>
+        </ul>
+      </div>
+
+      <!-- MOBILE MENU FULL LIST -->
+      <div class="lg:hidden" v-if="menuOpen">
+        <!-- ...existing code (mobile menu list)... -->
+        <ul class="flex flex-col mt-4 space-y-4 text-blue-700 font-medium tracking-wide text-base px-2">
+          <li
+            v-for="item in navItems"
+            :key="item.href"
+            class="relative"
+          >
+            <NavItem
+              :icon="item.icon"
+              :label="item.label"
+              :href="item.href"
+              :active="isActive(item.href)"
+              @click="menuOpen = false"
+            />
+            <span
+              class="absolute left-0 right-0 -bottom-2 h-[3px] bg-linear-to-r from-amber-300 to-amber-400 rounded-full transition-all duration-300"
+              :class="isActive(item.href) ? 'opacity-100 scale-x-100' : 'opacity-0 scale-x-0'"
+            ></span>
+          </li>
+          <li><NavDropdown label="Knowledge Center" :items="menuKnowledge" /></li>
+          <li><NavDropdown label="Tautan Terkait" :items="linksTerkait" /></li>
+          <li><NavDropdown label="Bantuan" :items="menuBantuan" /></li>
+        </ul>
       </div>
     </div>
 
@@ -364,14 +442,17 @@
 </template>
 
 <script setup>
+import { ref, computed, watch } from 'vue';
+import { useRouter, useRoute } from 'vue-router';
+import { useAuth } from '~/composables/useAuth';
+import { useLogin } from '~/composables/useLogin';
+import { toast } from 'vue-sonner';
 
 const menuOpen = ref(false);
 const toggleMenu = () => (menuOpen.value = !menuOpen.value);
 
 // Auth composable
 const { isLoggedIn, user, logout } = useAuth();
-
-import { watch } from 'vue';
 
 // Watch login state and update UI immediately
 watch(isLoggedIn, (val) => {
@@ -397,11 +478,8 @@ const registerForm = ref({
 });
 
 // Login handlers
-import { useRouter } from 'vue-router';
 const router = useRouter();
-import { useLogin } from '~/composables/useLogin';
 const { handleLogin: apiLogin, user: apiUser, error: loginError, loading: loginLoading } = useLogin();
-import { toast } from 'vue-sonner';
 
 const handleLogin = async () => {
   if (loginForm.value.email && loginForm.value.password) {
@@ -567,4 +645,7 @@ const route = useRoute();
 const normalize = (p) => (p ? p.replace(/\/+$/, "") : "");
 const currentPath = computed(() => normalize(route?.path || ""));
 const isActive = (href) => currentPath.value === normalize(href);
+
+const showMobileSearch = ref(false);
+const toggleMobileSearch = () => { showMobileSearch.value = !showMobileSearch.value; };
 </script>
