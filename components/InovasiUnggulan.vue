@@ -1,106 +1,339 @@
 <template>
   <ClientOnly>
-    <div class="our-courses bg-blue-100 py-8 shadow-lg rounded-lg mx-4 my-8">
-      <div class="max-w-7xl mx-auto px-4">
-        <div class="w-full">
-          <div class="section-heading text-center mb-8">
-            <h2 class="text-2xl font-bold text-blue-800">Inovasi Unggulan</h2>
-          </div>
-        </div>
-        <div class="">
-          <swiper
-            :slides-per-view="3"
-            :space-between="30"
-            :navigation="true"
-            :pagination="{ clickable: true }"
-            :autoplay="{ delay: 3000 }"
-            :loop="true"
-            :breakpoints="{
-              320: { slidesPerView: 1 },
-              768: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 }
-            }"
-            class="owl-courses-item"
-          >
-            <swiper-slide v-for="(item, index) in innovations" :key="index">
-              <div class="item bg-white rounded-lg shadow-md overflow-hidden hover:shadow-xl transition-shadow duration-300">
-                <img :src="item.image" :alt="item.title" class="w-full h-48 object-cover">
-                <div class="p-4">
-                  <h4 class="text-lg font-bold text-blue-800 mb-2 line-clamp-2">{{ item.title }}</h4>
-                  <p class="text-gray-700 text-sm mb-4 line-clamp-4">{{ item.description }}</p>
-                  <a :href="item.link" target="_blank" class="btn btn-sm btn-primary">Selengkapnya</a>
-                </div>
-              </div>
-            </swiper-slide>
-          </swiper>
-        </div>
-      </div>
+    <div class="innovations-section py-12">
+      <v-container fluid class="px-4">
+        <v-row justify="center" class="mb-8">
+          <v-col cols="12" class="text-center">
+            <v-fade-transition appear>
+              <h2 class="text-h4 text-md-h3 font-weight-bold text-blue-800 mb-2">
+                Inovasi Unggulan
+              </h2>
+            </v-fade-transition>
+            <v-divider
+              class="mx-auto"
+              color="blue"
+              width="200"
+              thickness="3"
+              rounded
+            ></v-divider>
+          </v-col>
+        </v-row>
+
+        <v-row justify="center">
+          <v-col cols="12">
+            <v-carousel
+              v-model="currentSlide"
+              height="auto"
+              hide-delimiter-background
+              show-arrows="hover"
+              :show-arrows-on-hover="true"
+              :cycle="true"
+              :interval="4000"
+              class="rounded-xl elevation-4"
+              aria-label="Carousel inovasi unggulan"
+            >
+              <v-carousel-item
+                v-for="(slide, slideIndex) in slides"
+                :key="slideIndex"
+                :aria-label="`Slide ${slideIndex + 1} dari ${slides.length}`"
+              >
+                <v-container>
+                  <v-row justify="center">
+                    <v-col
+                      v-for="(innovation, idx) in slide"
+                      :key="`${slideIndex}-${idx}`"
+                      cols="12"
+                      sm="6"
+                      lg="4"
+                      class="pa-2"
+                    >
+                      <v-card
+                        class="innovation-card elevation-6"
+                        rounded="lg"
+                        hover
+                        :ripple="false"
+                        height="100%"
+                      >
+                        <v-img
+                          :src="innovation.image"
+                          :alt="innovation.title"
+                          height="200"
+                          cover
+                          :lazy-src="'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23ddd\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'18\' fill=\'%23999\' text-anchor=\'middle\' dy=\'.3em\'%3ELoading...%3C/text%3E%3C/svg%3E'"
+                          @error="onImageError"
+                          class="card-image"
+                        >
+                          <template v-slot:placeholder>
+                            <v-row
+                              class="fill-height ma-0"
+                              align="center"
+                              justify="center"
+                            >
+                              <v-progress-circular
+                                indeterminate
+                                color="blue"
+                              ></v-progress-circular>
+                            </v-row>
+                          </template>
+                        </v-img>
+
+                        <v-card-title class="text-h6 font-weight-bold text-blue-800 pa-4 pb-2 line-clamp-2">
+                          {{ innovation.title }}
+                        </v-card-title>
+
+                        <v-card-text class="pa-4 pt-0">
+                          <p class="text-body-2 text-gray-700 line-clamp-3 mb-4">
+                            {{ innovation.description }}
+                          </p>
+                          <v-btn
+                            color="primary"
+                            size="small"
+                            :href="innovation.link"
+                            target="_blank"
+                            rel="noopener"
+                            variant="outlined"
+                            class="font-weight-medium"
+                            aria-label="Baca selengkapnya tentang inovasi ini"
+                          >
+                            <v-icon left size="small">mdi-open-in-new</v-icon>
+                            Selengkapnya
+                          </v-btn>
+                        </v-card-text>
+                      </v-card>
+                    </v-col>
+                  </v-row>
+                </v-container>
+              </v-carousel-item>
+            </v-carousel>
+
+            <!-- Navigation Dots Indicator -->
+            <v-row justify="center" class="mt-4">
+              <v-col cols="auto">
+                <v-item-group
+                  v-model="currentSlide"
+                  mandatory
+                  class="slide-indicators"
+                >
+                  <v-item
+                    v-for="n in slides.length"
+                    :key="n"
+                    :value="n - 1"
+                    v-slot="{ isSelected, toggle }"
+                  >
+                    <v-btn
+                      :variant="isSelected ? 'flat' : 'text'"
+                      size="small"
+                      icon
+                      color="primary"
+                      @click="toggle"
+                      :aria-label="`Go to slide ${n}`"
+                    >
+                      <v-icon size="12">
+                        {{ isSelected ? 'mdi-circle' : 'mdi-circle-outline' }}
+                      </v-icon>
+                    </v-btn>
+                  </v-item>
+                </v-item-group>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
     </div>
   </ClientOnly>
 </template>
 
 <script setup>
-import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
+import { ref, computed } from 'vue'
 
-const innovations = [
+// Reactive states
+const currentSlide = ref(0)
+const itemsPerSlide = ref(3)
+
+// Innovations data - moved to reactive for better performance
+const innovations = ref([
   {
     title: 'TIM BUSER (TIM BUNTING SERENTAK)',
     image: 'https://jippnas.menpan.go.id/fronts/assets/images/no-image.png',
-    description: `Swasembada daging sapi merupakan target pemerintah yang belum tercapai. Kebutuhan daging sapi nasional pada tahun 2020 mencapai 717.150 ton, sedangkan produksi daging sapi nasional sebesar 515.627 ton. Impor daging sapi sebesar 100.000 ton dan 500.000 ekor sapi bakalan atau setara dengan 112.055 ton daging sapi menjadi langkah pemerintah untuk memenuhi kebutuhan daging sapi nasional.
-
-Pemerintah melakukan berbagai program strategis berkesinambungan yang didukung dengan program pemerintah daerah dalam mencapai target swasembada daging. Salah satu program strategis mencapai target swasembada daging, yakni UPSUS SIWAB/Upaya Khusus Sapi Indukan Wajib Bunting (tahun 2017-2020), yang dilanjutkan dengan SIKOMANDAN/Sapi Kerbau Komoditas Andalan Negeri (tahun 2020-sekarang), dengan target peningkatan jumlah akseptor inseminasi buatan dan angka kelahiran sapi potong nasional.
-
-Dengan target pelaksanaan SIKOMANDAN terbesar se-Indonesia, Jawa Timur mampu berkontribusi sebesar 27,39% kebutuhan sapi potong nasional, sedangkan Pulau Madura berkontribusi sebesar 30% kebutuhan sapi potong di Jawa Timur. Dalam mendukung keberhasilan pelaksanaan program strategis nasional dan peningkatan mutu layanan SIKOMANDAN, pemerintah daerah, dalam hal ini Kabupaten Pamekasan, memiliki Inovasi TIM BUSER (Tim Bunting Serentak) pada tahun 2018.
-
-Inovasi ini berbentuk pelayanan pemeriksaan kebuntingan dan inseminasi buatan pada tingkat petani/peternak. TIM BUSER bertujuan untuk menjaring sapi betina produktif agar dapat kawin serentak dan bunting serentak. Mekanisme pelayanannya, yakni dengan mengumpulkan sapi dalam satu titik lokasi desa binaan secara massal, melakukan pemeriksaan kebuntingan terhadap akseptor yang sudah di-IB lebih dari 2 bulan, menjaring akseptor baru, melakukan pelayanan kesehatan hewan dan penanganan gangguan reproduksi, pembinaan kelompok tani, pemberian bantuan mineral dan obat cacing secara gratis, serta pembinaan penerapan teknologi pakan dan limbah.
-
-Keistimewaan dari inovasi ini yakni mengubah sistem pelayanan menjadi lebih efektif dan efisien. Petugas tidak lagi melakukan pelayanan dari kandang ke kandang, tetapi dapat dilakukan dengan mengumpulkan ternak dalam satu titik lokasi desa binaan secara massal dan serentak. Sementara itu, pelaksanaan Inovasi TIM BUSER dilengkapi dengan Standar Pelayanan, Standar Operasional Prosedur, Maklumat Pelayanan, dan Surat Keputusan Pengelolaan Pengaduan yang diperbarui secara berkala setiap tahun.
-
-Beberapa upaya mempromosikan Inovasi TIM BUSER, yaitu dengan sosialisasi secara langsung kepada peternak dan dilakukan survei mandiri terkait pengetahuan peternak terkait inovasi ini, sekaligus untuk mengukur tingkat kepuasan masyarakat terhadap pelayanan petugas. Selain itu, dilakukan juga survei kepuasan masyarakat berbasis online menggunakan aplikasi Google Form. Hasil dari survei kepuasan masyarakat, baik survei mandiri maupun berbasis online, lantas direkap dan diakumulasi sebagai laporan kepuasan masyarakat setiap tahun.`,
+    description: `Swasembada daging sapi merupakan target pemerintah yang belum tercapai. Kebutuhan daging sapi nasional pada tahun 2020 mencapai 717.150 ton...`,
     link: 'https://jippnas.menpan.go.id/inovasi/1304'
   },
   {
     title: 'Sistem Informasi Jabatan Provinsi Riau (SI-JABPRI)',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/295/img_1.png',
-    description: `Kementerian PANRB mendorong Pemda mewujudkan organisasi tepat fungsi, proses, dan ukuran, mengingat organisasi bersifat dinamis, tidak sekedar membentuk struktur, tetapi juga melakukan perencanaan kebutuhan jabatan dan pegawai yang proporsional, efektif, dan efisien. Perencanaan kebutuhan jabatan dan pegawai dilakukan melalui penyusunan analisis jabatan (Anjab) dan analisis beban kerja (ABK) pada jabatan struktural, pelaksana maupun fungsional. Dalam manajemen ASN peran Biro Organisasi adalah melakukan perencanaan kebutuhan riil, rasional dan sistematis berdasarkan beban kerja disetiap unit kerja. Apabila terjadi kesalahan perencanaan kebutuhan, maka ikut rusaklah tahap pelaksanaan manajemen ASN lainnya, seperti tahap rekrutmen pegawai, mutasi, rotasi, pangkat dan jabatan, pengembangan karir, pola karir, penilaian kinerja, penggajian, tunjangan dan lain sebagainya. Akibat selanjutnya juga terjadi pemborosan anggaran pembayaran tunjangan pegawai yang menduduki jabatan yang tidak sesuai dengan uraian tugas unit organisasi. Hal ini terjadi karena perencanaan tidak didasari pada kebutuhan organisasi riil. Tahapan verifikasi data anjab dan ABK seringkali bermasalah, tidak sebanding dengan jumlah verifikator anjab Biro Organisasi sehingga tidak optimal hasilnya. Dokumen anjab membutuhkan ruang arsip yang besar, rentan kerusakan dan anggaran kertas yang mahal. Permasalahan diatas tentunya sudah teratasi dengan lahirnya Sistem Informasi Jabatan Provinsi Riau (SI-JABPRI). Sistem berbasis website untuk kemudahan penyusunan Anjab, ABK dan Evaluasi Jabatan secara elektronik, dilengkapi petunjuk penyusunan sehingga dapat menekan anggaran kegiatan dibanding metode questioner, melakukan wawancara langsung ke Organisasi Perangkat Daerah atau hingga mendatangkan para ahli dalam penyusunan. SI-JABPRI disetting memiliki performance yang baik dalam pengolahan data yang banyak, sangat user-friendly, berkecepatan tinggi, membuat pengguna tidak jenuh dan terganggu dengan loading data yang berkepanjangan. Informasi jabatan lainnya pada sistem ini yang sangat mendukung manajemen kepegawaian lain adalah informasi formasi, kualifikasi pendidikan dan kompetensi jabatan, kesenjangan jabatan, syarat jabatan, efisiensi jabatan, jumlah pemangku jabatan, jumlah kebutuhan jabatan, serta distribusi jabatan yang berbasis analisis jabatan dan ABK. Sistem ini telah menggunakan teknologi informasi terbaru, mempunyai tampilan menarik dan terintegrasi dengan sistem kepegawaian "SMART" yang menyajikan seluruh nama ASN sebagai pemangku jabatan, kemudian integrasi dengan e-Agenda untuk mengukur target kinerja ASN sebagai syarat pembayaran TPP. Sebuah gagasan inovasi harus layak (feasible) dan dapat dilaksanakan (implementable). SI-JABPRI juga telah melalui analisis kelayakan inovasi yaitu telah layak administrasi, layak sumber daya, layak secara teknis, dan layak secara regulasi. SI-JABPRI memiliki nilai keberlanjutan yang tinggi, penyusunan anjab mengikuti perubahan kelembagaan yang dinamis, sangat potensial direplikasi oleh provinsi lain dan kabupaten/kota di Indonesia, karena metode penyusunan dan output yang dihasilkan memiliki pedoman regulasi dan format yang sama di seluruh Indonesia.`,
+    description: `Kementerian PANRB mendorong Pemda mewujudkan organisasi tepat fungsi, proses, dan ukuran...`,
     link: 'https://jippnas.menpan.go.id/inovasi/295'
   },
   {
     title: 'Pembangunan Pengelolaan Keuangan dengan Sistem Keuangan Desa (Siskeudes)',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/14/4KuYNihN1vXiX66DjLOgy16i7uC9ELmxxGOwrStk.jpg',
-    description: `Aplikasi Sistem Keuangan Desa (Siskeudes) dikembangkan sebagai inovasi dan kontribusi Badan Pengawasan Keuangan dan Pembangunan dalam ranah keuangan dan pembangunan desa, melalui pengawalan proses perencanaan, penganggaran, penatausahaan, dan pelaporan keuangan secara eletronik. Aplikasi Siskeudes telah digunakan pada 62.400 dari 75.265 desa (82,91%). Aplikasi ini telah mendapatkan respon positif dari berbagai stakeholders. Mulai dari pemerintah desa, pemerintah daerah, dan kementerian/lembaga. Aplikasi Siskeudes membantu mewujudkan pengelolaan keuangan desa yang akuntabel. Sampai dengan akhir tahun Tahun 2022, jumlah desa yang pengelolaan keuangan desanya akuntabel dengan menggunakan aplikasi Siskeudes adalah sebanyak 35.801. Kebermanfaatan aplikasi ini juga ditunjukkan dengan adanya interoperabilitas data (bagi pakai data) antara aplikasi Siskeudes dengan aplikasi pemerintahan lain, yaitu: Aplikasi Konsolidasi Keuangan Desa pada Kemendagri; Aplikasi Monev DD pada Kemendesa PDTT; Aplikasi Sistem Informasi Terpadu Pengawasan Desa (Situwassa) pada BPKP dalam rangka pengawasan dan analisis keuangan desa; dan Aplikasi OMSPAN dan Teman Desa untuk pengelolaan alokasi kinerja dalam perhitungan dana desa tahun 2023 pada Kementerian Keuangan.`,
+    description: `Aplikasi Sistem Keuangan Desa (Siskeudes) dikembangkan sebagai inovasi dan kontribusi Badan Pengawasan Keuangan...`,
     link: 'https://jippnas.menpan.go.id/inovasi/14'
   },
   {
     title: 'BARIS DITEBAS ( BARISTA DISABILITAS TEROBOS STIGMA KETERBATASAN )',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/2853/bPnh4Hhknuqgj6CqDejFElnkE4G4APkaIOqx6jDv.png',
-    description: `BARIS DITEBAS (Barista Disabilitas Terobos Stigma Keterbatasan adalah inovasi pelayanan publik yang inklusi sosial dari Sentra "Wyata Guna" Bandung. Barista bukan hanya orang yang "bertugas" untuk membuat kopi di kedai kopi, tetapi mereka adalah seniman. Barista adalah seseorang yang terlatih secara profesional, memiliki keahlian tinggi untuk meracik kopi dengan melibatkan berbagai campuran. Mendatangkan instruktur Barista disabilitas langsung dari Korea sebagai narasumber tamu, Pelatihan Barista angkatan pertama bagi penyandang disabilitas diresmikan pada tahun 2019 dengan Café More Wyata Guna yang didirikan pada tanggal 13 Desember 2019 sebagai laboratorium praktek bekerja sekaligus tempat penyaluran kerja lulusannya. Bekerja sama dengan Morning Glory Coffee Academy, sertifikasi barista dilakukan untuk melahirkan Barista profesional dan bersertifikasi. Berkolaborasi dengan PT. Nutrifood Indonesia untuk meningkatkan awarenessvcustomer, dan traffic customer, selain juga upaya Product Development untuk menciptakan menu-menu baru, tak lupa Pelatihan Service Excellent untuk para baristanya. Tahun 2020, Sentra Wyata Guna Bandung, meraih penghargaan sebagai Lembaga Disabilitas Kreatif dan Inovatif, lanjut Tahun 2021, melalui inovasinya meracik minuman siap seduh dalam kemasan, Cafe More Wyata Guna meraih penghargaan sebagai Produk millenial terbaik dan Tahun 2022, BARIS DITEBAS berhasil masuk menjadi nominasi Finalis Top Inovasi Pelayanan Publik Kompetisi Inovasi Pelayanan Publik di Lingkungan Kementerian/Lembaga, Pemerintah Daerah, BUMN dan BUMD.`,
+    description: `BARIS DITEBAS (Barista Disabilitas Terobos Stigma Keterbatasan adalah inovasi pelayanan publik...`,
     link: 'https://jippnas.menpan.go.id/inovasi/2853'
   },
   {
     title: 'PINTER MELATIH ANAK KOBRA (Pendidikan Karakter melalui Terapi Psikososial bagi Anak Korban Radikalisme)',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/2895/MP9i2zshtdOMWbPGUawOl6oNGfmqHgHkKkyjnk7Q.jpg',
-    description: `Penanganan Anak Korban Radikalisme tentu memiliki kekhususan dan keunikannya masing-masing. Kategorisasi anak korban radikalisme yang kemudian ditangani di Sentra "Handayani" di Jakarta juga harus menjadi perhatian, karena akan berdampak pada pemberian intervensi yang tepat dan sesuai bagi mereka. Selain itu, penanganan harus cakap dalam menakar sejauh mana dan sedalam apa ideologi radikalisme yang dipahaminya. Penanganan anak korban radikalisme, kian kompleks karena harus melibatkan professional dan/atau Lembaga lainnya untuk memastikan permasalahannya teratasi. Kejelasan prosedur, tahapan, sistem dalam penanganan anak korban radikalisme menjadi penting, mengingat kompleksitas penanganannya. Selain itu, dalam Konvensi Perserikatan Bangsa-Bangsa (PBB) Hak Anak, telah secara jelas diterangkan bahwa semua tindakan dan keputusan menyangkut seorang anak harus dilakukan atas dasar kepentingan terbaik sang anak dan pemerintah bertanggung jawab memastikan semua hak yang dicantumkan di dalam Konvensi dilindungi dan dipenuhi untuk tiap anak. Oleh karena itu, dibutuhkan sebuah aturan atau tatanan prosedur yang jelas agar seluruh penanganan bagi anak korban radikalisme dapat mengacu pada persiapan masa depan yang lebih baik, terukur dan berbasis kepentingan terbaik bagi anak. Sehingga dibuatlah makalah inovasi perubahan dengan judul "Standar Operasional Prosedur (SOP) Penanganan Anak Korban Radikalisme di Sentra "Handayani" di Jakarta".`,
+    description: `Penanganan Anak Korban Radikalisme tentu memiliki kekhususan dan keunikannya masing-masing...`,
     link: 'https://jippnas.menpan.go.id/inovasi/2895'
   }
-];
+])
+
+// Computed property to group items into slides
+const slides = computed(() => {
+  const result = []
+  for (let i = 0; i < innovations.value.length; i += itemsPerSlide.value) {
+    result.push(innovations.value.slice(i, i + itemsPerSlide.value))
+  }
+  return result
+})
+
+// Error handling for images
+const onImageError = (event) => {
+  console.warn('Image failed to load:', event.target.src)
+  // Could set a fallback image here
+}
+
+// Update items per slide based on screen size (responsive)
+const updateItemsPerSlide = () => {
+  if (typeof window !== 'undefined') {
+    if (window.innerWidth < 600) {
+      itemsPerSlide.value = 1
+    } else if (window.innerWidth < 1024) {
+      itemsPerSlide.value = 2
+    } else {
+      itemsPerSlide.value = 3
+    }
+  }
+}
+
+// Watch for window resize
+if (typeof window !== 'undefined') {
+  window.addEventListener('resize', updateItemsPerSlide)
+  updateItemsPerSlide() // Initial call
+}
 </script>
 
 <style scoped>
-.line-clamp-2 {
-  line-clamp: 2;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
+.innovations-section {
+  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  position: relative;
   overflow: hidden;
 }
 
-.line-clamp-4 {
-  line-clamp: 4;
-  -webkit-line-clamp: 4;
+.innovation-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.innovation-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(59, 130, 246, 0.1), transparent);
+  transition: left 0.6s;
+}
+
+.innovation-card:hover::before {
+  left: 100%;
+}
+
+.innovation-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-image {
+  transition: transform 0.3s ease;
+}
+
+.innovation-card:hover .card-image {
+  transform: scale(1.05);
+}
+
+.line-clamp-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+  line-height: 1.4;
+}
+
+.line-clamp-3 {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-height: 1.4;
+}
+
+.slide-indicators {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Floating animation for background */
+.innovations-section::before {
+  content: '';
+  position: absolute;
+  top: -50px;
+  right: -50px;
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(59, 130, 246, 0.1), transparent);
+  animation: float-bg 8s ease-in-out infinite;
+}
+
+.innovations-section::after {
+  content: '';
+  position: absolute;
+  bottom: -30px;
+  left: -30px;
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(147, 197, 253, 0.1), transparent);
+  animation: float-bg 6s ease-in-out infinite reverse;
+}
+
+@keyframes float-bg {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .innovation-card {
+    margin-bottom: 16px;
+  }
+  
+  .innovations-section::before,
+  .innovations-section::after {
+    display: none;
+  }
+  
+  .slide-indicators {
+    gap: 4px;
+  }
 }
 </style>

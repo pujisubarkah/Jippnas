@@ -47,45 +47,60 @@
         <table class="min-w-full table-auto">
           <thead class="bg-gray-50">
             <tr>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Judul</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Lokasi</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Kategori</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Tanggal</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Aksi</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">No</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Tahun</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">No Registrasi</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Judul Inovasi</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Badge</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Instansi</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Wilayah</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">SDG's</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Nama Inovator</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Nama Pemangku</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Publikasi</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Video</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Status</th>
             </tr>
           </thead>
           <tbody>
-            <tr v-for="inovasi in filteredInovasis" :key="inovasi.id" class="border-t hover:bg-gray-50">
+            <tr v-for="(inovasi, index) in filteredInovasis" :key="inovasi.id" class="border-t hover:bg-gray-50">
+              <td class="px-4 py-3 text-sm text-gray-600">{{ index + 1 }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.year || '2023' }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.registrationNumber || 'REG-001' }}</td>
               <td class="px-4 py-3 text-sm font-medium text-gray-800">{{ inovasi.title }}</td>
+              <td class="px-4 py-3">
+                <span class="px-2 py-1 text-xs font-semibold rounded bg-blue-100 text-blue-700">
+                  {{ inovasi.badge || 'Inovasi' }}
+                </span>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.instansi || 'Instansi A' }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.wilayah || inovasi.provinsi }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.sdgs || 'SDG 3' }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.innovator || 'Nama Inovator' }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.pemangku || 'Nama Pemangku' }}</td>
               <td class="px-4 py-3 text-sm text-gray-600">
-                {{ inovasi.kabupaten }}, {{ inovasi.provinsi }}
+                <a v-if="inovasi.publikasi" :href="inovasi.publikasi" target="_blank" class="text-blue-600 hover:underline">Link</a>
+                <span v-else>-</span>
+              </td>
+              <td class="px-4 py-3 text-sm text-gray-600">
+                <a v-if="inovasi.video" :href="inovasi.video" target="_blank" class="text-blue-600 hover:underline">Video</a>
+                <span v-else>-</span>
               </td>
               <td class="px-4 py-3">
                 <span
                   class="px-2 py-1 text-xs font-semibold rounded"
                   :class="{
-                    'bg-blue-100 text-blue-700': inovasi.category === 'teknologi',
-                    'bg-green-100 text-green-700': inovasi.category === 'pendidikan',
-                    'bg-amber-100 text-amber-700': inovasi.category === 'bisnis',
-                    'bg-red-100 text-red-700': inovasi.category === 'lingkungan',
-                    'bg-purple-100 text-purple-700': inovasi.category === 'lainnya'
+                    'bg-green-100 text-green-700': inovasi.status === 'approved',
+                    'bg-yellow-100 text-yellow-700': inovasi.status === 'pending',
+                    'bg-red-100 text-red-700': inovasi.status === 'rejected'
                   }"
                 >
-                  {{ capitalize(inovasi.category) }}
+                  {{ inovasi.status || 'Pending' }}
                 </span>
-              </td>
-              <td class="px-4 py-3 text-sm text-gray-600">{{ formatDate(inovasi.date) }}</td>
-              <td class="px-4 py-3">
-                <button class="text-blue-600 hover:text-blue-800 mr-2" title="Edit">
-                  <Edit class="w-4 h-4" />
-                </button>
-                <button class="text-red-600 hover:text-red-800" title="Hapus">
-                  <Trash class="w-4 h-4" />
-                </button>
               </td>
             </tr>
             <tr v-if="filteredInovasis.length === 0">
-              <td colspan="5" class="px-4 py-6 text-center text-gray-500">
+              <td colspan="13" class="px-4 py-6 text-center text-gray-500">
                 Tidak ada inovasi ditemukan.
               </td>
             </tr>
@@ -176,7 +191,63 @@ const inovasiForm = ref({
 })
 
 const inovasis = ref([
-  // ... data dummy seperti di atas
+  {
+    id: 1,
+    year: 2023,
+    registrationNumber: 'REG-001',
+    title: 'Inovasi Teknologi Pertanian',
+    badge: 'Inovasi',
+    instansi: 'Dinas Pertanian',
+    wilayah: 'Jawa Timur',
+    sdgs: 'SDG 2',
+    innovator: 'Ahmad Surya',
+    pemangku: 'Budi Santoso',
+    publikasi: 'https://example.com/pub1',
+    video: 'https://example.com/video1',
+    status: 'approved',
+    provinsi: 'Jawa Timur',
+    kabupaten: 'Malang',
+    category: 'teknologi',
+    date: '2023-05-15'
+  },
+  {
+    id: 2,
+    year: 2024,
+    registrationNumber: 'REG-002',
+    title: 'Sistem Pendidikan Online',
+    badge: 'Inovasi',
+    instansi: 'Dinas Pendidikan',
+    wilayah: 'DKI Jakarta',
+    sdgs: 'SDG 4',
+    innovator: 'Siti Aminah',
+    pemangku: 'Rudi Hartono',
+    publikasi: '',
+    video: 'https://example.com/video2',
+    status: 'pending',
+    provinsi: 'DKI Jakarta',
+    kabupaten: 'Jakarta Pusat',
+    category: 'pendidikan',
+    date: '2024-03-20'
+  },
+  {
+    id: 3,
+    year: 2023,
+    registrationNumber: 'REG-003',
+    title: 'Bisnis Ramah Lingkungan',
+    badge: 'Inovasi',
+    instansi: 'Kementerian Lingkungan',
+    wilayah: 'Jawa Barat',
+    sdgs: 'SDG 13',
+    innovator: 'Dewi Lestari',
+    pemangku: 'Agus Wijaya',
+    publikasi: 'https://example.com/pub3',
+    video: '',
+    status: 'rejected',
+    provinsi: 'Jawa Barat',
+    kabupaten: 'Bandung',
+    category: 'bisnis',
+    date: '2023-08-10'
+  }
 ])
 
 // Computed

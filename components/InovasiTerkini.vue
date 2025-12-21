@@ -1,112 +1,184 @@
 <template>
   <ClientOnly>
-    <div class="container-fluid bg-top relative">
-      <div class="container mx-auto px-4">
-        <div class="w-full pt-2">
-          <div class="flex justify-center">
-            <h2 class="relative text-4xl md:text-5xl font-extrabold text-white tracking-wide pb-3">
-              Inovasi Terkini
-              <span class="absolute left-1/2 -translate-x-1/2 -bottom-1 h-1 w-32 bg-linear-to-r from-amber-300 via-amber-400 to-amber-200 rounded-full"></span>
-            </h2>
-          </div>
-          <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
-            <div class="lg:col-span-8">
-              <div class="our-news">
-                <swiper
-                  :slides-per-view="1"
-                  :space-between="30"
-                  :navigation="true"
-                  :pagination="{ clickable: true }"
-                  :autoplay="{ delay: 3000 }"
-                  :loop="true"
-                  class="owl-news-item"
+    <div class="bg-top relative">
+      <v-container fluid class="pa-4">
+        <v-row justify="center" class="pt-2">
+          <v-col cols="12">
+            <v-row justify="center">
+              <h2 class="text-h3 text-md-h2 font-weight-black text-white text-center mb-3">
+                Inovasi Terkini
+                <v-divider
+                  class="mx-auto mt-2"
+                  color="amber"
+                  width="128"
+                  thickness="4"
+                  rounded
+                ></v-divider>
+              </h2>
+            </v-row>
+            <v-row>
+              <v-col cols="12" lg="8">
+                <v-carousel
+                  v-model="currentSlide"
+                  height="480"
+                  hide-delimiter-background
+                  show-arrows="hover"
+                  :show-arrows-on-hover="true"
+                  :cycle="true"
+                  :interval="3000"
+                  class="rounded-lg elevation-4"
+                  aria-label="Carousel inovasi terkini"
                 >
-                  <swiper-slide v-for="(item, index) in innovations" :key="index">
-                    <div class="item relative" style="max-width:1000px; height:480px;">
-                      <img :src="item.image" :alt="item.title" class="w-full h-full object-cover img_banner">
-                      <div class="carousel-caption absolute inset-0 flex justify-start items-center p-4">
-                        <div class="position-relative max-w-md">
-                          <div class="position-absolute top-0 left-0 bg-white my-5 p-3 rounded-bl-3xl shadow-lg">
-                            <h6 class="text-bold text-wrap text-truncate mb-2" style="max-height:70px; overflow: hidden;">
-                              {{ item.title }}
-                            </h6>
-                            <p class="mb-2">{{ item.institution }}</p>
-                            <div class="flex justify-end">
-                              <a :href="item.link" target="_blank" class="btn btn-sm btn-primary">Selengkapnya</a>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </swiper-slide>
-                </swiper>
-              </div>
-            </div>
-            <div class="lg:col-span-4">
-              <div style="height:480px;">
-                <iframe
-                  width="100%"
-                  height="100%"
-                  src="https://www.youtube.com/embed/BFewz4T-2nI?si=2CR7PZZascpuIvpI"
-                  title="YouTube video player"
-                  frameborder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-                  style="border-top-right-radius:100px;"
-                  allowfullscreen
-                ></iframe>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- ornament circles -->
-      <div class="pointer-events-none absolute inset-0">
-        <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-linear-to-br from-amber-200/40 to-transparent blur-xl"></div>
-        <div class="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-linear-to-tr from-blue-300/30 to-transparent blur-2xl"></div>
-        <div class="absolute top-1/2 left-12 w-40 h-40 rounded-full bg-linear-to-tr from-sky-200/30 to-transparent blur-xl"></div>
+                  <v-carousel-item
+                    v-for="(item, index) in innovations"
+                    :key="index"
+                    :aria-label="`Slide ${index + 1}: ${item.title}`"
+                  >
+                    <v-img
+                      :src="item.image"
+                      :alt="item.title"
+                      height="480"
+                      cover
+                      :lazy-src="item.lazyImage || '/placeholder.jpg'"
+                      @error="onImageError"
+                      class="carousel-image"
+                    >
+                      <v-card
+                        class="mx-4 my-12 pa-4 elevation-8"
+                        max-width="400"
+                        color="white"
+                        rounded="xl"
+                      >
+                        <v-card-title class="text-h6 font-weight-bold text-truncate-2">
+                          {{ item.title }}
+                        </v-card-title>
+                        <v-card-subtitle class="text-body-2 mb-2">
+                          {{ item.institution }}
+                        </v-card-subtitle>
+                        <v-card-actions class="pa-0">
+                          <v-spacer></v-spacer>
+                          <v-btn
+                            color="primary"
+                            size="small"
+                            :href="item.link"
+                            target="_blank"
+                            rel="noopener"
+                            aria-label="Baca selengkapnya tentang inovasi ini"
+                          >
+                            Selengkapnya
+                          </v-btn>
+                        </v-card-actions>
+                      </v-card>
+                    </v-img>
+                  </v-carousel-item>
+                </v-carousel>
+              </v-col>
+              <v-col cols="12" lg="4">
+                <v-card height="480" class="rounded-tl-0 elevation-4">
+                  <v-responsive :aspect-ratio="16/9">
+                    <iframe
+                      v-if="videoLoaded"
+                      :src="videoSrc"
+                      title="Video inovasi terkini"
+                      frameborder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      allowfullscreen
+                      class="w-full h-full"
+                      @load="onVideoLoad"
+                      @error="onVideoError"
+                    ></iframe>
+                    <v-skeleton-loader
+                      v-else
+                      type="image"
+                      height="100%"
+                      class="rounded-tl-0"
+                    ></v-skeleton-loader>
+                  </v-responsive>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-col>
+        </v-row>
+      </v-container>
+      <!-- Simplified ornaments -->
+      <div class="ornaments pointer-events-none">
+        <div class="ornament-1"></div>
+        <div class="ornament-2"></div>
+        <div class="ornament-3"></div>
       </div>
     </div>
   </ClientOnly>
 </template>
 
 <script setup>
-import { Swiper, SwiperSlide } from 'vue-awesome-swiper'
-import 'swiper/css'
-import 'swiper/css/navigation'
-import 'swiper/css/pagination'
+import { ref, onMounted } from 'vue'
 
-const innovations = [
+// Reactive states
+const currentSlide = ref(0)
+const videoLoaded = ref(false)
+const videoSrc = ref('https://www.youtube.com/embed/BFewz4T-2nI?si=2CR7PZZascpuIvpI')
+
+// Innovations data - moved to composable for better organization
+const innovations = ref([
   {
     title: 'Prolanis – One Stop Service Pengelolaan Hipertensi dan Diabetes Melitus di Puskesmas Talagabodas Kota Bandung',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/2497/img_1.png',
+    lazyImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==',
     institution: 'Pemerintah Kota Bandung',
     link: 'https://jippnas.menpan.go.id/inovasi/2497'
   },
   {
     title: 'Pengembangan Klinik Konsultasi Agribisnis',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/338/BVB2Tbw0vWsxlSRTkOiWYwsWtlrP1ESi9EqJS4Wn.jpg',
-    institution: 'Pemerintah Kabupaten gunungkidul',
+    lazyImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==',
+    institution: 'Pemerintah Kabupaten Gunungkidul',
     link: 'https://jippnas.menpan.go.id/inovasi/338'
   },
   {
     title: 'Inovasi Pelayanan Prima Bandara',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/2518/img_1.png',
+    lazyImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==',
     institution: 'PT Angkasa Pura I (Persero)',
     link: 'https://jippnas.menpan.go.id/inovasi/2518'
   },
   {
     title: '(IKAN DORI) Inovasi Pendidikan dan Pelatihan On site Diversifikasi Olahan Rumput Laut dan Ikan di daerah pesisir',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/2697/naJI1uZbWCcg0iun2xiJesRmNZUbTHfvMPVhGlXb.png',
+    lazyImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==',
     institution: 'Kementerian Perindustrian',
     link: 'https://jippnas.menpan.go.id/inovasi/2697'
   },
   {
     title: 'Smart Cloud',
     image: 'https://jippnas.menpan.go.id/storage/images/inovasi/img_1/275/ROUhUaXxk0y8q6wtBjDPwXC69tLHwwgkFh0y8B1p.png',
-    institution: 'Pemerintah Kota bima',
+    lazyImage: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAwIiBoZWlnaHQ9IjMwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtc2l6ZT0iMTgiIGZpbGw9IiM5OTkiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIuM2VtIj5Mb2FkaW5nLi4uPC90ZXh0Pjwvc3ZnPg==',
+    institution: 'Pemerintah Kota Bima',
     link: 'https://jippnas.menpan.go.id/inovasi/275'
   }
-];
+])
+
+// Methods
+const onImageError = (event) => {
+  console.warn('Image failed to load:', event.target.src)
+  // Could set a fallback image here
+}
+
+const onVideoLoad = () => {
+  videoLoaded.value = true
+}
+
+const onVideoError = () => {
+  console.error('Video failed to load')
+  // Could show error message or fallback content
+}
+
+// Lazy load video on mount
+onMounted(() => {
+  // Delay loading to improve initial page load
+  setTimeout(() => {
+    videoLoaded.value = true
+  }, 1000)
+})
 </script>
 
 <style scoped>
@@ -117,28 +189,55 @@ const innovations = [
   background-size: 100% auto;
   min-height: 80vh;
 }
-.bg-top::before,
-.bg-top::after {
-  content: "";
+
+.ornaments {
   position: absolute;
+  inset: 0;
+}
+
+.ornament-1 {
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 224px;
+  height: 224px;
   border-radius: 50%;
-  pointer-events: none;
-  mix-blend-mode: screen;
+  background: radial-gradient(circle at center, rgba(255, 200, 120, 0.2), transparent 70%);
+  filter: blur(16px);
 }
-.bg-top::before {
-  top: -80px;
-  left: 20%;
-  width: 260px;
-  height: 260px;
-  background: radial-gradient(circle at center, rgba(255, 200, 120, 0.35), transparent 70%);
-  filter: blur(4px);
+
+.ornament-2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 288px;
+  height: 288px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(125, 200, 255, 0.15), transparent 70%);
+  filter: blur(24px);
 }
-.bg-top::after {
-  bottom: -100px;
-  right: 10%;
-  width: 320px;
-  height: 320px;
-  background: radial-gradient(circle at center, rgba(125, 200, 255, 0.35), transparent 70%);
-  filter: blur(6px);
+
+.ornament-3 {
+  position: absolute;
+  top: 50%;
+  left: 48px;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(135, 206, 235, 0.15), transparent 70%);
+  filter: blur(16px);
+}
+
+.carousel-image {
+  border-radius: 8px;
+}
+
+/* Custom text truncation for title */
+.text-truncate-2 {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 </style>

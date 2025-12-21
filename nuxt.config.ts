@@ -1,11 +1,22 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { defineNuxtConfig } from 'nuxt/config';
+import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   build: {
-    transpile: ['vue-simple-calendar']
+    transpile: ['vue-simple-calendar', 'vuetify']
+  },
+  vite: {
+    plugins: [
+      vuetify({ autoImport: true }),
+    ],
+    vue: {
+      template: {
+        transformAssetUrls,
+      },
+    },
   },
   postcss: {
     plugins: {
@@ -27,6 +38,13 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.css'
+        }
+      ],
+      script: [
+        {
+          src: 'https://accounts.google.com/gsi/client',
+          async: true,
+          defer: true
         }
       ]
     }

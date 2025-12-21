@@ -1,32 +1,60 @@
 <template>
-  <div class="min-h-screen bg-gray-100 flex flex-col">
-    <Header :role="role" />
-    <div class="flex flex-1">
-      <Sidebar :role="role" />
-      <main class="flex-1 p-8">
+  <v-app class="dashboard-layout">
+    <Header :role="role" :sidebar-open="sidebarOpen" @toggle-sidebar="toggleSidebar" />
+    <Sidebar :role="role" :sidebar-open="sidebarOpen" />
+
+    <v-main :class="['main-content', { 'sidebar-closed': !sidebarOpen }]">
+      <div class="full-content">
         <slot />
-      </main>
-    </div>
-  </div>
+      </div>
+    </v-main>
+  </v-app>
 </template>
 
 <script setup>
 import Sidebar from '~/components/Sidebar.vue';
 import Header from '~/components/Header.vue';
 import { useAuth } from '~/composables/useAuth';
+import { computed, ref } from 'vue';
+
 const { user } = useAuth();
-const role = user?.role || 'user';
+const role = computed(() => user.value?.role || 'user');
+
+// Sidebar state
+const sidebarOpen = ref(true);
+
+const toggleSidebar = () => {
+  sidebarOpen.value = !sidebarOpen.value;
+};
 </script>
 
 <style scoped>
-/* Modern dashboard layout */
-.min-h-screen {
+.dashboard-layout {
+  background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
   min-height: 100vh;
 }
-main {
-  background: #f8fafc;
-  border-radius: 1rem;
-  margin: 2rem 1rem;
-  box-shadow: 0 2px 8px 0 rgba(0,0,0,0.04);
+
+.main-content {
+  margin-top: 80px; /* Account for fixed header */
+  padding-top: 24px; /* Additional space from header */
+}
+
+.full-content {
+  width: 100%;
+  min-height: calc(100vh - 104px); /* 80px header + 24px padding */
+  padding: 24px 48px;
+  box-sizing: border-box;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+
+/* Content is full screen with overlay sidebar */
+@media (min-width: 1024px) {
+  /* Add styles for .main-content and .sidebar-closed here if needed */
+}
+
+@media (max-width: 1023px) {
+  /* Add styles for .main-content and .sidebar-closed here if needed */
 }
 </style>

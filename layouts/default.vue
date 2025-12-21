@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen flex flex-col">
     <Navbar class="sticky top-0 z-50" />
-    <main class="grow">
+    <main class="grow pt-20">
       <NuxtPage />
     </main>
     <Footer />

@@ -1,10 +1,14 @@
 <template>
-  <NuxtLayout>
-    <NuxtPage />
-    <ClientOnly>
-      <Toaster />
-    </ClientOnly>
-  </NuxtLayout>
+  <v-app>
+    <NuxtLayout>
+      <div class="max-w-7xl mx-auto">
+        <NuxtPage />
+      </div>
+      <ClientOnly>
+        <Toaster />
+      </ClientOnly>
+    </NuxtLayout>
+  </v-app>
 </template>
 
 <script setup>

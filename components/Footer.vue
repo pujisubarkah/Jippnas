@@ -1,5 +1,5 @@
 <template>
-  <footer class="bg-[#C2E7F6] text-blue-800 w-full border-t-4 border-yellow-600 shadow-lg backdrop-blur-md font-poppins relative overflow-hidden text-base md:text-lg">
+  <footer class="bg-primary text-on-primary w-full border-t-4 border-yellow-600 shadow-lg backdrop-blur-md font-poppins relative overflow-hidden text-base md:text-lg">
     <!-- ornaments -->
     <div class="pointer-events-none absolute inset-0">
       <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-blue-200/30 blur-2xl"></div>
@@ -20,7 +20,7 @@
 
         <!-- Main Content -->
         <div class="w-full lg:w-3/4 p-4">
-          <h5 class="text-center font-extrabold text-3xl md:text-4xl my-4 text-blue-800 relative">
+          <h5 class="text-center font-extrabold text-3xl md:text-4xl my-4 text-on-primary relative">
             Pemangku Kepentingan JIPPNAS
             <span class="block mx-auto mt-2 h-1 w-32 bg-linear-to-r from-amber-300 via-amber-400 to-amber-300 rounded-full"></span>
           </h5>
@@ -66,47 +66,47 @@
           <!-- Links Section -->
           <div class="grid grid-cols-1 md:grid-cols-4 gap-4 pt-2">
             <!-- Tentang Kami -->
-            <div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-blue-100">
-              <h4 class="font-bold text-blue-800 mb-2 text-lg md:text-xl">Tentang Kami</h4>
+            <div class="rounded-2xl bg-surface/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-amber-300/60">
+              <h4 class="font-bold text-on-primary mb-2 text-lg md:text-xl">Tentang Kami</h4>
               <div class="flex flex-col text-sm md:text-base font-normal">
-                <a href="https://www.kemendagri.go.id" target="_blank" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Kementerian Dalam Negeri</a>
-                <a href="https://menpan.go.id" target="_blank" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Kementerian Pendayagunaan Aparatur Negara</a>
-                <a href="https://lan.go.id" target="_blank" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Lembaga Administrasi Negara</a>
+                <a href="https://www.kemendagri.go.id" target="_blank" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Kementerian Dalam Negeri</a>
+                <a href="https://menpan.go.id" target="_blank" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Kementerian Pendayagunaan Aparatur Negara</a>
+                <a href="https://lan.go.id" target="_blank" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Lembaga Administrasi Negara</a>
               </div>
             </div>
 
             <!-- Jelajahi -->
-            <div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-blue-100">
-              <h4 class="font-bold text-blue-800 mb-2 text-lg md:text-xl">Jelajahi</h4>
+            <div class="rounded-2xl bg-surface/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-amber-300/60">
+              <h4 class="font-bold text-on-primary mb-2 text-lg md:text-xl">Jelajahi</h4>
               <div class="flex flex-col text-sm md:text-base font-normal">
-                <NuxtLink to="/" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Beranda</NuxtLink>
-                <NuxtLink to="/etalase" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Etalase Inovasi</NuxtLink>
-                <NuxtLink to="/berita" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">Berita</NuxtLink>
+                <NuxtLink to="/" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Beranda</NuxtLink>
+                <NuxtLink to="/etalase" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Etalase Inovasi</NuxtLink>
+                <NuxtLink to="/berita" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">Berita</NuxtLink>
               </div>
             </div>
 
             <!-- Hubungi Kami -->
-            <div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-blue-100">
-              <h4 class="font-bold text-blue-800 mb-2 text-lg md:text-xl">Hubungi Kami</h4>
+            <div class="rounded-2xl bg-surface/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-amber-300/60">
+              <h4 class="font-bold text-on-primary mb-2 text-lg md:text-xl">Hubungi Kami</h4>
               <div class="flex flex-col text-sm md:text-base">
-                <a href="tel:+6221739838189" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">
+                <a href="tel:+6221739838189" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">
                   <i class="fas fa-phone mr-2"></i>(+6221) 7398381 - 89
                 </a>
-                <a href="mailto:halomenpan@menpan.go.id" target="_blank" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">
+                <a href="mailto:halomenpan@menpan.go.id" target="_blank" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">
                   <i class="fas fa-envelope mr-2"></i>halomenpan@menpan.go.id
                 </a>
-                <a href="https://g.co/kgs/hc7VCVY" target="_blank" class="text-blue-800 mb-2 hover:text-blue-900 hover:underline underline-offset-4">
+                <a href="https://g.co/kgs/hc7VCVY" target="_blank" class="text-on-primary mb-2 hover:text-amber-300 hover:underline underline-offset-4">
                   <i class="fas fa-map-marker-alt mr-2"></i>Jl. Jend. Sudirman Kav. 69 Jakarta Selatan - 12190
                 </a>
               </div>
             </div>
 
             <!-- Ikuti Kami -->
-            <div class="rounded-2xl bg-white/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-blue-100">
-              <h4 class="font-bold text-blue-800 mb-2 text-lg md:text-xl">Ikuti Kami</h4>
+            <div class="rounded-2xl bg-surface/70 backdrop-blur p-4 shadow-sm hover:shadow-md transition border border-amber-300/60">
+              <h4 class="font-bold text-on-primary mb-2 text-lg md:text-xl">Ikuti Kami</h4>
               <div class="text-sm md:text-base">
-                <a href="https://www.youtube.com/@sinovikkementerianpanrb4983" target="_blank" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white/80 backdrop-blur ring-1 ring-amber-300/60 hover:ring-amber-400 transition shadow-sm">
-                  <i class="fab fa-youtube text-blue-600 text-2xl"></i>
+                <a href="https://www.youtube.com/@sinovikkementerianpanrb4983" target="_blank" class="inline-flex items-center justify-center w-12 h-12 rounded-full bg-surface/80 backdrop-blur ring-1 ring-amber-300/60 hover:ring-amber-400 transition shadow-sm">
+                  <i class="fab fa-youtube text-red-500 text-2xl"></i>
                 </a>
               </div>
             </div>

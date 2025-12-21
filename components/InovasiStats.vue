@@ -1,68 +1,318 @@
 <template>
-  <div class="py-12 text-center relative overflow-hidden" style="background-image: url('/vektor2.jpg'); background-size: cover; background-position: center;">
-    <!-- ornament -->
-    <div class="pointer-events-none absolute inset-0">
-      <div class="absolute -top-10 -left-10 w-56 h-56 rounded-full bg-blue-200/30 blur-2xl"></div>
-      <div class="absolute bottom-0 right-0 w-72 h-72 rounded-full bg-amber-200/30 blur-3xl"></div>
-    </div>
+  <div class="stats-section">
+    <v-container fluid class="pa-0">
+      <v-row justify="center" class="py-12">
+        <v-col cols="12" class="text-center">
+          <v-fade-transition appear>
+            <h1 class="text-h3 text-md-h2 font-weight-black mb-2 bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-500">
+              Inovasi Pelayanan Publik
+            </h1>
+          </v-fade-transition>
+          <v-slide-y-transition appear>
+            <p class="text-body-1 text-blue-600 italic mb-8">
+              *sampai saat ini
+            </p>
+          </v-slide-y-transition>
 
-    <h1 class="text-4xl md:text-5xl font-extrabold bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-500 drop-shadow-sm">
-      Inovasi Pelayanan Publik
-    </h1>
-    <p class="text-blue-600 mt-1 italic text-sm">*sampai saat ini</p>
+          <v-row justify="center" class="mb-8">
+            <v-col cols="12" md="10" lg="8">
+              <v-row>
+                <!-- Instansi Card -->
+                <v-col cols="12" sm="6" lg="4" class="pa-2">
+                  <v-card
+                    class="stat-card elevation-8"
+                    rounded="xl"
+                    hover
+                    :ripple="false"
+                  >
+                    <v-card-text class="text-center pa-6">
+                      <v-avatar
+                        size="80"
+                        class="mb-4 gradient-blue"
+                      >
+                        <v-icon size="40" color="white">mdi-office-building</v-icon>
+                      </v-avatar>
+                      <div class="counter-wrapper mb-2">
+                        <span class="counter-number">{{ formatNumber(animatedNumbers.instansi) }}</span>
+                      </div>
+                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
+                        Instansi
+                      </p>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
 
-    <div class="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3 max-w-5xl mx-auto">
-      <!-- Instansi -->
-      <div class="group relative px-6 py-8 rounded-3xl bg-white/70 backdrop-blur shadow-md hover:shadow-lg transition border border-blue-100">
-        <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-blue-600 to-blue-500 text-white shadow-sm mb-4">
-          <i class="fas fa-building text-3xl"></i>
-        </div>
-        <h3 class="text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-500">
-          320
-        </h3>
-        <p class="mt-2 text-blue-700 font-medium">Instansi</p>
-        <span class="absolute inset-x-10 -bottom-1 h-1 rounded-full bg-linear-to-r from-amber-300 to-amber-400 opacity-0 group-hover:opacity-100 transition"></span>
-      </div>
+                <!-- Inovasi Card -->
+                <v-col cols="12" sm="6" lg="4" class="pa-2">
+                  <v-card
+                    class="stat-card elevation-8"
+                    rounded="xl"
+                    hover
+                    :ripple="false"
+                  >
+                    <v-card-text class="text-center pa-6">
+                      <v-avatar
+                        size="80"
+                        class="mb-4 gradient-sky"
+                      >
+                        <v-icon size="40" color="white">mdi-lightbulb</v-icon>
+                      </v-avatar>
+                      <div class="counter-wrapper mb-2">
+                        <span class="counter-number">{{ formatNumber(animatedNumbers.inovasi) }}</span>
+                      </div>
+                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
+                        Inovasi
+                      </p>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
 
-      <!-- Inovasi -->
-      <div class="group relative px-6 py-8 rounded-3xl bg-white/70 backdrop-blur shadow-md hover:shadow-lg transition border border-blue-100">
-        <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-sky-600 to-sky-500 text-white shadow-sm mb-4">
-          <i class="fas fa-lightbulb text-3xl"></i>
-        </div>
-        <h3 class="text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-sky-700 to-sky-500">
-          2928
-        </h3>
-        <p class="mt-2 text-blue-700 font-medium">Inovasi</p>
-        <span class="absolute inset-x-10 -bottom-1 h-1 rounded-full bg-linear-to-r from-amber-300 to-amber-400 opacity-0 group-hover:opacity-100 transition"></span>
-      </div>
+                <!-- Replikasi Card -->
+                <v-col cols="12" lg="4" class="pa-2">
+                  <v-card
+                    class="stat-card elevation-8"
+                    rounded="xl"
+                    hover
+                    :ripple="false"
+                  >
+                    <v-card-text class="text-center pa-6">
+                      <v-avatar
+                        size="80"
+                        class="mb-4 gradient-indigo"
+                      >
+                        <v-icon size="40" color="white">mdi-content-copy</v-icon>
+                      </v-avatar>
+                      <div class="counter-wrapper mb-2">
+                        <span class="counter-number">{{ formatNumber(animatedNumbers.replikasi) }}</span>
+                      </div>
+                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
+                        Replikasi Inovasi
+                      </p>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-col>
+          </v-row>
 
-      <!-- Replikasi -->
-      <div class="group relative px-6 py-8 rounded-3xl bg-white/70 backdrop-blur shadow-md hover:shadow-lg transition border border-blue-100 sm:col-span-2 lg:col-span-1">
-        <div class="mx-auto flex items-center justify-center w-16 h-16 rounded-full bg-linear-to-br from-indigo-600 to-indigo-500 text-white shadow-sm mb-4">
-          <i class="fas fa-clone text-3xl"></i>
-        </div>
-        <h3 class="text-6xl font-extrabold tracking-tight bg-clip-text text-transparent bg-linear-to-r from-indigo-700 to-indigo-500">
-          20940
-        </h3>
-        <p class="mt-2 text-blue-700 font-medium">Replikasi Inovasi</p>
-        <span class="absolute inset-x-10 -bottom-1 h-1 rounded-full bg-linear-to-r from-amber-300 to-amber-400 opacity-0 group-hover:opacity-100 transition"></span>
-      </div>
-    </div>
+          <v-row justify="center">
+            <v-col cols="12" md="8" lg="6">
+              <v-divider class="my-6 border-amber-300"></v-divider>
+              <v-btn
+                to="/etalase"
+                size="large"
+                rounded="pill"
+                color="primary"
+                variant="flat"
+                class="px-8 py-3 font-weight-bold text-white shadow-lg hover:shadow-xl transition-all"
+                prepend-icon="mdi-eye"
+                aria-label="Lihat etalase inovasi lengkap"
+              >
+                Lihat Etalase Inovasi
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-col>
+      </v-row>
+    </v-container>
 
-    <div class="flex justify-center mt-10">
-      <div class="w-full max-w-5xl mx-auto">
-        <hr class="border-t-2 border-blue-300 mb-6">
-        <NuxtLink
-          to="/etalase"
-          class="px-8 py-3 rounded-full font-semibold text-white bg-linear-to-r from-blue-600 via-blue-500 to-blue-700 shadow-lg hover:shadow-xl hover:from-blue-600 hover:to-blue-800 transition border border-amber-300/60"
-        >
-          Lihat Etalase Inovasi
-        </NuxtLink>
-      </div>
+    <!-- Animated Background Ornaments -->
+    <div class="ornaments">
+      <div class="ornament-1"></div>
+      <div class="ornament-2"></div>
+      <div class="ornament-3"></div>
     </div>
   </div>
 </template>
 
 <script setup>
-// No script needed for this static component
+import { ref, onMounted } from 'vue'
+
+// Statistics data
+const stats = ref([
+  { id: 'instansi', icon: 'mdi-office-building', number: 320, label: 'Instansi', gradient: 'gradient-blue' },
+  { id: 'inovasi', icon: 'mdi-lightbulb', number: 2928, label: 'Inovasi', gradient: 'gradient-sky' },
+  { id: 'replikasi', icon: 'mdi-content-copy', number: 20940, label: 'Replikasi Inovasi', gradient: 'gradient-indigo' }
+])
+
+// Animated counters
+const animatedNumbers = ref({
+  instansi: 0,
+  inovasi: 0,
+  replikasi: 0
+})
+
+// Animate counters on mount
+onMounted(() => {
+  stats.value.forEach(stat => {
+    animateCounter(stat.id, stat.number)
+  })
+})
+
+const animateCounter = (id, target) => {
+  const duration = 2000 // 2 seconds
+  const steps = 60
+  const increment = target / steps
+  let current = 0
+  const timer = setInterval(() => {
+    current += increment
+    if (current >= target) {
+      animatedNumbers.value[id] = target
+      clearInterval(timer)
+    } else {
+      animatedNumbers.value[id] = Math.floor(current)
+    }
+  }, duration / steps)
+}
+
+// Format number with commas
+const formatNumber = (num) => {
+  return num.toLocaleString('id-ID')
+}
 </script>
+
+<style scoped>
+.stats-section {
+  position: relative;
+  overflow: hidden;
+  background-image: url('/vektor2.jpg');
+  background-size: cover;
+  background-position: center;
+  min-height: 70vh;
+  display: flex;
+  align-items: center;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(59, 130, 246, 0.1);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.stat-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.stat-card:hover::before {
+  left: 100%;
+}
+
+.stat-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+}
+
+.gradient-blue {
+  background: linear-gradient(135deg, #2563eb, #3b82f6);
+}
+
+.gradient-sky {
+  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+}
+
+.gradient-indigo {
+  background: linear-gradient(135deg, #6366f1, #8b5cf6);
+}
+
+.counter-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.counter-number {
+  font-size: 3.5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, #1e40af, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  line-height: 1;
+  display: block;
+  animation: countUp 2s ease-out;
+}
+
+@keyframes countUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.ornaments {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.ornament-1 {
+  position: absolute;
+  top: -40px;
+  left: -40px;
+  width: 224px;
+  height: 224px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15), transparent 70%);
+  filter: blur(32px);
+  animation: float 6s ease-in-out infinite;
+}
+
+.ornament-2 {
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 288px;
+  height: 288px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15), transparent 70%);
+  filter: blur(40px);
+  animation: float 8s ease-in-out infinite reverse;
+}
+
+.ornament-3 {
+  position: absolute;
+  top: 50%;
+  left: 10%;
+  width: 160px;
+  height: 160px;
+  border-radius: 50%;
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), transparent 70%);
+  filter: blur(24px);
+  animation: float 7s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-20px) rotate(180deg);
+  }
+}
+
+/* Responsive adjustments */
+@media (max-width: 600px) {
+  .counter-number {
+    font-size: 2.5rem;
+  }
+  
+  .ornament-1,
+  .ornament-2,
+  .ornament-3 {
+    display: none;
+  }
+}
+</style>
