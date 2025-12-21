@@ -158,7 +158,6 @@
               v-for="item in menuKnowledge"
               :key="item.href"
               :to="item.href"
-              target="_blank"
             >
               <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>

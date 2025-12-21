@@ -165,7 +165,7 @@
         <div class="flex flex-col sm:flex-row gap-4">
           <button
             @click="enrollInCourse"
-            class="flex-1 bg-blue-600 text-white py-4 px-8 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-semibold text-lg flex items-center justify-center gap-3 shadow-lg"
+            class="flex-1 bg-blue-600 text-gray-900 py-4 px-8 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors font-semibold text-lg flex items-center justify-center gap-3 shadow-lg"
           >
             <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
