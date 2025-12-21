@@ -1,37 +1,154 @@
 <template>
-  <v-app-bar app elevation="1" color="white" class="navbar-custom font-poppins" height="80">
-    <v-container fluid class="d-flex align-center pa-0 px-4">
-      <!-- Logo -->
-      <v-toolbar-title class="d-flex align-center">
-        <v-img
-          src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
-          max-width="200"
-          max-height="65"
-          contain
-          class="logo-hover cursor-pointer"
-          alt="JIPPNAS Logo"
-        />
-      </v-toolbar-title>
+  <!-- 🔑 Critical for height sync -->
+  <v-app-bar
+    app
+    elevation="2"
+    color="white"
+    class="navbar-custom"
+    height="auto"
+    ref="navbarRef"
+  >
+    <v-container fluid class="pa-0">
+      <!-- Top Row: Logo, Search, and Auth -->
+      <div class="d-flex align-center justify-space-between px-6 py-3 top-section">
+        <!-- Logo -->
+        <NuxtLink to="/" class="logo-container shrink-0">
+          <v-img
+            src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
+            :width="200"
+            :height="60"
+            contain
+            class="logo-img"
+            alt="JIPPNAS Logo"
+          />
+        </NuxtLink>
 
-      <v-spacer />
+        <!-- Search Bar (Desktop only) -->
+        <div class="d-none d-lg-flex grow mx-6 search-container">
+          <div class="relative w-full">
+            <input
+              v-model="searchQuery"
+              @keyup.enter="handleSearch"
+              class="search-input w-full pl-12 pr-4 py-2.5 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:shadow-md transition-all duration-200"
+              type="search"
+              placeholder="Cari Inovasi..."
+              aria-label="Cari Inovasi"
+            />
+            <svg
+              class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+          </div>
+        </div>
 
-      <!-- Navigation Menu for Desktop - Inline -->
-      <div class="hidden-md-and-down d-flex align-center">
+        <!-- Auth Buttons -->
+        <div class="d-flex align-center gap-2 shrink-0">
+          <template v-if="!isLoggedIn">
+            <v-btn
+              variant="outlined"
+              color="primary"
+              @click="showLoginModal = true"
+              size="default"
+              class="px-4 d-none d-md-flex"
+            >
+              <v-icon start>mdi-login</v-icon>
+              Masuk
+            </v-btn>
+            <v-btn
+              variant="flat"
+              color="primary"
+              @click="showRegisterModal = true"
+              size="default"
+              class="px-4 d-none d-md-flex"
+            >
+              <v-icon start>mdi-account-plus</v-icon>
+              Daftar
+            </v-btn>
+          </template>
+
+          <!-- User Menu -->
+          <v-menu v-else offset-y>
+            <template #activator="{ props }">
+              <v-btn
+                variant="outlined"
+                v-bind="props"
+                color="primary"
+                size="default"
+                class="px-3 d-none d-md-flex"
+              >
+                <v-icon start>mdi-account-circle</v-icon>
+                {{ user.name }}
+                <v-icon end size="small">mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title class="font-weight-bold">{{ user.name }}</v-list-item-title>
+                <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
+              </v-list-item>
+              <v-divider />
+              <v-list-item @click="handleLogout">
+                <template #prepend>
+                  <v-icon>mdi-logout</v-icon>
+                </template>
+                <v-list-item-title>Keluar</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+
+          <!-- Mobile Menu Toggle -->
+          <v-app-bar-nav-icon
+            class="d-lg-none ml-2"
+            @click="drawer = !drawer"
+            color="primary"
+          />
+        </div>
+      </div>
+
+      <!-- Mobile Search Bar -->
+      <div class="d-lg-none px-6 py-3 search-section-mobile">
+        <div class="relative">
+          <input
+            v-model="searchQuery"
+            @keyup.enter="handleSearch"
+            class="search-input w-full pl-12 pr-4 py-2.5 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:shadow-md transition-all duration-200"
+            type="search"
+            placeholder="Cari Inovasi..."
+            aria-label="Cari Inovasi"
+          />
+          <svg
+            class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-600"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+          </svg>
+        </div>
+      </div>
+
+      <!-- Bottom Row: Navigation Menu -->
+      <div class="d-none d-lg-flex align-center justify-center px-4 py-2 nav-section">
         <v-btn
           v-for="item in navItems"
           :key="item.href"
           :to="item.href"
           variant="text"
           :active="isActive(item.href)"
-          class="nav-link"
+          class="nav-link mx-1"
           color="primary"
+          size="default"
         >
           {{ item.label }}
         </v-btn>
 
         <v-menu offset-y>
           <template #activator="{ props }">
-            <v-btn variant="text" v-bind="props" class="nav-link" color="primary">
+            <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
               Knowledge Center
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
@@ -40,7 +157,7 @@
             <v-list-item
               v-for="item in menuKnowledge"
               :key="item.href"
-              :href="item.href"
+              :to="item.href"
               target="_blank"
             >
               <v-list-item-title>{{ item.label }}</v-list-item-title>
@@ -50,7 +167,7 @@
 
         <v-menu offset-y>
           <template #activator="{ props }">
-            <v-btn variant="text" v-bind="props" class="nav-link" color="primary">
+            <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
               Tautan Terkait
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
@@ -69,7 +186,7 @@
 
         <v-menu offset-y>
           <template #activator="{ props }">
-            <v-btn variant="text" v-bind="props" class="nav-link" color="primary">
+            <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
               Bantuan
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
@@ -78,17 +195,15 @@
             <v-list-item
               v-for="item in menuBantuan"
               :key="item.href"
-              :href="item.href"
-              target="_blank"
+              :to="item.href"
             >
               <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
 
-        <v-divider vertical class="mx-3" thickness="2" />
+        <v-divider vertical class="mx-3" />
 
-        <!-- Sidebar Toggle Button -->
         <v-btn
           icon
           variant="text"
@@ -98,93 +213,11 @@
         >
           <v-icon>{{ props.sidebarOpen ? 'mdi-menu-open' : 'mdi-menu' }}</v-icon>
         </v-btn>
-
-        <v-divider vertical class="mx-3" thickness="2" />
-
-        <!-- Search Icon -->
-        <v-btn icon variant="text" @click="searchDialog = true" class="mx-1">
-          <v-icon color="primary">mdi-magnify</v-icon>
-        </v-btn>
-
-        <!-- Auth Buttons -->
-        <template v-if="!isLoggedIn">
-          <v-btn
-            variant="outlined"
-            color="primary"
-            class="ml-2"
-            @click="showLoginModal = true"
-            size="small"
-          >
-            Masuk
-          </v-btn>
-          <v-btn
-            variant="flat"
-            color="primary"
-            class="ml-2"
-            @click="showRegisterModal = true"
-            size="small"
-          >
-            Daftar
-          </v-btn>
-        </template>
-
-        <!-- User Menu -->
-        <v-menu v-else offset-y>
-          <template #activator="{ props }">
-            <v-btn icon v-bind="props" class="ml-2">
-              <v-avatar color="primary" size="32">
-                <span class="text-white">{{ user.name?.charAt(0).toUpperCase() }}</span>
-              </v-avatar>
-            </v-btn>
-          </template>
-          <v-list>
-            <v-list-item>
-              <v-list-item-title>{{ user.name }}</v-list-item-title>
-              <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
-            </v-list-item>
-            <v-divider />
-            <v-list-item @click="handleLogout">
-              <template #prepend>
-                <v-icon>mdi-logout</v-icon>
-              </template>
-              <v-list-item-title>Keluar</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
       </div>
-
-      <!-- Mobile Menu -->
-      <v-app-bar-nav-icon
-        class="hidden-lg-and-up"
-        @click="drawer = !drawer"
-        color="primary"
-      />
     </v-container>
 
-    <!-- Search Dialog -->
-    <v-dialog v-model="searchDialog" max-width="600">
-      <v-card>
-        <v-card-text class="pa-4">
-          <v-text-field
-            v-model="searchQuery"
-            placeholder="Cari Inovasi..."
-            prepend-inner-icon="mdi-magnify"
-            variant="outlined"
-            autofocus
-            @keyup.enter="handleSearch"
-            hide-details
-          />
-        </v-card-text>
-      </v-card>
-    </v-dialog>
-
     <!-- Mobile Drawer -->
-    <v-navigation-drawer
-      v-model="drawer"
-      temporary
-      app
-      width="300"
-    >
+    <v-navigation-drawer v-model="drawer" temporary app width="300">
       <v-list>
         <v-list-item
           v-for="item in navItems"
@@ -212,8 +245,7 @@
           <v-list-item
             v-for="item in menuKnowledge"
             :key="item.href"
-            :href="item.href"
-            target="_blank"
+            :to="item.href"
             @click="drawer = false"
           >
             <v-list-item-title>{{ item.label }}</v-list-item-title>
@@ -252,8 +284,7 @@
           <v-list-item
             v-for="item in menuBantuan"
             :key="item.href"
-            :href="item.href"
-            target="_blank"
+            :to="item.href"
             @click="drawer = false"
           >
             <v-list-item-title>{{ item.label }}</v-list-item-title>
@@ -262,7 +293,7 @@
       </v-list>
     </v-navigation-drawer>
 
-    <!-- Login Modal -->
+    <!-- Modals (unchanged structure, cleaned internals) -->
     <v-dialog v-model="showLoginModal" max-width="500">
       <v-card>
         <v-card-title class="text-h5">
@@ -284,7 +315,7 @@
               required
               prepend-icon="mdi-lock"
             />
-            <v-btn type="submit" color="primary" block class="mt-4">
+            <v-btn type="submit" color="primary" block class="mt-4" :loading="loginLoading">
               Masuk
             </v-btn>
           </v-form>
@@ -294,6 +325,7 @@
             color="red"
             block
             prepend-icon="mdi-google"
+            :disabled="googleScriptLoading"
             @click="handleGoogleLogin"
           >
             Masuk dengan Google
@@ -302,7 +334,6 @@
       </v-card>
     </v-dialog>
 
-    <!-- Register Modal -->
     <v-dialog v-model="showRegisterModal" max-width="500">
       <v-card>
         <v-card-title class="text-h5">
@@ -345,305 +376,295 @@
         </v-card-text>
       </v-card>
     </v-dialog>
-</v-app-bar>
+  </v-app-bar>
 </template>
 
 <script setup>
+import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
+import { useRouter, useRoute } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
+import { useLogin } from '~/composables/useLogin'
+import { toast } from 'vue-sonner'
 
-const props = defineProps({
-  sidebarOpen: {
-    type: Boolean,
-    default: true
-  }
-});
+// 🔑 Props & Emits (unchanged)
+const props = defineProps({ sidebarOpen: { type: Boolean, default: true } })
+const emit = defineEmits(['toggle-sidebar'])
 
-const emit = defineEmits(['toggle-sidebar']);
+// 🔑 Navbar ref — now used for height sync
+const navbarRef = ref(null)
 
-const menuOpen = ref(false);
-const toggleMenu = () => (menuOpen.value = !menuOpen.value);
+// Auth state
+const { isLoggedIn, user, login, logout } = useAuth()
 
-// New Vuetify variables
-const drawer = ref(false);
-const searchQuery = ref('');
-const searchDialog = ref(false);
+// Modals & Forms
+const drawer = ref(false)
+const showLoginModal = ref(false)
+const showRegisterModal = ref(false)
+const loginForm = ref({ email: '', password: '' })
+const registerForm = ref({ name: '', email: '', password: '' })
+const searchQuery = ref('')
 
-// Auth composable
-const { isLoggedIn, user, logout } = useAuth();
+// 🔑 Simplified toast helper (DRY)
+const appToast = {
+  success: (title, opts = {}) => toast.success(title, { position: 'top-right', duration: 4000, ...opts }),
+  error: (msg, opts = {}) => toast.error(msg, { position: 'top-right', duration: 5000, ...opts }),
+  warn: (msg, opts = {}) => toast.warning(msg, { position: 'top-right', duration: 3000, ...opts })
+}
 
-import { watch, onMounted } from 'vue';
-
-// Watch login state and update UI immediately
-watch(isLoggedIn, (val) => {
-  if (val) {
-    showLoginModal.value = false;
-    loginForm.value = { email: '', password: '' };
-  }
-});
-
-// Login modal state
-const showLoginModal = ref(false);
-const loginForm = ref({
-  email: '',
-  password: ''
-});
-
-// Register modal state
-const showRegisterModal = ref(false);
-const registerForm = ref({
-  name: '',
-  email: '',
-  password: ''
-});
-
-// Search handler
-const handleSearch = () => {
-  if (searchQuery.value.trim()) {
-    console.log('Searching for:', searchQuery.value);
-    searchDialog.value = false;
-    // router.push(`/search?q=${encodeURIComponent(searchQuery.value)}`);
-  }
-};
-
-// Login handlers
-import { useRouter } from 'vue-router';
-const router = useRouter();
-import { useLogin } from '~/composables/useLogin';
-const { handleLogin: apiLogin, user: apiUser, error: loginError, loading: loginLoading } = useLogin();
-import { toast } from 'vue-sonner';
+// 🔑 Login with API + toast cleanup
+const { handleLogin: apiLogin, user: apiUser, error: loginError, loading: loginLoading } = useLogin()
+const router = useRouter()
 
 const handleLogin = async () => {
-  if (loginForm.value.email && loginForm.value.password) {
-    await apiLogin({ email: loginForm.value.email, password: loginForm.value.password });
-    if (apiUser.value && apiUser.value.role) {
-      // Use auth composable
-      const { login } = useAuth();
-      login(apiUser.value);
-      showLoginModal.value = false;
-      loginForm.value = { email: '', password: '' };
-      toast.success('🎉 Login Berhasil!', {
-        description: 'Selamat datang kembali!',
-        duration: 4000
-      });
-      router.push(`/${apiUser.value.role}/dashboard`);
-    } else {
-      toast.error(loginError.value || 'Login gagal!', {
-        position: 'top-right',
-        timeout: 5000,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: false,
-        closeButton: 'button',
-        icon: true,
-        rtl: false
-      });
+  const { email, password } = loginForm.value
+  if (!email || !password) return appToast.warn('Harap isi semua field!')
+
+  await apiLogin({ email, password })
+  if (apiUser.value?.role) {
+    login(apiUser.value)
+    showLoginModal.value = false
+    loginForm.value = { email: '', password: '' }
+    appToast.success('🎉 Login Berhasil!', { description: 'Selamat datang kembali!' })
+    router.push(`/${apiUser.value.role}/dashboard`)
+  } else {
+    appToast.error(loginError.value || 'Login gagal. Cek email & password.')
+  }
+}
+
+// 🔑 Google Auth — SSR-safe
+const googleScriptLoading = ref(false)
+const loadGoogleScript = () => {
+  if (typeof window === 'undefined') return Promise.resolve()
+  if (window.google?.accounts) return Promise.resolve()
+
+  return new Promise((resolve, reject) => {
+    if (document.getElementById('google-client')) return resolve()
+
+    googleScriptLoading.value = true
+    const script = document.createElement('script')
+    script.id = 'google-client'
+    script.src = 'https://accounts.google.com/gsi/client'
+    script.async = true
+    script.onload = () => {
+      googleScriptLoading.value = false
+      resolve()
     }
-  } else {
-    toast.warning('Harap isi semua field!', {
-      position: 'top-right',
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: false,
-      hideProgressBar: false,
-      closeButton: 'button',
-      icon: true,
-      rtl: false
-    });
+    script.onerror = () => {
+      googleScriptLoading.value = false
+      reject(new Error('Gagal muat Google Sign-In'))
+    }
+    document.head.appendChild(script)
+  })
+}
+
+const handleGoogleLogin = async () => {
+  try {
+    await loadGoogleScript()
+    if (window.google?.accounts?.id && !window.googleInitialized) {
+      window.google.accounts.id.initialize({
+        client_id: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
+        callback: handleGoogleCallback
+      })
+      window.googleInitialized = true
+    }
+    window.google?.accounts?.id?.prompt?.()
+  } catch (err) {
+    console.error('Google login init failed:', err)
+    appToast.error('Gagal memuat Google Sign-In')
   }
-};
-
-const handleGoogleLogin = () => {
-  // Handle Google login logic here
-  if (window.google && window.google.accounts) {
-    window.google.accounts.id.prompt();
-  } else {
-    console.error('Google Sign-In not loaded');
-  }
-};
-
-// Register handlers
-const handleRegister = () => {
-  // Handle register logic here
-  console.log('Register attempt:', registerForm.value);
-
-  // Mock registration - in real app, this would call an API
-  if (registerForm.value.name && registerForm.value.email && registerForm.value.password) {
-    const userData = {
-      id: Date.now(), // Mock ID
-      name: registerForm.value.name,
-      email: registerForm.value.email
-    };
-
-    // Use auth composable
-    const { login } = useAuth();
-    login(userData);
-
-    // Close modal and reset form
-    showRegisterModal.value = false;
-    registerForm.value = { name: '', email: '', password: '' };
-
-    // Show success message
-    toast.success('Registrasi berhasil!', {
-      position: 'top-right',
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: false,
-      hideProgressBar: false,
-      closeButton: 'button',
-      icon: true,
-      rtl: false
-    });
-  } else {
-    toast.warning('Harap isi semua field!', {
-      position: 'top-right',
-      timeout: 3000,
-      closeOnClick: true,
-      pauseOnFocusLoss: true,
-      pauseOnHover: true,
-      draggable: true,
-      draggablePercent: 0.6,
-      showCloseButtonOnHover: false,
-      hideProgressBar: false,
-      closeButton: 'button',
-      icon: true,
-      rtl: false
-    });
-  }
-};
-
-const handleGoogleRegister = () => {
-  // Handle Google register logic here
-  console.log('Google register attempt');
-};
-
-// Logout handler
-const handleLogout = () => {
-  const { logout } = useAuth();
-  logout();
-  toast.info('Anda telah logout!', {
-    position: 'top-right',
-    timeout: 3000,
-    closeOnClick: true,
-    pauseOnFocusLoss: true,
-    pauseOnHover: true,
-    draggable: true,
-    draggablePercent: 0.6,
-    showCloseButtonOnHover: false,
-    hideProgressBar: false,
-    closeButton: 'button',
-    icon: true,
-    rtl: false
-  });
-};
-
-const linksTerkait = [
-  { label: "web menpan testing", href: "#" },
-  { label: "LAPOR!", href: "#" },
-  { label: "testing web sinovik", href: "#" }
-];
-
-const menuBantuan = [
-  { label: "MODEL INOVASI", href: "/model" },
-  { label: "BUKU INOVASI", href: "/buku" },
-  { label: "UNDUHAN", href: "/unduhan" },
-  { label: "FAQ", href: "/faq" },
-  { label: "HUBUNGI KAMI", href: "/kontak" }
-];
-
-const menuKnowledge = [
-  { label: "LMS", href: "/course" },
-  { label: "Forum Diskusi", href: "/forum" },
-  { label: "Event/Webinar", href: "/event" }
-];
-
-const navItems = [
-  { icon: "home", label: "Beranda", href: "/" },
-  { icon: "folder", label: "Etalase Inovasi", href: "/etalase" },
-  { icon: "map", label: "Inovasi Dekat Saya", href: "/dekatsaya" },
-  { icon: "news", label: "Berita", href: "/berita" }
-];
-
-// SSR-safe route handling
-const route = useRoute();
-const normalize = (p) => (p ? p.replace(/\/+$/, "") : "");
-const currentPath = computed(() => normalize(route?.path || ""));
-const isActive = (href) => currentPath.value === normalize(href);
-
-// Initialize Google Sign-In
-onMounted(() => {
-  if (process.client && window.google && window.google.accounts) {
-    window.google.accounts.id.initialize({
-      client_id: 'YOUR_GOOGLE_CLIENT_ID', // Replace with your actual client ID
-      callback: handleGoogleCallback
-    });
-  }
-});
+}
 
 const handleGoogleCallback = async (response) => {
   try {
+    if (!response?.credential) throw new Error('No credential')
     const res = await $fetch('/api/google-login', {
       method: 'POST',
       body: { token: response.credential }
-    });
-
-    if (res.success) {
-      const { login } = useAuth();
-      login(res.user);
-      showLoginModal.value = false;
-      toast.success('🎉 Login dengan Google Berhasil!', {
-        description: 'Selamat datang!',
-        duration: 4000
-      });
-      router.push(`/${res.user.role}/dashboard`);
-    } else {
-      toast.error(res.error || 'Login gagal!');
-    }
-  } catch (error) {
-    console.error('Google login error:', error);
-    toast.error('Terjadi kesalahan saat login dengan Google');
+    })
+    if (res.success && res.user) {
+      login(res.user)
+      showLoginModal.value = false
+      appToast.success('🎉 Login dengan Google Berhasil!')
+      router.push(`/${res.user.role}/dashboard`)
+    } else throw new Error(res.error)
+  } catch (err) {
+    appToast.error(err.message || 'Login Google gagal')
   }
-};
+}
+
+// 🔑 Register (mock → replace with API later)
+const handleRegister = () => {
+  const { name, email, password, confirmPassword } = registerForm.value
+  if (!name || !email || !password) return appToast.warn('Harap isi semua field!')
+  if (password !== confirmPassword) return appToast.warn('Kata sandi tidak cocok!')
+
+  // ✅ Safe mock user
+  login({ id: Date.now(), name, email })
+  showRegisterModal.value = false
+  registerForm.value = { name: '', email: '', password: '' }
+  appToast.success('Registrasi berhasil!')
+}
+
+// 🔑 Logout
+const handleLogout = () => {
+  logout()
+  appToast.info('Anda telah logout.')
+}
+
+// 🔑 Search — SPA-friendly
+const handleSearch = () => {
+  if (searchQuery.value.trim()) {
+    router.push({ path: '/search', query: { q: searchQuery.value.trim() } })
+  }
+}
+
+// 🔑 Nav data (moved to script for clarity)
+const navItems = [
+  { icon: 'mdi-home', label: 'Beranda', href: '/' },
+  { icon: 'mdi-folder', label: 'Etalase Inovasi', href: '/etalase' },
+  { icon: 'mdi-map-marker', label: 'Inovasi Dekat Saya', href: '/dekatsaya' },
+  { icon: 'mdi-newspaper', label: 'Berita', href: '/berita' }
+]
+
+const menuKnowledge = [
+  { label: 'LMS', href: '/course' },
+  { label: 'Forum Diskusi', href: '/forum' },
+  { label: 'Event/Webinar', href: '/event' }
+]
+
+const linksTerkait = [
+  { label: 'Web Menpan', href: 'https://menpan.go.id' },
+  { label: 'LAPOR!', href: 'https://lapor.go.id' },
+  { label: 'Sinovik', href: 'https://sinovik.menpan.go.id' }
+]
+
+const menuBantuan = [
+  { label: 'Model Inovasi', href: '/model' },
+  { label: 'Buku Inovasi', href: '/buku' },
+  { label: 'Unduhan', href: '/unduhan' },
+  { label: 'FAQ', href: '/faq' },
+  { label: 'Hubungi Kami', href: '/kontak' }
+]
+
+// 🔑 Active link helper
+const route = useRoute()
+const normalize = (p) => p?.replace(/\/+$/, '') || ''
+const currentPath = computed(() => normalize(route.path))
+const isActive = (href) => currentPath.value === normalize(href)
+
+// 🔑 🔥 HEIGHT SYNC — This is the fix for content cutoff
+onMounted(() => {
+  const updateHeight = () => {
+    if (navbarRef.value?.$el) {
+      const h = navbarRef.value.$el.offsetHeight
+      document.documentElement.style.setProperty('--navbar-height', `${h}px`)
+      console.log('Navbar height:', h) // Debug log
+    }
+  }
+
+  // Debounced resize
+  let t
+  const debounced = () => {
+    clearTimeout(t)
+    t = setTimeout(updateHeight, 150)
+  }
+
+  // Initial update with delay to ensure DOM is ready
+  setTimeout(updateHeight, 100)
+  setTimeout(updateHeight, 500) // Secondary check
+  
+  updateHeight()
+  window.addEventListener('resize', debounced)
+  window.addEventListener('orientationchange', updateHeight)
+
+  onBeforeUnmount(() => {
+    window.removeEventListener('resize', debounced)
+    window.removeEventListener('orientationchange', updateHeight)
+  })
+})
 </script>
 
 <style scoped>
+/* ✅ Poppins is kept & scoped */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
 .navbar-custom {
   border-bottom: 3px solid #1976D2;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  font-family: 'Poppins', sans-serif;
 }
 
-.logo-hover {
-  transition: transform 0.3s ease;
+.logo-container {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
 }
 
-.logo-hover:hover {
-  transform: scale(1.02);
+.logo-img {
+  transition: transform 0.3s ease, opacity 0.3s ease;
+  display: block;
 }
 
-.cursor-pointer {
-  cursor: pointer;
+.logo-img:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+
+.top-section {
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-container {
+  max-width: 600px;
+}
+
+.search-section-mobile {
+  background: #f8f9fa;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.search-input {
+  border: 2px solid #e3f2fd;
+  background: white;
+  color: #1565c0;
+  font-size: 0.9rem;
+  font-family: 'Poppins', sans-serif;
+  font-weight: 500;
+  caret-color: #1976D2;
+}
+
+.search-input::placeholder {
+  color: #90a4ae;
+  font-weight: 500;
+  font-family: 'Poppins', sans-serif;
+}
+
+.search-input:focus {
+  border-color: #1976D2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
+}
+
+.nav-section {
+  background: white;
 }
 
 .nav-link {
+  font-family: 'Poppins', sans-serif;
   font-size: 0.95rem;
-  font-weight: 500;
+  font-weight: 600;
   letter-spacing: 0.02em;
   text-transform: none;
   transition: all 0.2s ease;
   position: relative;
+  padding: 8px 16px;
 }
 
 .nav-link:hover {
-  color: #1976D2 !important;
+  background-color: rgba(25, 118, 210, 0.08);
+}
+
+.nav-link.v-btn--active {
+  font-weight: 700;
 }
 
 .nav-link.v-btn--active::after {
@@ -657,4 +678,15 @@ const handleGoogleCallback = async (response) => {
   background-color: #1976D2;
   border-radius: 2px 2px 0 0;
 }
+
+@media (max-width: 1280px) {
+  .search-container { max-width: 400px; }
+}
+@media (max-width: 960px) {
+  .logo-img { width: 160px !important; height: 48px !important; }
+}
+@media (max-width: 600px) {
+  .logo-img { width: 140px !important; height: 42px !important; }
+}
+.gap-2 { gap: 8px; }
 </style>

@@ -2,142 +2,136 @@
   <ClientOnly>
     <div class="innovations-section py-12">
       <v-container fluid class="px-4">
-        <v-row justify="center" class="mb-8">
-          <v-col cols="12" class="text-center">
-            <v-fade-transition appear>
-              <h2 class="text-h4 text-md-h3 font-weight-bold text-blue-800 mb-2">
-                Inovasi Unggulan
-              </h2>
-            </v-fade-transition>
-            <v-divider
-              class="mx-auto"
-              color="blue"
-              width="200"
-              thickness="3"
-              rounded
-            ></v-divider>
-          </v-col>
-        </v-row>
+        <!-- Section Header -->
+        <div class="text-center mb-8">
+          <v-fade-transition appear>
+            <h2 class="text-h4 text-md-h3 font-weight-bold text-blue-800 mb-2">
+              Inovasi Unggulan
+            </h2>
+          </v-fade-transition>
+          <v-divider
+            class="mx-auto"
+            color="blue"
+            width="200"
+            thickness="3"
+            rounded
+          />
+        </div>
 
-        <v-row justify="center">
-          <v-col cols="12">
-            <v-carousel
-              v-model="currentSlide"
-              height="auto"
-              hide-delimiter-background
-              show-arrows="hover"
-              :show-arrows-on-hover="true"
-              :cycle="true"
-              :interval="4000"
-              class="rounded-xl elevation-4"
-              aria-label="Carousel inovasi unggulan"
-            >
-              <v-carousel-item
-                v-for="(slide, slideIndex) in slides"
-                :key="slideIndex"
-                :aria-label="`Slide ${slideIndex + 1} dari ${slides.length}`"
-              >
-                <v-container>
-                  <v-row justify="center">
-                    <v-col
-                      v-for="(innovation, idx) in slide"
-                      :key="`${slideIndex}-${idx}`"
-                      cols="12"
-                      sm="6"
-                      lg="4"
-                      class="pa-2"
-                    >
-                      <v-card
-                        class="innovation-card elevation-6"
-                        rounded="lg"
-                        hover
-                        :ripple="false"
-                        height="100%"
-                      >
-                        <v-img
-                          :src="innovation.image"
-                          :alt="innovation.title"
-                          height="200"
-                          cover
-                          :lazy-src="'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23ddd\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'18\' fill=\'%23999\' text-anchor=\'middle\' dy=\'.3em\'%3ELoading...%3C/text%3E%3C/svg%3E'"
-                          @error="onImageError"
-                          class="card-image"
-                        >
-                          <template v-slot:placeholder>
-                            <v-row
-                              class="fill-height ma-0"
-                              align="center"
-                              justify="center"
-                            >
-                              <v-progress-circular
-                                indeterminate
-                                color="blue"
-                              ></v-progress-circular>
-                            </v-row>
-                          </template>
-                        </v-img>
-
-                        <v-card-title class="text-h6 font-weight-bold text-blue-800 pa-4 pb-2 line-clamp-2">
-                          {{ innovation.title }}
-                        </v-card-title>
-
-                        <v-card-text class="pa-4 pt-0">
-                          <p class="text-body-2 text-gray-700 line-clamp-3 mb-4">
-                            {{ innovation.description }}
-                          </p>
-                          <v-btn
-                            color="primary"
-                            size="small"
-                            :href="innovation.link"
-                            target="_blank"
-                            rel="noopener"
-                            variant="outlined"
-                            class="font-weight-medium"
-                            aria-label="Baca selengkapnya tentang inovasi ini"
-                          >
-                            <v-icon left size="small">mdi-open-in-new</v-icon>
-                            Selengkapnya
-                          </v-btn>
-                        </v-card-text>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </v-container>
-              </v-carousel-item>
-            </v-carousel>
-
-            <!-- Navigation Dots Indicator -->
-            <v-row justify="center" class="mt-4">
-              <v-col cols="auto">
-                <v-item-group
-                  v-model="currentSlide"
-                  mandatory
-                  class="slide-indicators"
+        <!-- Carousel Section -->
+        <v-carousel
+          v-model="currentSlide"
+          height="auto"
+          hide-delimiter-background
+          show-arrows="hover"
+          :show-arrows-on-hover="true"
+          :cycle="true"
+          :interval="4000"
+          class="rounded-xl elevation-4"
+          aria-label="Carousel inovasi unggulan"
+        >
+          <v-carousel-item
+            v-for="(slide, slideIndex) in slides"
+            :key="slideIndex"
+            :aria-label="`Slide ${slideIndex + 1} dari ${slides.length}`"
+          >
+            <v-container>
+              <v-row justify="center">
+                <v-col
+                  v-for="(innovation, idx) in slide"
+                  :key="`${slideIndex}-${idx}`"
+                  cols="12"
+                  sm="6"
+                  lg="4"
+                  class="pa-2"
                 >
-                  <v-item
-                    v-for="n in slides.length"
-                    :key="n"
-                    :value="n - 1"
-                    v-slot="{ isSelected, toggle }"
+                  <v-card
+                    class="innovation-card elevation-6"
+                    rounded="lg"
+                    hover
+                    :ripple="false"
+                    height="100%"
                   >
-                    <v-btn
-                      :variant="isSelected ? 'flat' : 'text'"
-                      size="small"
-                      icon
-                      color="primary"
-                      @click="toggle"
-                      :aria-label="`Go to slide ${n}`"
+                    <v-img
+                      :src="innovation.image"
+                      :alt="innovation.title"
+                      height="200"
+                      cover
+                      :lazy-src="DEFAULT_PLACEHOLDER"
+                      @error="onImageError"
+                      class="card-image"
                     >
-                      <v-icon size="12">
-                        {{ isSelected ? 'mdi-circle' : 'mdi-circle-outline' }}
-                      </v-icon>
-                    </v-btn>
-                  </v-item>
-                </v-item-group>
-              </v-col>
-            </v-row>
-          </v-col>
-        </v-row>
+                      <template v-slot:placeholder>
+                        <v-row
+                          class="fill-height ma-0"
+                          align="center"
+                          justify="center"
+                        >
+                          <v-progress-circular
+                            indeterminate
+                            color="blue"
+                          />
+                        </v-row>
+                      </template>
+                    </v-img>
+
+                    <v-card-title class="text-h6 font-weight-bold text-blue-800 pa-4 pb-2 line-clamp-2">
+                      {{ innovation.title }}
+                    </v-card-title>
+
+                    <v-card-text class="pa-4 pt-0">
+                      <p class="text-body-2 text-gray-700 line-clamp-3 mb-4">
+                        {{ innovation.description }}
+                      </p>
+                      <v-btn
+                        color="primary"
+                        size="small"
+                        :href="innovation.link"
+                        target="_blank"
+                        rel="noopener"
+                        variant="outlined"
+                        class="font-weight-medium"
+                        aria-label="Baca selengkapnya tentang inovasi ini"
+                      >
+                        <v-icon left size="small">mdi-open-in-new</v-icon>
+                        Selengkapnya
+                      </v-btn>
+                    </v-card-text>
+                  </v-card>
+                </v-col>
+              </v-row>
+            </v-container>
+          </v-carousel-item>
+        </v-carousel>
+
+        <!-- Navigation Dots Indicator -->
+        <div class="text-center mt-4">
+          <v-item-group
+            v-model="currentSlide"
+            mandatory
+            class="slide-indicators"
+          >
+            <v-item
+              v-for="n in slides.length"
+              :key="n"
+              :value="n - 1"
+              v-slot="{ isSelected, toggle }"
+            >
+              <v-btn
+                :variant="isSelected ? 'flat' : 'text'"
+                size="small"
+                icon
+                color="primary"
+                @click="toggle"
+                :aria-label="`Go to slide ${n}`"
+              >
+                <v-icon size="12">
+                  {{ isSelected ? 'mdi-circle' : 'mdi-circle-outline' }}
+                </v-icon>
+              </v-btn>
+            </v-item>
+          </v-item-group>
+        </div>
       </v-container>
     </div>
   </ClientOnly>
@@ -146,11 +140,24 @@
 <script setup>
 import { ref, computed } from 'vue'
 
-// Reactive states
+// =============================================
+// REACTIVE STATE
+// =============================================
+
+/** Current slide index for carousel */
 const currentSlide = ref(0)
+
+/** Number of items to display per slide (responsive) */
 const itemsPerSlide = ref(3)
 
-// Innovations data - moved to reactive for better performance
+// =============================================
+// DATA
+// =============================================
+
+/** Default lazy loading placeholder */
+const DEFAULT_PLACEHOLDER = 'data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'400\' height=\'200\' viewBox=\'0 0 400 200\'%3E%3Crect width=\'100%25\' height=\'100%25\' fill=\'%23ddd\'/%3E%3Ctext x=\'50%25\' y=\'50%25\' font-size=\'18\' fill=\'%23999\' text-anchor=\'middle\' dy=\'.3em\'%3ELoading...%3C/text%3E%3C/svg%3E'
+
+/** Innovations data array */
 const innovations = ref([
   {
     title: 'TIM BUSER (TIM BUNTING SERENTAK)',
@@ -184,7 +191,11 @@ const innovations = ref([
   }
 ])
 
-// Computed property to group items into slides
+// =============================================
+// COMPUTED PROPERTIES
+// =============================================
+
+/** Group innovations into slides based on itemsPerSlide */
 const slides = computed(() => {
   const result = []
   for (let i = 0; i < innovations.value.length; i += itemsPerSlide.value) {
@@ -193,13 +204,25 @@ const slides = computed(() => {
   return result
 })
 
-// Error handling for images
+// =============================================
+// EVENT HANDLERS
+// =============================================
+
+/**
+ * Handle image loading error
+ * @param {Event} event - Error event
+ */
 const onImageError = (event) => {
   console.warn('Image failed to load:', event.target.src)
-  // Could set a fallback image here
 }
 
-// Update items per slide based on screen size (responsive)
+// =============================================
+// RESPONSIVE HANDLING
+// =============================================
+
+/**
+ * Update items per slide based on screen size
+ */
 const updateItemsPerSlide = () => {
   if (typeof window !== 'undefined') {
     if (window.innerWidth < 600) {
@@ -212,7 +235,13 @@ const updateItemsPerSlide = () => {
   }
 }
 
-// Watch for window resize
+// =============================================
+// LIFECYCLE HOOKS
+// =============================================
+
+/**
+ * Initialize responsive behavior on mount
+ */
 if (typeof window !== 'undefined') {
   window.addEventListener('resize', updateItemsPerSlide)
   updateItemsPerSlide() // Initial call
@@ -220,11 +249,19 @@ if (typeof window !== 'undefined') {
 </script>
 
 <style scoped>
+/* =============================================
+   MAIN CONTAINER STYLES
+   ============================================= */
+
 .innovations-section {
   background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
   position: relative;
   overflow: hidden;
 }
+
+/* =============================================
+   CARD STYLES
+   ============================================= */
 
 .innovation-card {
   background: rgba(255, 255, 255, 0.95);
@@ -255,6 +292,10 @@ if (typeof window !== 'undefined') {
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
+/* =============================================
+   IMAGE STYLES
+   ============================================= */
+
 .card-image {
   transition: transform 0.3s ease;
 }
@@ -263,6 +304,11 @@ if (typeof window !== 'undefined') {
   transform: scale(1.05);
 }
 
+/* =============================================
+   TEXT UTILITIES
+   ============================================= */
+
+/* Limit text to 2 lines */
 .line-clamp-2 {
   display: -webkit-box;
   -webkit-line-clamp: 2;
@@ -272,6 +318,7 @@ if (typeof window !== 'undefined') {
   line-height: 1.4;
 }
 
+/* Limit text to 3 lines */
 .line-clamp-3 {
   display: -webkit-box;
   -webkit-line-clamp: 3;
@@ -281,13 +328,21 @@ if (typeof window !== 'undefined') {
   line-height: 1.4;
 }
 
+/* =============================================
+   NAVIGATION STYLES
+   ============================================= */
+
 .slide-indicators {
   display: flex;
   gap: 8px;
   align-items: center;
+  justify-content: center;
 }
 
-/* Floating animation for background */
+/* =============================================
+   ANIMATIONS
+   ============================================= */
+
 .innovations-section::before {
   content: '';
   position: absolute;
@@ -321,17 +376,20 @@ if (typeof window !== 'undefined') {
   }
 }
 
-/* Responsive adjustments */
+/* =============================================
+   RESPONSIVE ADJUSTMENTS
+   ============================================= */
+
 @media (max-width: 600px) {
   .innovation-card {
     margin-bottom: 16px;
   }
-  
+
   .innovations-section::before,
   .innovations-section::after {
     display: none;
   }
-  
+
   .slide-indicators {
     gap: 4px;
   }
