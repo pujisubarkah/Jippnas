@@ -2,12 +2,19 @@
   <div>
     <h1 class="text-2xl font-bold mb-6">Buku Inovasi</h1>
     <v-card>
+      <v-card-header>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" @click="openAddModal">
+          Tambah Buku Inovasi
+        </v-btn>
+      </v-card-header>
       <v-card-text>
         <v-data-table
           :headers="headers"
           :items="bukuData"
           :items-per-page="10"
           class="elevation-1"
+          :loading="loading"
         >
           <template v-slot:item.gambar="{ item }">
             <v-img :src="item.gambar" width="100" height="100" contain></v-img>
@@ -16,16 +23,78 @@
             <div>{{ item.sinopsis }}</div>
           </template>
           <template v-slot:item.action="{ item }">
-            <v-btn icon small color="primary" @click="editItem(item)" title="Edit">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon small color="red" @click="deleteItem(item)" title="Trash">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+            <div class="d-flex justify-center align-center">
+              <v-btn icon small color="primary" @click="editItem(item)" title="Edit" class="mr-1">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon small color="red" @click="deleteItem(item)" title="Trash">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <!-- Modal Tambah/Edit Buku Inovasi -->
+    <v-dialog v-model="showModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          {{ isEditing ? 'Edit Buku Inovasi' : 'Tambah Buku Inovasi Baru' }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-form @submit.prevent="saveBuku" class="space-y-4">
+            <v-text-field
+              v-model="form.judul"
+              label="Judul *"
+              required
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan judul buku"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.gambar"
+              label="Gambar"
+              type="url"
+              variant="outlined"
+              placeholder="Masukkan URL gambar"
+            ></v-text-field>
+
+            <v-textarea
+              v-model="form.sinopsis"
+              label="Sinopsis"
+              rows="4"
+              variant="outlined"
+              placeholder="Masukkan sinopsis buku"
+            ></v-textarea>
+
+            <v-text-field
+              v-model="form.file"
+              label="File"
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan nama file"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.uploaded_by"
+              label="Uploaded By"
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan nama uploader"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeModal">Batal</v-btn>
+          <v-btn color="primary" @click="saveBuku">
+            {{ isEditing ? 'Update' : 'Simpan' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -34,114 +103,162 @@ definePageMeta({
   layout: 'sidebar'
 })
 
+import { ref, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
+
+// Reactive data
+const bukuData = ref([])
+const loading = ref(true)
+const error = ref(null)
+const showModal = ref(false)
+const isEditing = ref(false)
+const editingId = ref(null)
+
+// Form data
+const form = ref({
+  judul: '',
+  gambar: '',
+  sinopsis: '',
+  file: '',
+  uploaded_by: ''
+})
+
+// Headers for data table
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
   { title: 'Judul', key: 'judul' },
   { title: 'Gambar', key: 'gambar', width: '120px' },
   { title: 'Sinopsis', key: 'sinopsis' },
   { title: 'File', key: 'file', width: '100px' },
-  { title: 'Uploaded By', key: 'uploadedBy' },
+  { title: 'Uploaded By', key: 'uploaded_by' },
   { title: 'Action', key: 'action', sortable: false, width: '100px' }
 ]
 
-const bukuData = [
-  {
-    no: 1,
-    judul: 'Top KIPP Tahun 2023',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//TusZOGArhtiEvQJc.jpg',
-    sinopsis: 'Buku Top Inovasi Pelayanan Publik Tahun 2023 merupakan dokumentasi dari sepuluh tahun pelaksanaan Kompetisi Inovasi Pelayanan Publik (KIPP) yang diselenggarakan oleh Kementerian PANRB. Kompetisi ini telah menjadi barometer bagi kementerian/lembaga, pemerintah daerah, dan BUMN dalam mendorong lahirnya inovasi pelayanan publik yang berdampak nyata. Sejalan dengan arahan Presiden dan Wakil Presiden Republik Indonesia, inovasi dalam pelayanan publik menjadi wujud konkret dari reformasi birokrasi yang tidak hanya administratif, namun berorientasi pada hasil yang dirasakan langsung oleh masyarakat. Buku ini menyajikan praktik-praktik inovatif dari berbagai instansi pemerintah yang telah melalui proses seleksi ketat dan terbukti memberikan manfaat. Diterbitkan dalam dua bahasa—Indonesia dan Inggris—buku ini diharapkan menjadi sumber pembelajaran dan inspirasi bagi pengambil kebijakan, praktisi pemerintahan, serta masyarakat luas, baik di dalam maupun luar negeri. Terbitnya buku ini menegaskan komitmen kuat untuk terus menumbuhkan budaya inovasi sebagai bagian penting dari transformasi birokrasi yang adaptif, responsif, dan berdampak.',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 2,
-    judul: 'Top KIPP Tahun 2022',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//IIAy8b2xy3H9Y66e.jpg',
-    sinopsis: 'Dalam rangka mendokumentasikan praktik terbaik dari inovasi yang menjadi Finalis Top Inovasi Pelayanan Publik Tahun 2022, disusunlah Buku Inovasi Pelayanan Publik Tahun 2022. Penyusunan ini merupakan bentuk perhatian dan dorongan terhadap upaya penciptaan inovasi pelayanan publik serta komitmen terhadap keberlanjutan dalam memelihara dan mengembangkan inovasi. Keberlanjutan inovasi memiliki peran penting dalam penyebarluasan pengetahuan inovasi sebagai bagian dari percepatan peningkatan kualitas pelayanan publik.',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 3,
-    judul: 'Top Kelompok Khusus 2020',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//cpM3X4KJpidpbgNg.jpg',
-    sinopsis: 'Buku ini berisi informasi mengenai inovasi pelayanan publik yang ditetapkan menjadi 15 Finalis Kelompok Khusus Kompetisi Inovasi Pelayanan Publik yang Berkelanjutan Tahun 2020, termasuk di dalamnya inovasi yang ditetapkan menjadi 5 Pemenang Outstanding Achievement of Public Service Innovation (OAPSI) 2020 yang ditandai dengan warna dan logo khusus 5 Pemenang OAPSI 2020',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 4,
-    judul: 'Top 99 Tahun 2020',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//sBh2Bp6ABSVd3NdS.jpg',
-    sinopsis: 'Penyelenggaraan Kompetisi Inovasi Pelayanan Publik (KIPP) oleh Kementerian Pendayagunaan Aparatur Negara dan Reformasi Birokrasi dilakukan sejak Tahun 2014. Penyelenggaraan kompetisi ini dilaksanakan setia  tahun dan tahun 2020 ini merupakan yang ke-7 kalinya. Kegiatan tahunan yang dilaksanakan secara konsisten dan berkelanjutan membuktikan bahwa inovasi pelayanan publik merupakan ukuran sekaligus hasil dari upaya percepatan peningkatan kualitas pelayanan publik.',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 5,
-    judul: 'Top 99 Tahun 2019',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku/31/v8FMEz88ZMgXJorD.jpg',
-    sinopsis: 'Kami mengharapkan buku ini menjadi inspirasi bagi seluruh penyelenggara pelayanan publik agar inovasi yang telah ada dapat direplikasi dan dimodifikasi. Selain itu, juga mendorong semangat kompetisi yang positif antarpenyelenggara layanan untuk berlomba-lomba dalam peningkatan kualitas pelayanan publik',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 6,
-    judul: 'Top 99 Tahun 2018',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//oGZzerBXGiv52BsO.jpg',
-    sinopsis: 'Penetapan Top 99 Inovasi Pelayanan Publik Tahun 2018 selain sebagai bentuk penghargaan kepada inovator, juga sebagai best practices bagi penyelenggara yang lain agar komitmen untuk meningkatkan kualitas pelayanan publik dapat terus menular secara masiv. Hal ini demi mencapai tujuan program One Agency One Innovation yang diharapkan dapat menimbulkan dampak luas bagi percepatan reformasi birokrasi',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 7,
-    judul: 'Top 99 Tahun 2017',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//wWo1DAtIVKoAwKKv.jpg',
-    sinopsis: 'Penerbitan buku ini merupakan bagian dari perjalanan yang cukup panjang dalam ajang Kompetisi Inovasi Pelayanan Publik Tahun 2017. Mereka yang terpilih menjadi Top 99 Inovasi Pelayanan Publik merupakan inovasi yang terpilih dari 3.054 yang mendaftar secara online dalam registrasi Sistem Informasi Inovasi Pelayanan Publik (Sinovik) yang diproses melalui seleksi administrasi, evaluasi proposal Tim Evaluasi dan reviu dari Tim Panel Independen.',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 8,
-    judul: 'Top 99 Tahun 2016',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//c78ubLGthfWE19xA.jpg',
-    sinopsis: 'Kompetisi ini mengacu pada Peraturan Menteri PANRB Nomor 30 Tahun 2014 tentang Pedoman Inovasi Pelayanan Publik dan Peraturan Menteri PANRB Nomor 15 Tahun 2015 tentang Kompetisi Inovasi Pelayanan Publik Tahun 2016 di lingkungan Kementerian, Lembaga, Pemerintah Provinsi, Pemerintah Kabupaten, Pemerintah Kota, dan BUMN. Tahun 2016 merupakan tahun pertama bagi kepesertaan dari BUMN',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 9,
-    judul: 'Top 99 KIPP Tahun 2015',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//4afqypAMSKpQGvpi.jpg',
-    sinopsis: 'Buku ini berisi 99 inovasi pelayanan publik 2015 terbaik yang dilaksanakan oleh Kementerian/Lembaga, Pemerintah Provinsi, Pemerintah Kabupaten, dan Pemerintah Kota Tahun 2015. Inovasi pelayanan publik mengacu pada Peraturan Menteri PANRB Nomor 30 Tahun 2014 tentang Pedoman Inovasi Pelayanan Publik dan Surat Edaran Menteri PANRB Nomor 09 Tahun 2014 tentang Kompetisi Inovasi Pelayanan Publik Tahun 2015 di lingkungan Kementerian/Lembaga dan Pemerintah Daerah.',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
-  },
-  {
-    no: 10,
-    judul: 'Top 99 KIPP Tahun 2014',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/buku//Y6QLfj6XWpcTYKwZ.jpg',
-    sinopsis: 'Buku ini tidak sekedar menyampaikan succes story inovasi Kementerian/Lembaga dan Pemerintah Daerah, namun lebih dari itu untuk menggugah setiap aparatur pemerintah berlomba-lomba melakukan inovasi untuk kemajuan pelayanan publik di lingkungannya masing-masing. Hal ini juga sesuai dengan tujuan kompetisi inovasi pelayanan publik, yaitu menjadikan inovasi sebagai sarana pembelajaran dan mendorong tumbuhnya modifikasi atau inovasi baru pelayanan publik',
-    file: 'File Tersedia',
-    uploadedBy: 'Super Admin',
-    action: ''
+// Fetch data from API
+const fetchBukuData = async () => {
+  try {
+    loading.value = true
+    const response = await $fetch('/api/buku-inovasi')
+    if (response.success) {
+      // Add 'no' field for numbering
+      bukuData.value = response.data.map((item, index) => ({
+        ...item,
+        no: index + 1
+      }))
+    } else {
+      throw new Error('Failed to fetch data')
+    }
+  } catch (err) {
+    console.error('Error fetching buku data:', err)
+    error.value = 'Failed to load data'
+    toast.error('Gagal memuat data buku inovasi')
+  } finally {
+    loading.value = false
   }
-]
+}
+
+// Modal functions
+const openAddModal = () => {
+  isEditing.value = false
+  editingId.value = null
+  form.value = {
+    judul: '',
+    gambar: '',
+    sinopsis: '',
+    file: '',
+    uploaded_by: ''
+  }
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  form.value = {
+    judul: '',
+    gambar: '',
+    sinopsis: '',
+    file: '',
+    uploaded_by: ''
+  }
+}
 
 const editItem = (item) => {
-  console.log('Edit item', item.judul)
+  isEditing.value = true
+  editingId.value = item.id
+  form.value = {
+    judul: item.judul,
+    gambar: item.gambar,
+    sinopsis: item.sinopsis,
+    file: item.file,
+    uploaded_by: item.uploaded_by
+  }
+  showModal.value = true
 }
 
-const deleteItem = (item) => {
-  console.log('Delete item', item.judul)
+const deleteItem = async (item) => {
+  if (confirm(`Apakah Anda yakin ingin menghapus "${item.judul}"?`)) {
+    try {
+      const response = await $fetch(`/api/buku-inovasi/${item.id}`, {
+        method: 'DELETE'
+      })
+      if (response.success) {
+        await fetchBukuData() // Refresh data
+        toast.success('Buku inovasi berhasil dihapus')
+      }
+    } catch (err) {
+      console.error('Error deleting item:', err)
+      toast.error('Gagal menghapus buku inovasi')
+    }
+  }
 }
+
+const saveBuku = async () => {
+  try {
+    if (!form.value.judul.trim()) {
+      toast.warning('Judul buku harus diisi')
+      return
+    }
+
+    let response
+    if (isEditing.value) {
+      // Update existing buku
+      response = await $fetch(`/api/buku-inovasi/${editingId.value}`, {
+        method: 'PUT',
+        body: {
+          judul: form.value.judul.trim(),
+          gambar: form.value.gambar.trim(),
+          sinopsis: form.value.sinopsis.trim(),
+          file: form.value.file.trim(),
+          uploaded_by: form.value.uploaded_by.trim()
+        }
+      })
+    } else {
+      // Create new buku
+      response = await $fetch('/api/buku-inovasi', {
+        method: 'POST',
+        body: {
+          judul: form.value.judul.trim(),
+          gambar: form.value.gambar.trim(),
+          sinopsis: form.value.sinopsis.trim(),
+          file: form.value.file.trim(),
+          uploaded_by: form.value.uploaded_by.trim()
+        }
+      })
+    }
+
+    if (response.success) {
+      await fetchBukuData() // Refresh data
+      closeModal()
+      toast.success(`Buku inovasi berhasil ${isEditing.value ? 'diupdate' : 'ditambahkan'}`)
+    }
+  } catch (err) {
+    console.error('Error saving buku:', err)
+    toast.error(`Gagal ${isEditing.value ? 'mengupdate' : 'menyimpan'} buku inovasi`)
+  }
+}
+
+// Initialize
+onMounted(() => {
+  fetchBukuData()
+})
 </script>

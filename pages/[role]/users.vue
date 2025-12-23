@@ -1,6 +1,6 @@
 <template>
   <div>
-    <h2 class="text-2xl font-bold mb-4 text-blue-700">Management User</h2>
+    <h2 class="text-2xl font-bold mb-4 text-blue-700">Manajemen Pengguna</h2>
     <div class="bg-white rounded-lg shadow p-6">
       <div class="flex justify-between items-center mb-4">
         <h3 class="text-lg font-semibold">Daftar Pengguna</h3>

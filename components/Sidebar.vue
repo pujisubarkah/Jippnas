@@ -160,21 +160,9 @@ const menuConfig = [
     roles: ['admin']
   },
   {
-    label: 'Management User',
+    label: 'Manajemen Pengguna',
     slug: 'users',
     icon: 'Users',
-    roles: ['admin']
-  },
-  {
-    label: 'Webinar',
-    slug: 'webinar',
-    icon: 'Video',
-    roles: ['admin']
-  },
-  {
-    label: 'Berita',
-    slug: 'berita',
-    icon: 'Newspaper',
     roles: ['admin']
   },
   {
