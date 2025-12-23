@@ -35,12 +35,14 @@
             <v-chip :color="item.status === 'Aktif' ? 'green' : 'red'" dark>{{ item.status }}</v-chip>
           </template>
           <template v-slot:item.action="{ item }">
-            <v-btn icon small color="primary" @click="editOecd(item)" title="Edit">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon small color="red" @click="deleteOecd(item)" title="Delete">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+            <div class="d-flex align-center" style="gap:8px;">
+              <v-btn icon small color="primary" @click="editOecd(item)" title="Edit">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon small color="red" @click="deleteOecd(item)" title="Delete">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
