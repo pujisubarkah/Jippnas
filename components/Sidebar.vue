@@ -160,36 +160,6 @@ const menuConfig = [
     roles: ['admin']
   },
   {
-    label: 'Manajemen Pengguna',
-    slug: 'users',
-    icon: 'Users',
-    roles: ['admin']
-  },
-  {
-    label: 'Manajemen Berita',
-    slug: 'manajemen-berita',
-    icon: 'Newspaper',
-    roles: ['admin'],
-    children: [
-      {
-        label: 'List Berita',
-        slug: 'list-berita',
-        roles: ['admin']
-      },
-      {
-        label: 'Pengaturan Top Berita',
-        slug: 'pengaturan-top-berita',
-        roles: ['admin']
-      }
-    ]
-  },
-  {
-    label: 'Inovasi',
-    slug: 'inovasi',
-    icon: 'Lightbulb',
-    roles: ['admin']
-  },
-  {
     label: 'Manajemen Konten Inovasi',
     slug: 'konten-inovasi',
     icon: 'FileText',
@@ -249,6 +219,42 @@ const menuConfig = [
       {
         label: 'Daftar Bacaan',
         slug: 'daftar-bacaan',
+        roles: ['admin']
+      }
+    ]
+  },
+  {
+    label: 'Manajemen Pengguna',
+    slug: 'manajemen-pengguna',
+    icon: 'Users',
+    roles: ['admin'],
+    children: [
+      {
+        label: 'Daftar Pengguna',
+        slug: 'daftar-pengguna',
+        roles: ['admin']
+      },
+      {
+        label: 'Role Pengguna',
+        slug: 'role-pengguna',
+        roles: ['admin']
+      }
+    ]
+  },
+  {
+    label: 'Manajemen Berita',
+    slug: 'manajemen-berita',
+    icon: 'Newspaper',
+    roles: ['admin'],
+    children: [
+      {
+        label: 'List Berita',
+        slug: 'list-berita',
+        roles: ['admin']
+      },
+      {
+        label: 'Pengaturan Top Berita',
+        slug: 'pengaturan-top-berita',
         roles: ['admin']
       }
     ]
