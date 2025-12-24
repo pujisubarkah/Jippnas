@@ -1,285 +1,138 @@
 <template>
-  <div class="daftar-bacaan-page">
-    <v-card class="pa-6">
-      <v-card-title class="text-h4 mb-4">
-        <v-icon start>mdi-book-open-page-variant</v-icon>
-        Daftar Bacaan
-      </v-card-title>
+  <div>
+    <h1 class="text-2xl font-bold mb-6">Daftar Bacaan</h1>
 
+    <v-card>
       <v-card-text>
-        <v-alert type="info" class="mb-4">
-          Halaman untuk mengelola daftar bacaan pembaca sistem inovasi.
-        </v-alert>
-
-        <!-- Search and Filter -->
-        <v-row class="mb-4">
-          <v-col cols="12" md="6">
-            <v-text-field
-              v-model="search"
-              label="Cari bacaan..."
-              prepend-icon="mdi-magnify"
-              clearable
-              @input="filterBacaan"
-            />
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-select
-              v-model="filterStatus"
-              :items="statusOptions"
-              label="Status"
-              @update:modelValue="filterBacaan"
-            />
-          </v-col>
-          <v-col cols="12" md="3">
-            <v-btn
-              color="primary"
-              prepend-icon="mdi-plus"
-              block
-              @click="showAddDialog = true"
-            >
-              Tambah Bacaan
-            </v-btn>
-          </v-col>
-        </v-row>
-
-        <!-- Data Table -->
         <v-data-table
           :headers="headers"
-          :items="filteredBacaan"
-          :loading="loading"
+          :items="items"
+          :search="search"
+          :items-per-page="10"
           class="elevation-1"
         >
-          <template v-slot:item.status="{ item }">
-            <v-chip
-              :color="getStatusColor(item.status)"
-              size="small"
-            >
-              {{ item.status }}
-            </v-chip>
+          <template v-slot:top>
+            <v-text-field
+              v-model="search"
+              label="Cari Judul"
+              class="mx-4"
+            ></v-text-field>
           </template>
 
-          <template v-slot:item.actions="{ item }">
-            <v-btn
-              icon="mdi-eye"
-              size="small"
-              variant="text"
-              @click="viewBacaan(item)"
-            />
-            <v-btn
-              icon="mdi-pencil"
-              size="small"
-              variant="text"
-              color="primary"
-              @click="editBacaan(item)"
-            />
-            <v-btn
-              icon="mdi-delete"
-              size="small"
-              variant="text"
-              color="error"
-              @click="deleteBacaan(item)"
-            />
+          <template v-slot:item.action="{ item }">
+            <div class="d-flex gap-2">
+              <v-btn
+                icon
+                color="primary"
+                @click="viewInnovation(item)"
+              >
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+              <v-btn
+                icon
+                color="error"
+                @click="deleteBookmark(item)"
+              >
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
     </v-card>
-
-    <!-- Add/Edit Dialog -->
-    <v-dialog v-model="showAddDialog" max-width="600">
-      <v-card>
-        <v-card-title>
-          {{ isEditing ? 'Edit Bacaan' : 'Tambah Bacaan Baru' }}
-        </v-card-title>
-        <v-card-text>
-          <v-form @submit.prevent="saveBacaan">
-            <v-text-field
-              v-model="bacaanForm.judul"
-              label="Judul Bacaan"
-              required
-            />
-            <v-textarea
-              v-model="bacaanForm.deskripsi"
-              label="Deskripsi"
-              rows="3"
-            />
-            <v-select
-              v-model="bacaanForm.kategori"
-              :items="kategoriOptions"
-              label="Kategori"
-            />
-            <v-select
-              v-model="bacaanForm.status"
-              :items="statusOptions"
-              label="Status"
-            />
-            <v-text-field
-              v-model="bacaanForm.penulis"
-              label="Penulis"
-            />
-            <v-btn type="submit" color="primary" :loading="saving">
-              {{ isEditing ? 'Update' : 'Simpan' }}
-            </v-btn>
-          </v-form>
-        </v-card-text>
-      </v-card>
-    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+definePageMeta({ layout: 'sidebar' })
+import { ref } from 'vue'
 
-// Reactive data
 const search = ref('')
-const filterStatus = ref('')
-const loading = ref(false)
-const saving = ref(false)
-const showAddDialog = ref(false)
-const isEditing = ref(false)
 
-// Form data
-const bacaanForm = ref({
-  id: null,
-  judul: '',
-  deskripsi: '',
-  kategori: '',
-  status: 'Aktif',
-  penulis: ''
-})
+const headers = [
+  { title: 'No', key: 'no', width: '40px' },
+  { title: 'Judul Inovasi', key: 'judul', width: '848px' },
+  { title: 'Ditandai Oleh', key: 'ditandai_oleh', width: '130px' },
+  { title: 'Action', key: 'action', width: '71px' }
+]
 
-// Mock data - replace with API calls
-const bacaanList = ref([
+const items = ref([
   {
-    id: 1,
-    judul: 'Panduan Inovasi Teknologi',
-    deskripsi: 'Panduan lengkap tentang inovasi teknologi di Indonesia',
-    kategori: 'Teknologi',
-    status: 'Aktif',
-    penulis: 'Admin JIPPNAS',
-    dibaca: 150,
-    created_at: '2024-01-15'
+    no: 1,
+    judul: 'Sistem Informasi Jabatan Provinsi Riau (SI-JABPRI)',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/19',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/19'
   },
   {
-    id: 2,
-    judul: 'Strategi Pengembangan Inovasi',
-    deskripsi: 'Strategi efektif untuk mengembangkan inovasi di organisasi',
-    kategori: 'Strategi',
-    status: 'Aktif',
-    penulis: 'Tim Inovasi',
-    dibaca: 89,
-    created_at: '2024-01-10'
+    no: 2,
+    judul: 'SIPEKAT: Sistem Pengelolaan Kenaikan Pangkat',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/18',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/18'
+  },
+  {
+    no: 3,
+    judul: 'PUTIKSARI (KAMPUNG TEMATIK WONOSARI BERSERI)',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/17',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/17'
+  },
+  {
+    no: 4,
+    judul: 'Misteri Calon Pengantin Paseso Merapi (Pengurangan Resiko Bencana Berbasis Masyarakat)',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/14',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/14'
+  },
+  {
+    no: 5,
+    judul: 'Meningkatkan Pelaksanaan Lelang yang Efisien, Kompetitif dan Adil Melalui Pelaksanaan e-Auction',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/11',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/11'
+  },
+  {
+    no: 6,
+    judul: 'Lapo BRA (Layanan Pojok Braille)',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/12',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/12'
+  },
+  {
+    no: 7,
+    judul: 'KOPI PAHIT (Kompilasi Inovasi Porong Cegah dan Atasi Stunting)',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/15',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/15'
+  },
+  {
+    no: 8,
+    judul: 'Informasi Zona Potensi Penangkapan Ikan (ZPPI) untuk Peningkatan Perekonomian Nelayan Indonesia',
+    ditandai_oleh: 'Super Admin',
+    inovasi_url: 'https://jippnas.menpan.go.id/inovasi/13',
+    delete_url: 'https://jippnas.menpan.go.id/dashboard/mark/delete/13'
   }
 ])
 
-// Options
-const statusOptions = ['Aktif', 'Tidak Aktif', 'Draft']
-const kategoriOptions = ['Teknologi', 'Strategi', 'Bisnis', 'Sosial', 'Lingkungan']
-
-// Table headers
-const headers = [
-  { title: 'Judul', key: 'judul' },
-  { title: 'Kategori', key: 'kategori' },
-  { title: 'Status', key: 'status' },
-  { title: 'Penulis', key: 'penulis' },
-  { title: 'Dibaca', key: 'dibaca' },
-  { title: 'Aksi', key: 'actions', sortable: false }
-]
-
-// Computed
-const filteredBacaan = computed(() => {
-  let filtered = bacaanList.value
-
-  if (search.value) {
-    filtered = filtered.filter(item =>
-      item.judul.toLowerCase().includes(search.value.toLowerCase()) ||
-      item.deskripsi.toLowerCase().includes(search.value.toLowerCase())
-    )
-  }
-
-  if (filterStatus.value) {
-    filtered = filtered.filter(item => item.status === filterStatus.value)
-  }
-
-  return filtered
-})
-
-// Methods
-const filterBacaan = () => {
-  // Filtering is handled by computed property
+const viewInnovation = (item) => {
+  window.open(item.inovasi_url, '_blank')
 }
 
-const viewBacaan = (item) => {
-  console.log('View bacaan:', item)
-  // Implement view functionality
-}
-
-const editBacaan = (item) => {
-  isEditing.value = true
-  bacaanForm.value = { ...item }
-  showAddDialog.value = true
-}
-
-const deleteBacaan = (item) => {
-  if (confirm(`Hapus bacaan "${item.judul}"?`)) {
-    bacaanList.value = bacaanList.value.filter(b => b.id !== item.id)
+const deleteBookmark = (item) => {
+  if (confirm('Apakah Anda yakin ingin menghapus bookmark ini?')) {
+    // Handle delete logic here
+    console.log('Deleting bookmark:', item)
   }
 }
-
-const saveBacaan = async () => {
-  saving.value = true
-  try {
-    if (isEditing.value) {
-      // Update existing
-      const index = bacaanList.value.findIndex(b => b.id === bacaanForm.value.id)
-      if (index !== -1) {
-        bacaanList.value[index] = { ...bacaanForm.value }
-      }
-    } else {
-      // Add new
-      const newBacaan = {
-        ...bacaanForm.value,
-        id: Date.now(),
-        dibaca: 0,
-        created_at: new Date().toISOString().split('T')[0]
-      }
-      bacaanList.value.push(newBacaan)
-    }
-
-    // Reset form
-    bacaanForm.value = {
-      id: null,
-      judul: '',
-      deskripsi: '',
-      kategori: '',
-      status: 'Aktif',
-      penulis: ''
-    }
-    showAddDialog.value = false
-    isEditing.value = false
-  } catch (error) {
-    console.error('Error saving bacaan:', error)
-  } finally {
-    saving.value = false
-  }
-}
-
-const getStatusColor = (status) => {
-  switch (status) {
-    case 'Aktif': return 'success'
-    case 'Tidak Aktif': return 'error'
-    case 'Draft': return 'warning'
-    default: return 'grey'
-  }
-}
-
-// Lifecycle
-onMounted(() => {
-  // Load data from API if needed
-})
 </script>
 
 <style scoped>
-.daftar-bacaan-page {
-  min-height: 100vh;
+.gap-2 > * + * {
+  margin-left: 0.5rem;
+}
+
+.d-flex {
+  display: flex;
 }
 </style>

@@ -1,7 +1,7 @@
 <template>
   <div class="stats-section">
     <v-container fluid class="pa-0">
-      <v-row justify="center" class="py-12">
+      <v-row justify="center" class="py-16">
         <v-col cols="12" class="text-center">
           <v-fade-transition appear>
             <h1 class="text-h3 text-md-h2 font-weight-black mb-2 bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-500">
@@ -14,82 +14,40 @@
             </p>
           </v-slide-y-transition>
 
-          <v-row justify="center" class="mb-8">
+          <v-row justify="center" class="mb-12">
             <v-col cols="12" md="10" lg="8">
-              <v-row>
-                <!-- Instansi Card -->
-                <v-col cols="12" sm="6" lg="4" class="pa-2">
-                  <v-card
-                    class="stat-card elevation-8"
-                    rounded="xl"
-                    hover
-                    :ripple="false"
-                  >
-                    <v-card-text class="text-center pa-6">
-                      <v-avatar
-                        size="80"
-                        class="mb-4 gradient-blue"
-                      >
-                        <v-icon size="40" color="white">mdi-office-building</v-icon>
-                      </v-avatar>
-                      <div class="counter-wrapper mb-2">
-                        <span class="counter-number">{{ formatNumber(animatedNumbers.instansi) }}</span>
-                      </div>
-                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
-                        Instansi
-                      </p>
-                    </v-card-text>
-                  </v-card>
+              <v-row class="justify-center" dense>
+                <!-- Instansi -->
+                <v-col cols="12" sm="4" class="d-flex justify-center">
+                  <div class="stat-circle elevation-4 gradient-blue">
+                    <div class="stat-content">
+                      <v-icon size="36" color="white" class="mb-3">mdi-office-building</v-icon>
+                      <div class="counter-number">{{ formatNumber(animatedNumbers.instansi) }}</div>
+                      <div class="stat-label">Instansi</div>
+                    </div>
+                  </div>
                 </v-col>
 
-                <!-- Inovasi Card -->
-                <v-col cols="12" sm="6" lg="4" class="pa-2">
-                  <v-card
-                    class="stat-card elevation-8"
-                    rounded="xl"
-                    hover
-                    :ripple="false"
-                  >
-                    <v-card-text class="text-center pa-6">
-                      <v-avatar
-                        size="80"
-                        class="mb-4 gradient-sky"
-                      >
-                        <v-icon size="40" color="white">mdi-lightbulb</v-icon>
-                      </v-avatar>
-                      <div class="counter-wrapper mb-2">
-                        <span class="counter-number">{{ formatNumber(animatedNumbers.inovasi) }}</span>
-                      </div>
-                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
-                        Inovasi
-                      </p>
-                    </v-card-text>
-                  </v-card>
+                <!-- Inovasi -->
+                <v-col cols="12" sm="4" class="d-flex justify-center">
+                  <div class="stat-circle elevation-4 gradient-sky">
+                    <div class="stat-content">
+                      <v-icon size="36" color="white" class="mb-3">mdi-lightbulb</v-icon>
+                      <div class="counter-number">{{ formatNumber(animatedNumbers.inovasi) }}</div>
+                      <div class="stat-label">Inovasi</div>
+                    </div>
+                  </div>
                 </v-col>
 
-                <!-- Replikasi Card -->
-                <v-col cols="12" lg="4" class="pa-2">
-                  <v-card
-                    class="stat-card elevation-8"
-                    rounded="xl"
-                    hover
-                    :ripple="false"
-                  >
-                    <v-card-text class="text-center pa-6">
-                      <v-avatar
-                        size="80"
-                        class="mb-4 gradient-indigo"
-                      >
-                        <v-icon size="40" color="white">mdi-content-copy</v-icon>
-                      </v-avatar>
-                      <div class="counter-wrapper mb-2">
-                        <span class="counter-number">{{ formatNumber(animatedNumbers.replikasi) }}</span>
-                      </div>
-                      <p class="text-h6 font-weight-medium text-blue-700 mb-0">
-                        Replikasi Inovasi
-                      </p>
-                    </v-card-text>
-                  </v-card>
+                <!-- Replikasi -->
+                <v-col cols="12" sm="4" class="d-flex justify-center">
+                  <div class="stat-circle elevation-4 gradient-indigo">
+                    <div class="stat-content">
+                      <v-icon size="36" color="white" class="mb-3">mdi-content-copy</v-icon>
+                      <div class="counter-number">{{ formatNumber(animatedNumbers.replikasi) }}</div>
+                      <div class="stat-label">Replikasi</div>
+                    </div>
+                  </div>
                 </v-col>
               </v-row>
             </v-col>
@@ -100,7 +58,7 @@
               <v-divider class="my-6 border-amber-300"></v-divider>
               <v-btn
                 to="/etalase"
-                size="large"
+                size="x-large"
                 rounded="pill"
                 color="primary"
                 variant="flat"
@@ -128,44 +86,34 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 
-// Statistics data
-const stats = ref([
-  { id: 'instansi', icon: 'mdi-office-building', number: 320, label: 'Instansi', gradient: 'gradient-blue' },
-  { id: 'inovasi', icon: 'mdi-lightbulb', number: 2928, label: 'Inovasi', gradient: 'gradient-sky' },
-  { id: 'replikasi', icon: 'mdi-content-copy', number: 20940, label: 'Replikasi Inovasi', gradient: 'gradient-indigo' }
-])
-
-// Animated counters
 const animatedNumbers = ref({
   instansi: 0,
   inovasi: 0,
   replikasi: 0
 })
 
-// Animate counters on mount
+const stats = [
+  { id: 'instansi', target: 320 },
+  { id: 'inovasi', target: 2928 },
+  { id: 'replikasi', target: 20940 }
+]
+
 onMounted(() => {
-  stats.value.forEach(stat => {
-    animateCounter(stat.id, stat.number)
-  })
+  stats.forEach(stat => animateCounter(stat.id, stat.target))
 })
 
 const animateCounter = (id, target) => {
-  const duration = 2000 // 2 seconds
+  const duration = 2000
   const steps = 60
   const increment = target / steps
   let current = 0
   const timer = setInterval(() => {
     current += increment
-    if (current >= target) {
-      animatedNumbers.value[id] = target
-      clearInterval(timer)
-    } else {
-      animatedNumbers.value[id] = Math.floor(current)
-    }
+    animatedNumbers.value[id] = current >= target ? target : Math.floor(current)
+    if (current >= target) clearInterval(timer)
   }, duration / steps)
 }
 
-// Format number with commas
 const formatNumber = (num) => {
   return num.toLocaleString('id-ID')
 }
@@ -178,80 +126,77 @@ const formatNumber = (num) => {
   background-image: url('/vektor2.jpg');
   background-size: cover;
   background-position: center;
-  min-height: 70vh;
+  min-height: 80vh;
   display: flex;
   align-items: center;
 }
 
-.stat-card {
-  background: rgba(255, 255, 255, 0.85);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(59, 130, 246, 0.1);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+/* Circular stat cards */
+.stat-circle {
+  width: 240px;
+  height: 240px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
+  transition: transform 0.4s ease, box-shadow 0.4s ease;
+  margin: 1.5rem auto;
+  cursor: default;
   overflow: hidden;
 }
 
-.stat-card::before {
+.stat-circle::before {
   content: '';
   position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-  transition: left 0.5s;
+  inset: 0;
+  border-radius: 50%;
+  background: inherit;
+  z-index: -1;
 }
 
-.stat-card:hover::before {
-  left: 100%;
+.stat-circle:hover {
+  transform: scale(1.05) translateY(-8px);
+  box-shadow:
+    0 12px 30px rgba(0, 0, 0, 0.12),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.2);
 }
 
-.stat-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+.stat-content {
+  text-align: center;
+  z-index: 2;
+  color: white;
+  padding: 0 16px;
 }
 
+.counter-number {
+  font-size: 2.5rem;
+  font-weight: 900;
+  line-height: 1.1;
+  margin: 0.5rem 0;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.stat-label {
+  font-size: 1.125rem;
+  font-weight: 600;
+  opacity: 0.95;
+}
+
+/* Gradients */
 .gradient-blue {
-  background: linear-gradient(135deg, #2563eb, #3b82f6);
+  background: linear-gradient(135deg, #1d4ed8, #3b82f6);
 }
 
 .gradient-sky {
-  background: linear-gradient(135deg, #0ea5e9, #38bdf8);
+  background: linear-gradient(135deg, #0284c7, #0ea5e9);
 }
 
 .gradient-indigo {
   background: linear-gradient(135deg, #6366f1, #8b5cf6);
 }
 
-.counter-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-.counter-number {
-  font-size: 3.5rem;
-  font-weight: 900;
-  background: linear-gradient(135deg, #1e40af, #3b82f6);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-  line-height: 1;
-  display: block;
-  animation: countUp 2s ease-out;
-}
-
-@keyframes countUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
-
+/* Background ornaments (same animation, but adjusted size/position) */
 .ornaments {
   position: absolute;
   inset: 0;
@@ -260,55 +205,62 @@ const formatNumber = (num) => {
 
 .ornament-1 {
   position: absolute;
-  top: -40px;
-  left: -40px;
-  width: 224px;
-  height: 224px;
+  top: -60px;
+  left: -60px;
+  width: 320px;
+  height: 320px;
   border-radius: 50%;
   background: radial-gradient(circle at center, rgba(59, 130, 246, 0.15), transparent 70%);
-  filter: blur(32px);
-  animation: float 6s ease-in-out infinite;
+  filter: blur(40px);
+  animation: float 8s ease-in-out infinite;
 }
 
 .ornament-2 {
   position: absolute;
-  bottom: 0;
-  right: 0;
-  width: 288px;
-  height: 288px;
+  bottom: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.15), transparent 70%);
-  filter: blur(40px);
-  animation: float 8s ease-in-out infinite reverse;
+  background: radial-gradient(circle at center, rgba(245, 158, 11, 0.1), transparent 70%);
+  filter: blur(50px);
+  animation: float 10s ease-in-out infinite reverse;
 }
 
 .ornament-3 {
   position: absolute;
-  top: 50%;
-  left: 10%;
-  width: 160px;
-  height: 160px;
+  top: 55%;
+  left: 5%;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
-  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.1), transparent 70%);
-  filter: blur(24px);
-  animation: float 7s ease-in-out infinite;
+  background: radial-gradient(circle at center, rgba(99, 102, 241, 0.08), transparent 70%);
+  filter: blur(28px);
+  animation: float 9s ease-in-out infinite;
 }
 
 @keyframes float {
   0%, 100% {
-    transform: translateY(0px) rotate(0deg);
+    transform: translateY(0) rotate(0deg);
   }
   50% {
-    transform: translateY(-20px) rotate(180deg);
+    transform: translateY(-25px) rotate(180deg);
   }
 }
 
-/* Responsive adjustments */
+/* Mobile adjustments */
 @media (max-width: 600px) {
-  .counter-number {
-    font-size: 2.5rem;
+  .stat-circle {
+    width: 200px;
+    height: 200px;
   }
-  
+  .counter-number {
+    font-size: 2rem;
+  }
+  .stat-label {
+    font-size: 1rem;
+  }
+
   .ornament-1,
   .ornament-2,
   .ornament-3 {
