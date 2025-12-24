@@ -9,7 +9,7 @@
           </template>
         </v-breadcrumbs>
         <v-spacer></v-spacer>
-        <v-btn color="primary" href="https://jippnas.menpan.go.id/dashboard/upp/form">
+        <v-btn color="primary" @click="openAddModal">
           Tambah UPP
         </v-btn>
       </v-card-header>
@@ -36,22 +36,72 @@
               <v-btn icon small color="primary" @click="editUpp(item)" title="Edit">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
+              <v-btn icon small color="red" @click="deleteUpp(item)" title="Delete">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
             </div>
           </template>
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <!-- Modal Tambah/Edit UPP -->
+    <v-dialog v-model="showModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          {{ isEditing ? 'Edit UPP' : 'Tambah UPP Baru' }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-form @submit.prevent="saveUpp" class="space-y-4">
+            <v-text-field
+              v-model="form.nama"
+              label="Nama UPP *"
+              required
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan nama UPP"
+            ></v-text-field>
+
+            <v-textarea
+              v-model="form.keterangan"
+              label="Keterangan"
+              rows="4"
+              variant="outlined"
+              placeholder="Masukkan keterangan UPP"
+            ></v-textarea>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeModal">Batal</v-btn>
+          <v-btn color="primary" @click="saveUpp">
+            {{ isEditing ? 'Update' : 'Simpan' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'sidebar'
 })
 
 const search = ref('')
+const rawUppData = ref([])
+const showModal = ref(false)
+const isEditing = ref(false)
+const editingId = ref(null)
+
+// Form data
+const form = ref({
+  nama: '',
+  keterangan: ''
+})
 
 const breadcrumbItems = [
   {
@@ -67,77 +117,120 @@ const headers = [
   { title: 'Action', key: 'action', sortable: false, width: '100px' }
 ]
 
-const uppData = ref([
-  {
-    no: 1,
-    nama: 'UPTD TPA Sampah Manggar Dinas Kebersihan Pertamanan dan Pemakaman',
-    keterangan: 'Pemerintah Kota balikpapan - UPTD TPA Sampah Manggar Dinas Kebersihan Pertamanan dan Pemakaman',
-    action: ''
-  },
-  {
-    no: 2,
-    nama: 'UPTD SPF SDN Pancuran 1',
-    keterangan: 'Pemerintah Kabupaten bondowoso - UPTD SPF SDN Pancuran 1',
-    action: ''
-  },
-  {
-    no: 3,
-    nama: 'UPTD SMP Negeri 4 Bumijawa',
-    keterangan: 'Pemerintah Kabupaten tegal - UPTD SMP Negeri 4 Bumijawa',
-    action: ''
-  },
-  {
-    no: 4,
-    nama: 'UPTD SMP Negeri 3',
-    keterangan: 'Pemerintah Kabupaten tuban - UPTD SMP Negeri 3',
-    action: ''
-  },
-  {
-    no: 5,
-    nama: 'UPTD SMK Negeri 3 Wonosari',
-    keterangan: 'Pemerintah Kabupaten Purbalingga - UPTD SMK Negeri 3 Wonosari',
-    action: ''
-  },
-  {
-    no: 6,
-    nama: 'UPTD SMK Negeri 3 Wonosari',
-    keterangan: 'Pemerintah Kabupaten gunungkidul - UPTD SMK Negeri 3 Wonosari',
-    action: ''
-  },
-  {
-    no: 7,
-    nama: 'UPTD Sistem Penanggulangan Gawat Darurat Terpadu Dinas Kesehatan',
-    keterangan: 'Pemerintah Kabupaten Bangka - UPTD Sistem Penanggulangan Gawat Darurat Terpadu Dinas Kesehatan',
-    action: ''
-  },
-  {
-    no: 8,
-    nama: 'UPTD Rumah Susun Sederhana Sewa',
-    keterangan: 'Pemerintah Kota Cimahi - UPTD Rumah Susun Sederhana Sewa',
-    action: ''
-  },
-  {
-    no: 9,
-    nama: 'UPTD Rumah Sakit Mata Bali Mandara - Dinas Kesehatan',
-    keterangan: 'Pemerintah Provinsi Bali - UPTD Rumah Sakit Mata Bali Mandara - Dinas Kesehatan',
-    action: ''
-  },
-  {
-    no: 10,
-    nama: 'UPTD Rumah Sakit Khusus Mata Masyarakat Dinas Kesehatan',
-    keterangan: 'Pemerintah Provinsi Sumatera selatan - UPTD Rumah Sakit Khusus Mata Masyarakat Dinas Kesehatan',
-    action: ''
+const uppData = computed(() => {
+  return rawUppData.value.map((item, index) => ({
+    ...item,
+    no: index + 1
+  }))
+})
+
+const fetchUpp = async () => {
+  try {
+    const response = await $fetch('/api/upp')
+    if (response.success) {
+      rawUppData.value = response.data
+    } else {
+      console.error('Failed to fetch upp:', response.error)
+      toast.error('Gagal memuat data UPP')
+    }
+  } catch (error) {
+    console.error('Error fetching upp:', error)
+    toast.error('Gagal memuat data UPP')
   }
-])
+}
+
+onMounted(() => {
+  fetchUpp()
+})
+
+// Modal functions
+const openAddModal = () => {
+  isEditing.value = false
+  editingId.value = null
+  form.value = {
+    nama: '',
+    keterangan: ''
+  }
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  form.value = {
+    nama: '',
+    keterangan: ''
+  }
+}
+
+const editUpp = (item) => {
+  isEditing.value = true
+  editingId.value = item.id
+  form.value = {
+    nama: item.nama,
+    keterangan: item.keterangan
+  }
+  showModal.value = true
+}
+
+const saveUpp = async () => {
+  try {
+    if (!form.value.nama.trim()) {
+      toast.warning('Nama UPP harus diisi')
+      return
+    }
+
+    let response
+    if (isEditing.value) {
+      // Update existing upp
+      response = await $fetch(`/api/upp/${editingId.value}`, {
+        method: 'PUT',
+        body: {
+          nama: form.value.nama.trim(),
+          keterangan: form.value.keterangan.trim()
+        }
+      })
+    } else {
+      // Create new upp
+      response = await $fetch('/api/upp', {
+        method: 'POST',
+        body: {
+          nama: form.value.nama.trim(),
+          keterangan: form.value.keterangan.trim()
+        }
+      })
+    }
+
+    if (response.success) {
+      await fetchUpp() // Refresh data
+      closeModal()
+      toast.success(`UPP berhasil ${isEditing.value ? 'diupdate' : 'ditambahkan'}`)
+    }
+  } catch (error) {
+    console.error('Error saving upp:', error)
+    toast.error(`Gagal ${isEditing.value ? 'mengupdate' : 'menyimpan'} UPP`)
+  }
+}
+
+const deleteUpp = async (item) => {
+  if (confirm(`Apakah Anda yakin ingin menghapus "${item.nama}"?`)) {
+    try {
+      const response = await $fetch(`/api/upp/${item.id}`, {
+        method: 'DELETE'
+      })
+      if (response.success) {
+        await fetchUpp() // Refresh data
+        toast.success('UPP berhasil dihapus')
+      }
+    } catch (error) {
+      console.error('Error deleting upp:', error)
+      toast.error('Gagal menghapus UPP')
+    }
+  }
+}
 
 function logUpp(item) {
   // Implementasi log upp
   alert('Log: ' + item.nama)
-}
-
-function editUpp(item) {
-  // Implementasi edit upp
-  alert('Edit: ' + item.nama)
 }
 </script>
 

@@ -1,9 +1,23 @@
 <script setup>
+import { ref, computed, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
+
 definePageMeta({
   layout: 'sidebar'
 })
 
 const search = ref('')
+const rawTautanData = ref([])
+const showModal = ref(false)
+const isEditing = ref(false)
+const editingId = ref(null)
+const loading = ref(true)
+
+// Form data
+const form = ref({
+  nama: '',
+  tautan: ''
+})
 
 const breadcrumbItems = [
   {
@@ -19,30 +33,118 @@ const headers = [
   { title: 'Action', key: 'actions', sortable: false, width: '150px' }
 ]
 
-const tautanData = ref([
-  {
-    no: 1,
-    nama: 'web menpan testing',
-    tautan: 'https://menpan.go.id'
-  },
-  {
-    no: 2,
-    nama: 'testing web sinovik',
-    tautan: 'https://sinovik.menpan.go.id'
-  },
-  {
-    no: 3,
-    nama: 'LAPOR!',
-    tautan: 'https://www.lapor.go.id/'
-  }
-])
+const tautanData = computed(() => {
+  return rawTautanData.value.map((item, index) => ({
+    ...item,
+    no: index + 1
+  }))
+})
 
-const editItem = (item) => {
-  console.log('Edit item', item.nama)
+const fetchTautan = async () => {
+  try {
+    loading.value = true
+    const response = await $fetch('/api/tautan')
+    if (response.success) {
+      rawTautanData.value = response.data
+    } else {
+      console.error('Failed to fetch tautan:', response.error)
+      toast.error('Gagal memuat data tautan')
+    }
+  } catch (error) {
+    console.error('Error fetching tautan:', error)
+    toast.error('Gagal memuat data tautan')
+  } finally {
+    loading.value = false
+  }
 }
 
-const deleteItem = (item) => {
-  console.log('Delete item', item.nama)
+onMounted(() => {
+  fetchTautan()
+})
+
+// Modal functions
+const openAddModal = () => {
+  isEditing.value = false
+  editingId.value = null
+  form.value = {
+    nama: '',
+    tautan: ''
+  }
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  form.value = {
+    nama: '',
+    tautan: ''
+  }
+}
+
+const editItem = (item) => {
+  isEditing.value = true
+  editingId.value = item.id
+  form.value = {
+    nama: item.nama,
+    tautan: item.tautan
+  }
+  showModal.value = true
+}
+
+const saveTautan = async () => {
+  try {
+    if (!form.value.nama.trim() || !form.value.tautan.trim()) {
+      toast.warning('Nama dan tautan harus diisi')
+      return
+    }
+
+    let response
+    if (isEditing.value) {
+      // Update existing tautan
+      response = await $fetch(`/api/tautan/${editingId.value}`, {
+        method: 'PUT',
+        body: {
+          nama: form.value.nama.trim(),
+          tautan: form.value.tautan.trim()
+        }
+      })
+    } else {
+      // Create new tautan
+      response = await $fetch('/api/tautan', {
+        method: 'POST',
+        body: {
+          nama: form.value.nama.trim(),
+          tautan: form.value.tautan.trim()
+        }
+      })
+    }
+
+    if (response.success) {
+      await fetchTautan() // Refresh data
+      closeModal()
+      toast.success(`Tautan berhasil ${isEditing.value ? 'diupdate' : 'ditambahkan'}`)
+    }
+  } catch (error) {
+    console.error('Error saving tautan:', error)
+    toast.error(`Gagal ${isEditing.value ? 'mengupdate' : 'menyimpan'} tautan`)
+  }
+}
+
+const deleteItem = async (item) => {
+  if (confirm(`Apakah Anda yakin ingin menghapus "${item.nama}"?`)) {
+    try {
+      const response = await $fetch(`/api/tautan/${item.id}`, {
+        method: 'DELETE'
+      })
+      if (response.success) {
+        await fetchTautan() // Refresh data
+        toast.success('Tautan berhasil dihapus')
+      }
+    } catch (error) {
+      console.error('Error deleting tautan:', error)
+      toast.error('Gagal menghapus tautan')
+    }
+  }
 }
 </script>
 
@@ -57,7 +159,7 @@ const deleteItem = (item) => {
           </template>
         </v-breadcrumbs>
         <v-spacer></v-spacer>
-        <v-btn color="primary" href="https://jippnas.menpan.go.id/dashboard/tautan/form">
+        <v-btn color="primary" @click="openAddModal">
           Tambah Tautan
         </v-btn>
       </v-card-header>
@@ -74,6 +176,7 @@ const deleteItem = (item) => {
           :items="tautanData"
           :search="search"
           :items-per-page="10"
+          :loading="loading"
           class="elevation-1"
         >
           <template v-slot:item.tautan="{ item }">
@@ -90,6 +193,43 @@ const deleteItem = (item) => {
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <!-- Modal Tambah/Edit Tautan -->
+    <v-dialog v-model="showModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          {{ isEditing ? 'Edit Tautan' : 'Tambah Tautan Baru' }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-form @submit.prevent="saveTautan" class="space-y-4">
+            <v-text-field
+              v-model="form.nama"
+              label="Nama Tautan *"
+              required
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan nama tautan"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.tautan"
+              label="URL Tautan *"
+              required
+              type="url"
+              variant="outlined"
+              placeholder="Masukkan URL tautan (https://...)"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeModal">Batal</v-btn>
+          <v-btn color="primary" @click="saveTautan">
+            {{ isEditing ? 'Update' : 'Simpan' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
