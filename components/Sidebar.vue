@@ -157,7 +157,14 @@ const menuConfig = [
     label: 'Dashboard',
     slug: 'dashboard',
     icon: 'Home',
-    roles: ['admin']
+    roles: ['admin'],
+    children: [
+      {
+        label: 'Overview',
+        slug: 'dashboard',
+        roles: ['admin']
+      }
+    ]
   },
   {
     label: 'Manajemen Konten Inovasi',

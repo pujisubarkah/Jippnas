@@ -38,6 +38,14 @@ export default defineNuxtConfig({
         {
           rel: 'stylesheet',
           href: 'https://cdn.jsdelivr.net/npm/apexcharts@3.41.0/dist/apexcharts.css'
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://cdn.jsdelivr.net/npm/ol@10.7.0/ol.css'
+        },
+        {
+          rel: 'stylesheet',
+          href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css'
         }
       ],
       script: [

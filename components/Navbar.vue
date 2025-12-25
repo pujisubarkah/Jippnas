@@ -424,7 +424,8 @@ const handleLogin = async () => {
     showLoginModal.value = false
     loginForm.value = { email: '', password: '' }
     appToast.success('🎉 Login Berhasil!', { description: 'Selamat datang kembali!' })
-    router.push(`/${apiUser.value.role}/dashboard`)
+    // Use navigateTo for better Nuxt routing
+    await navigateTo(`/${apiUser.value.role}/dashboard`)
   } else {
     appToast.error(loginError.value || 'Login gagal. Cek email & password.')
   }
@@ -484,7 +485,7 @@ const handleGoogleCallback = async (response) => {
       login(res.user)
       showLoginModal.value = false
       appToast.success('🎉 Login dengan Google Berhasil!')
-      router.push(`/${res.user.role}/dashboard`)
+      await navigateTo(`/${res.user.role}/dashboard`)
     } else throw new Error(res.error)
   } catch (err) {
     appToast.error(err.message || 'Login Google gagal')
