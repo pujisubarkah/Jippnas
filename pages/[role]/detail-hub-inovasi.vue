@@ -51,9 +51,21 @@
           :items-per-page="10"
           class="elevation-1"
         >
-          <template v-slot:item.totalScore="{ item }">
-            <v-chip color="primary" size="small">
-              {{ item.totalScore }} poin
+          <template v-slot:item.originalTotalScore="{ item }">
+            <v-chip color="blue" size="small">
+              {{ item.originalTotalScore }} poin
+            </v-chip>
+          </template>
+
+          <template v-slot:item.verifiedTotalScore="{ item }">
+            <v-chip 
+              :color="item.originalTotalScore !== item.verifiedTotalScore ? 'orange' : 'green'" 
+              size="small"
+            >
+              {{ item.verifiedTotalScore }} poin
+              <v-icon v-if="item.originalTotalScore !== item.verifiedTotalScore" size="small" class="ml-1">
+                mdi-alert-circle
+              </v-icon>
             </v-chip>
           </template>
 
@@ -111,13 +123,30 @@
                   <div>
                     <p class="text-caption text-grey">Total Skor</p>
                     <div class="d-flex align-center gap-2">
-                      <p class="font-weight-medium text-primary">{{ calculateTotalScore(selectedResponse) }} poin</p>
+                      <div class="text-center">
+                        <p class="text-caption text-grey">Responden</p>
+                        <v-chip size="small" color="blue">
+                          {{ selectedResponse.originalTotalScore }} poin
+                        </v-chip>
+                      </div>
+                      <v-icon>mdi-arrow-right</v-icon>
+                      <div class="text-center">
+                        <p class="text-caption text-grey">Verifikator</p>
+                        <v-chip 
+                          size="small" 
+                          :color="selectedResponse.originalTotalScore !== selectedResponse.verifiedTotalScore ? 'orange' : 'green'"
+                        >
+                          {{ selectedResponse.verifiedTotalScore }} poin
+                        </v-chip>
+                      </div>
                       <v-chip 
                         v-if="hasAnyScoreChanged(selectedResponse)"
                         size="x-small" 
                         color="warning"
+                        class="ml-2"
                       >
-                        Terverifikasi
+                        <v-icon size="small">mdi-alert-circle</v-icon>
+                        Skor Diubah
                       </v-chip>
                     </div>
                   </div>
@@ -348,7 +377,8 @@ const selectedResponse = ref(null)
 const headers = [
   { title: 'ID', key: 'id', width: '80px' },
   { title: 'Instansi', key: 'instansi' },
-  { title: 'Total Skor', key: 'totalScore', width: '120px' },
+  { title: 'Total Skor Responden', key: 'originalTotalScore', width: '150px' },
+  { title: 'Total Skor Verifikator', key: 'verifiedTotalScore', width: '150px' },
   { title: 'Status', key: 'verificationStatus', width: '150px' },
   { title: 'Tanggal', key: 'submittedAt', width: '150px' },
   { title: 'Aksi', key: 'aksi', sortable: false, width: '100px' }
@@ -366,7 +396,8 @@ const responses = ref([
   {
     id: 1,
     instansi: 'Dinas Komunikasi dan Informatika',
-    totalScore: 85,
+    originalTotalScore: 85,
+    verifiedTotalScore: 85,
     verificationStatus: 'verified',
     submittedAt: '2025-12-20T10:30:00',
     answers: [
@@ -423,7 +454,8 @@ const responses = ref([
   {
     id: 2,
     instansi: 'Badan Perencanaan Pembangunan Daerah',
-    totalScore: 72,
+    originalTotalScore: 72,
+    verifiedTotalScore: 72,
     verificationStatus: 'pending',
     submittedAt: '2025-12-21T14:15:00',
     answers: [
@@ -480,7 +512,8 @@ const responses = ref([
   {
     id: 3,
     instansi: 'Dinas Pendidikan',
-    totalScore: 58,
+    originalTotalScore: 58,
+    verifiedTotalScore: 45, // Verifikator mengubah skor
     verificationStatus: 'rejected',
     submittedAt: '2025-12-22T09:45:00',
     answers: [
@@ -595,7 +628,7 @@ const saveVerification = () => {
   if (!selectedResponse.value) return
 
   // Recalculate total score based on verified answers
-  selectedResponse.value.totalScore = calculateTotalScore(selectedResponse.value)
+  selectedResponse.value.verifiedTotalScore = calculateTotalScore(selectedResponse.value)
 
   // Update verification status for overall response
   const allVerified = selectedResponse.value.answers.every(aspect =>
