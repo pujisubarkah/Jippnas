@@ -12,3 +12,5 @@ export * from './tautan';
 export * from './kategori_umum';
 export * from './kategori_kompetisi';
 export * from './kategori-sdgs';
+export * from './survey';
+export * from './forum';
