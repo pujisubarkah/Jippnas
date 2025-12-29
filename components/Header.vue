@@ -83,42 +83,47 @@
         </v-btn>
 
         <!-- User Menu -->
-        <v-menu
-          v-model="showDropdown"
-          :close-on-content-click="false"
-          location="bottom end"
-          offset-y
-        >
+        <v-menu offset-y>
           <template v-slot:activator="{ props }">
             <v-btn
-              variant="outlined"
-              color="primary"
-              class="ml-2"
               v-bind="props"
-              :aria-label="'Menu pengguna - ' + (user?.username || user?.name || 'User')"
+              class="ml-2"
+              variant="text"
+              color="primary"
             >
-              <span class="mr-2">{{ user?.username || user?.name || 'User' }}</span>
-              <v-icon>mdi-chevron-down</v-icon>
+              <v-avatar size="36" color="primary" class="mr-2">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  class="text-white"
+                >
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </v-avatar>
+              <span class="text-body-2 font-weight-medium hidden-sm-and-down">
+                {{ user?.username || 'User' }}
+              </span>
+              <v-icon class="ml-1">mdi-chevron-down</v-icon>
             </v-btn>
           </template>
 
-          <v-list density="comfortable">
-            <v-list-item @click="openChangePassword">
-              <template v-slot:prepend>
-                <v-icon>mdi-lock-reset</v-icon>
-              </template>
-              <v-list-item-title>Ganti Password</v-list-item-title>
+          <v-list>
+            <v-list-item>
+              <v-list-item-title>Profile</v-list-item-title>
             </v-list-item>
-
-            <v-divider />
-
-            <v-list-item @click="handleLogout" :disabled="loggingOut">
-              <template v-slot:prepend>
-                <v-icon color="error">mdi-logout</v-icon>
-              </template>
-              <v-list-item-title class="text-error">
-                {{ loggingOut ? 'Logging out...' : 'Logout' }}
-              </v-list-item-title>
+            <v-list-item>
+              <v-list-item-title>Settings</v-list-item-title>
+            </v-list-item>
+            <v-divider></v-divider>
+            <v-list-item @click="logout">
+              <v-list-item-title class="text-error">Logout</v-list-item-title>
             </v-list-item>
           </v-list>
         </v-menu>
