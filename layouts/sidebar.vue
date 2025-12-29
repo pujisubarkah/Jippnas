@@ -104,11 +104,14 @@
         <slot />
       </div>
     </v-main>
+
+    <FooterSidebar />
   </v-app>
 </template>
 
 <script setup>
 import Sidebar from '~/components/Sidebar.vue';
+import FooterSidebar from '~/components/footer_sidebar.vue';
 import { useAuth } from '~/composables/useAuth';
 import { computed, ref } from 'vue';
 
