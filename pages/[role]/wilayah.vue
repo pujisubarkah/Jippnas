@@ -9,7 +9,7 @@
           </template>
         </v-breadcrumbs>
         <v-spacer></v-spacer>
-        <v-btn color="primary" href="https://jippnas.menpan.go.id/dashboard/wilayah/form">
+        <v-btn color="primary" @click="openAddModal">
           Tambah Wilayah
         </v-btn>
       </v-card-header>
@@ -41,17 +41,108 @@
         </v-data-table>
       </v-card-text>
     </v-card>
+
+    <!-- Modal Tambah/Edit Wilayah -->
+    <v-dialog v-model="showModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          {{ isEditing ? 'Edit Wilayah' : 'Tambah Wilayah Baru' }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-form @submit.prevent="saveWilayah" class="space-y-4">
+            <v-text-field
+              v-model="form.id"
+              label="ID Wilayah *"
+              required
+              maxlength="10"
+              variant="outlined"
+              placeholder="Masukkan ID wilayah"
+              :disabled="isEditing"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.nama"
+              label="Nama Wilayah *"
+              required
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan nama wilayah"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.jenis"
+              label="Jenis"
+              maxlength="50"
+              variant="outlined"
+              placeholder="Masukkan jenis wilayah"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.ibukota"
+              label="Ibukota"
+              maxlength="100"
+              variant="outlined"
+              placeholder="Masukkan ibukota wilayah"
+            ></v-text-field>
+          </v-form>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeModal">Batal</v-btn>
+          <v-btn color="primary" @click="saveWilayah">
+            {{ isEditing ? 'Update' : 'Simpan' }}
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Modal Log Wilayah -->
+    <v-dialog v-model="showLogModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          Log Aktivitas Wilayah: {{ selectedWilayahName }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-data-table
+            :headers="logHeaders"
+            :items="logData"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeLogModal">Tutup</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed, onMounted } from 'vue'
+import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'sidebar'
 })
 
 const search = ref('')
+const rawWilayahData = ref([])
+const showModal = ref(false)
+const isEditing = ref(false)
+const editingId = ref(null)
+const showLogModal = ref(false)
+const selectedWilayahName = ref('')
+const logData = ref([])
+
+// Form data
+const form = ref({
+  id: '',
+  nama: '',
+  jenis: '',
+  ibukota: ''
+})
 
 const breadcrumbItems = [
   {
@@ -69,97 +160,130 @@ const headers = [
   { title: 'Action', key: 'action', sortable: false, width: '100px' }
 ]
 
-const wilayahData = ref([
-  {
-    no: 1,
-    id: '96',
-    nama: 'PAPUA BARAT DAYA',
-    jenis: '',
-    ibukota: '',
-    action: ''
-  },
-  {
-    no: 2,
-    id: '95',
-    nama: 'PAPUA PEGUNUNGAN',
-    jenis: '',
-    ibukota: '',
-    action: ''
-  },
-  {
-    no: 3,
-    id: '94',
-    nama: 'PAPUA TENGAH',
-    jenis: '',
-    ibukota: '',
-    action: ''
-  },
-  {
-    no: 4,
-    id: '93',
-    nama: 'PAPUA SELATAN',
-    jenis: '',
-    ibukota: '',
-    action: ''
-  },
-  {
-    no: 5,
-    id: '92.71',
-    nama: 'KOTA SORONG',
-    jenis: 'Pemkot',
-    ibukota: 'Sorong',
-    action: ''
-  },
-  {
-    no: 6,
-    id: '92.12',
-    nama: 'KAB. PEGUNUNGAN ARFAK',
-    jenis: 'Pemkab',
-    ibukota: 'Anggi',
-    action: ''
-  },
-  {
-    no: 7,
-    id: '92.11',
-    nama: 'KAB. MANOKWARI SELATAN',
-    jenis: 'Pemkab',
-    ibukota: 'Ransiki',
-    action: ''
-  },
-  {
-    no: 8,
-    id: '92.10',
-    nama: 'KAB. MAYBRAT',
-    jenis: 'Pemkab',
-    ibukota: 'Kumurkek',
-    action: ''
-  },
-  {
-    no: 9,
-    id: '92.09',
-    nama: 'KAB. TAMBRAUW',
-    jenis: 'Pemkab',
-    ibukota: 'Fef',
-    action: ''
-  },
-  {
-    no: 10,
-    id: '92.08',
-    nama: 'KAB. KAIMANA',
-    jenis: 'Pemkab',
-    ibukota: 'Kaimana',
-    action: ''
-  }
-])
+const logHeaders = [
+  { title: 'No', key: 'no', width: '50px' },
+  { title: 'Nama', key: 'nama' },
+  { title: 'Updated By', key: 'updated_by' },
+  { title: 'Tanggal', key: 'tanggal' }
+]
 
-function logWilayah(item) {
-  // Implementasi log wilayah
-  alert('Log: ' + item.nama)
+const wilayahData = computed(() => {
+  return rawWilayahData.value.map((item, index) => ({
+    ...item,
+    no: index + 1
+  }))
+})
+
+const fetchWilayah = async () => {
+  try {
+    const response = await $fetch('/api/wilayah')
+    if (response.success) {
+      rawWilayahData.value = response.data
+    } else {
+      console.error('Failed to fetch wilayah:', response.error)
+      toast.error('Gagal memuat data wilayah')
+    }
+  } catch (error) {
+    console.error('Error fetching wilayah:', error)
+    toast.error('Gagal memuat data wilayah')
+  }
 }
 
-function editWilayah(item) {
-  // Implementasi edit wilayah
-  alert('Edit: ' + item.nama)
+onMounted(() => {
+  fetchWilayah()
+})
+
+// Modal functions
+const openAddModal = () => {
+  isEditing.value = false
+  editingId.value = null
+  form.value = {
+    id: '',
+    nama: '',
+    jenis: '',
+    ibukota: ''
+  }
+  showModal.value = true
+}
+
+const closeModal = () => {
+  showModal.value = false
+  form.value = {
+    id: '',
+    nama: '',
+    jenis: '',
+    ibukota: ''
+  }
+}
+
+const editWilayah = (item) => {
+  isEditing.value = true
+  editingId.value = item.id
+  form.value = {
+    id: item.id,
+    nama: item.nama,
+    jenis: item.jenis,
+    ibukota: item.ibukota
+  }
+  showModal.value = true
+}
+
+const saveWilayah = async () => {
+  try {
+    if (!form.value.id.trim() || !form.value.nama.trim()) {
+      toast.warning('ID dan Nama wilayah harus diisi')
+      return
+    }
+
+    let response
+    if (isEditing.value) {
+      // Update existing wilayah
+      response = await $fetch(`/api/wilayah/${editingId.value}`, {
+        method: 'PUT',
+        body: {
+          nama: form.value.nama.trim(),
+          jenis: form.value.jenis.trim(),
+          ibukota: form.value.ibukota.trim()
+        }
+      })
+    } else {
+      // Create new wilayah
+      response = await $fetch('/api/wilayah', {
+        method: 'POST',
+        body: {
+          id: form.value.id.trim(),
+          nama: form.value.nama.trim(),
+          jenis: form.value.jenis.trim(),
+          ibukota: form.value.ibukota.trim()
+        }
+      })
+    }
+
+    if (response.success) {
+      await fetchWilayah() // Refresh data
+      closeModal()
+      toast.success(`Wilayah berhasil ${isEditing.value ? 'diupdate' : 'ditambahkan'}`)
+    }
+  } catch (error) {
+    console.error('Error saving wilayah:', error)
+    toast.error(`Gagal ${isEditing.value ? 'mengupdate' : 'menyimpan'} wilayah`)
+  }
+}
+
+const logWilayah = (item) => {
+  selectedWilayahName.value = item.nama
+  // Dummy log data - replace with actual API call
+  logData.value = [
+    { no: 1, nama: 'Update Nama', updated_by: 'Admin', tanggal: '2023-10-01' },
+    { no: 2, nama: 'Update Jenis', updated_by: 'User1', tanggal: '2023-10-02' },
+    { no: 3, nama: 'Update Ibukota', updated_by: 'Admin', tanggal: '2023-10-03' }
+  ]
+  showLogModal.value = true
+}
+
+const closeLogModal = () => {
+  showLogModal.value = false
+  logData.value = []
 }
 </script>
 

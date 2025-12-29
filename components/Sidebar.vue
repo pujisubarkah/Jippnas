@@ -42,7 +42,7 @@
       <template v-for="item in menu" :key="item.label">
         <v-list-group v-if="item.children" :value="item.label">
           <template v-slot:activator="{ props }">
-            <v-list-item v-bind="props" :active="isActive(item.to)" active-class="bg-primary text-white">
+            <v-list-item v-bind="props" :active="isActive(item.to)" active-class="sidebar-active">
               <template v-slot:prepend>
                 <div v-html="item.iconSvg"></div>
               </template>
@@ -55,7 +55,7 @@
             :key="child.label"
             :to="child.to"
             :active="isActive(child.to)"
-            active-class="bg-primary text-white"
+            active-class="sidebar-active"
             class="pl-12"
           >
             <v-list-item-title>{{ child.label }}</v-list-item-title>
@@ -66,7 +66,7 @@
           v-else
           :to="item.to"
           :active="isActive(item.to)"
-          active-class="bg-primary text-white"
+          active-class="sidebar-active"
         >
           <template v-slot:prepend>
             <div v-html="item.iconSvg"></div>
@@ -113,7 +113,7 @@ const iconSvgs = {
   Home: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9,22 9,12 15,12 15,22"></polyline></svg>',
   Users: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M22 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>',
   Video: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><polygon points="23 7 16 12 23 17 23 7"></polygon><rect width="15" height="14" x="1" y="5" rx="2" ry="2"></rect></svg>',
-  Newspaper: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h16"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 10h4"></path><path d="M10 14h3"></path><path d="M10 18h2"></path></svg>',
+  Newspaper: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 0-2 2Zm0 0a2 2 0 0 0 2 2h16"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>',
   Lightbulb: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.4 1.5 2.5"></path><path d="M9 18h6"></path><path d="M10 22h4"></path></svg>',
   Plus: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M5 12h14"></path><path d="M12 5v14"></path></svg>',
   FileText: '<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-primary"><path d="M15 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7Z"></path><path d="M14 2v4a2 2 0 0 0 2 2h4"></path><path d="M10 9H8"></path><path d="M16 13H8"></path><path d="M16 17H8"></path></svg>',
@@ -454,8 +454,15 @@ const menu = computed(() => {
   transform: translateX(4px);
 }
 
-.v-list-item--active {
-  background-color: rgba(25, 118, 210, 0.12) !important;
+/* Active item styling - only text color blue, no background */
+.sidebar-active {
+  background-color: transparent !important;
+  color: #1976D2 !important;
+  font-weight: 500 !important;
+}
+
+.sidebar-active .v-list-item-title {
+  color: #1976D2 !important;
 }
 
 /* Ensure text wraps and displays fully when expanded */

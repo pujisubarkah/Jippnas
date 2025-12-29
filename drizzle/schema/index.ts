@@ -15,3 +15,5 @@ export * from './kategori-sdgs';
 export * from './survey';
 export * from './forum';
 export * from './sdgs';
+export * from './penghargaan';
+export * from './wilayah';

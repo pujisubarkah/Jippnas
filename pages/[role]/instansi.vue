@@ -114,6 +114,27 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Modal Log Instansi -->
+    <v-dialog v-model="showLogModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          Log Aktivitas Instansi: {{ selectedInstansiName }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <v-data-table
+            :headers="logHeaders"
+            :items="logData"
+            :items-per-page="10"
+            class="elevation-1"
+          ></v-data-table>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeLogModal">Tutup</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </div>
 </template>
 
@@ -130,6 +151,9 @@ const rawInstansiData = ref([])
 const showModal = ref(false)
 const isEditing = ref(false)
 const editingId = ref(null)
+const showLogModal = ref(false)
+const selectedInstansiName = ref('')
+const logData = ref([])
 
 // Form data
 const form = ref({
@@ -155,6 +179,13 @@ const headers = [
   { title: 'Telp', key: 'telp', width: '80px' },
   { title: 'Status Hub', key: 'statusHub', width: '100px' },
   { title: 'Action', key: 'action', sortable: false, width: '150px' }
+]
+
+const logHeaders = [
+  { title: 'No', key: 'no', width: '50px' },
+  { title: 'Nama', key: 'nama' },
+  { title: 'Updated By', key: 'updated_by' },
+  { title: 'Tanggal', key: 'tanggal' }
 ]
 
 const instansiData = computed(() => {
@@ -284,9 +315,20 @@ const deleteInstansi = async (item) => {
   }
 }
 
-function logInstansi(item) {
-  // Implementasi log instansi
-  alert('Log: ' + item.nama)
+const logInstansi = (item) => {
+  selectedInstansiName.value = item.nama
+  // Dummy log data - replace with actual API call
+  logData.value = [
+    { no: 1, nama: 'Update Nama', updated_by: 'Admin', tanggal: '2023-10-01' },
+    { no: 2, nama: 'Update Alamat', updated_by: 'User1', tanggal: '2023-10-02' },
+    { no: 3, nama: 'Update Status', updated_by: 'Admin', tanggal: '2023-10-03' }
+  ]
+  showLogModal.value = true
+}
+
+const closeLogModal = () => {
+  showLogModal.value = false
+  logData.value = []
 }
 
 function statusHubInstansi(item) {
