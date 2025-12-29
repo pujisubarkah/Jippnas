@@ -7,6 +7,18 @@
     class="header-custom"
   >
     <v-container fluid class="d-flex align-center pa-0 px-4">
+      <!-- Hamburger Menu for Sidebar -->
+      <v-btn
+        icon
+        variant="text"
+        color="primary"
+        class="mr-2"
+        @click="$emit('toggle-sidebar')"
+        :aria-label="'Toggle sidebar'"
+      >
+        <v-icon>mdi-menu</v-icon>
+      </v-btn>
+
       <!-- Logo/Title -->
       <v-toolbar-title class="d-flex align-center">
         <span class="text-h6 font-weight-bold text-primary mr-3">

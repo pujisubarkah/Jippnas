@@ -58,12 +58,12 @@ export default defineEventHandler(async (event) => {
     // Create new forum user
     try {
       const body = await readBody(event)
-      const { userId, displayName, avatarUrl, bio, role = 'member' } = body
+      const { userId, username, email, displayName, avatarUrl, bio, role = 'member' } = body
 
-      if (!userId || !displayName) {
+      if (!userId || !username || !email || !displayName) {
         throw createError({
           statusCode: 400,
-          statusMessage: 'User ID and display name are required'
+          statusMessage: 'User ID, username, email, and display name are required'
         })
       }
 
@@ -71,6 +71,8 @@ export default defineEventHandler(async (event) => {
         .insert(forumUsers)
         .values({
           userId,
+          username,
+          email,
           displayName,
           avatarUrl,
           bio,

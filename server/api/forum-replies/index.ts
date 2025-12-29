@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
-import { eq, desc } from 'drizzle-orm'
+import { eq, desc, and } from 'drizzle-orm'
 import postgres from 'postgres'
 import { forumReplies, forumUsers } from '~/drizzle/schema/forum'
 

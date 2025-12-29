@@ -1,78 +1,80 @@
 <template>
   <v-navigation-drawer
     v-model="drawer"
-    :permanent="!isMobile && sidebarOpen"
+    :rail="!sidebarOpen"
+    :permanent="!isMobile"
     :temporary="isMobile"
-    :absolute="true"
-    :width="sidebarOpen ? 280 : 80"
-    :class="['sidebar-custom', { 'sidebar-collapsed': !sidebarOpen }]"
     color="white"
     elevation="4"
     app
   >
-    <v-container class="pa-4">
-      <v-row justify="center" class="mb-6" v-if="sidebarOpen">
-        <v-col cols="12" class="text-center">
-          <h2 class="text-h5 font-weight-bold text-primary mb-2">Menu</h2>
-          <v-divider color="primary" thickness="2"></v-divider>
-        </v-col>
-      </v-row>
+    <!-- Header Logo - hanya tampil saat open -->
+    <div v-if="sidebarOpen" class="pa-4">
+      <div class="d-flex justify-center align-center mb-4">
+        <img
+          src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
+          alt="Logo Jippnas"
+          class="logo-sidebar"
+          width="220"
+          height="80"
+        />
+      </div>
+      <v-divider color="primary" thickness="2" class="mb-2"></v-divider>
+    </div>
 
-      <v-list density="comfortable" class="pa-0">
-        <v-list-item
-          v-if="!role"
-          class="text-primary"
-          disabled
-        >
-          <v-list-item-title>Memuat data user...</v-list-item-title>
-        </v-list-item>
+    <v-list density="comfortable" :class="sidebarOpen ? 'px-2' : 'px-0'">
+      <v-list-item
+        v-if="!role"
+        class="text-primary"
+        disabled
+      >
+        <v-list-item-title>Memuat data user...</v-list-item-title>
+      </v-list-item>
 
-        <v-list-item
-          v-else-if="menu.length === 0"
-          class="text-primary"
-          disabled
-        >
-          <v-list-item-title>Menu tidak tersedia untuk role ini.</v-list-item-title>
-        </v-list-item>
+      <v-list-item
+        v-else-if="menu.length === 0"
+        class="text-primary"
+        disabled
+      >
+        <v-list-item-title>Menu tidak tersedia untuk role ini.</v-list-item-title>
+      </v-list-item>
 
-        <template v-for="item in menu" :key="item.label">
-          <v-list-group v-if="item.children" :value="item.label">
-            <template v-slot:activator="{ props }">
-              <v-list-item v-bind="props" :active="isActive(item.to)" active-class="bg-primary text-white">
-                <template v-slot:prepend>
-                  <div v-html="item.iconSvg"></div>
-                </template>
-                <v-list-item-title v-if="sidebarOpen">{{ item.label }}</v-list-item-title>
-              </v-list-item>
-            </template>
-
-            <v-list-item
-              v-for="child in item.children"
-              :key="child.label"
-              :to="child.to"
-              :active="isActive(child.to)"
-              active-class="bg-primary text-white"
-              class="ml-4"
-            >
-              <v-list-item-title v-if="sidebarOpen">{{ child.label }}</v-list-item-title>
+      <template v-for="item in menu" :key="item.label">
+        <v-list-group v-if="item.children" :value="item.label">
+          <template v-slot:activator="{ props }">
+            <v-list-item v-bind="props" :active="isActive(item.to)" active-class="bg-primary text-white">
+              <template v-slot:prepend>
+                <div v-html="item.iconSvg"></div>
+              </template>
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>
-          </v-list-group>
+          </template>
 
           <v-list-item
-            v-else
-            :to="item.to"
-            :active="isActive(item.to)"
+            v-for="child in item.children"
+            :key="child.label"
+            :to="child.to"
+            :active="isActive(child.to)"
             active-class="bg-primary text-white"
-            class="mb-1"
+            class="pl-12"
           >
-            <template v-slot:prepend>
-              <div v-html="item.iconSvg"></div>
-            </template>
-            <v-list-item-title v-if="sidebarOpen">{{ item.label }}</v-list-item-title>
+            <v-list-item-title>{{ child.label }}</v-list-item-title>
           </v-list-item>
-        </template>
-      </v-list>
-    </v-container>
+        </v-list-group>
+
+        <v-list-item
+          v-else
+          :to="item.to"
+          :active="isActive(item.to)"
+          active-class="bg-primary text-white"
+        >
+          <template v-slot:prepend>
+            <div v-html="item.iconSvg"></div>
+          </template>
+          <v-list-item-title>{{ item.label }}</v-list-item-title>
+        </v-list-item>
+      </template>
+    </v-list>
   </v-navigation-drawer>
 </template>
 
@@ -423,13 +425,26 @@ const menu = computed(() => {
 </script>
 
 <style scoped>
-.sidebar-custom {
-  border-right: 3px solid #1976D2 !important;
-  border-radius: 0 12px 12px 0;
+/* Logo styling */
+.logo-sidebar {
+  max-width: 220px;
+  max-height: 80px;
+  width: 100%;
+  height: auto;
+  object-fit: contain;
 }
 
-.sidebar-custom .v-navigation-drawer__content {
-  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+/* Smooth transitions for all elements */
+.v-navigation-drawer {
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.v-list-item {
+  min-height: 48px !important;
+  height: auto !important;
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
 /* Hover effects for list items */
@@ -437,74 +452,63 @@ const menu = computed(() => {
   background-color: rgba(25, 118, 210, 0.15) !important;
   color: #1976D2 !important;
   transform: translateX(4px);
-  transition: all 0.2s ease;
 }
 
 .v-list-item--active {
   background-color: rgba(25, 118, 210, 0.12) !important;
 }
 
-/* Sub menu styling */
-.v-list-group__items .v-list-item {
-  padding-left: 32px !important;
+/* Ensure text wraps and displays fully when expanded */
+.v-list-item-title {
+  white-space: normal !important;
+  word-wrap: break-word !important;
+  overflow-wrap: break-word !important;
+  line-height: 1.4 !important;
+  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-.v-list-group__items .v-list-item:hover {
-  background-color: rgba(25, 118, 210, 0.1) !important;
-  transform: translateX(2px);
+/* Smooth icon transition */
+.v-list-item__prepend {
+  transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
 }
 
-/* Collapsed sidebar styling */
-.sidebar-custom.sidebar-collapsed .v-list-item {
-  justify-content: center;
-  padding-left: 8px !important;
-  padding-right: 8px !important;
+/* Rail mode - hide submenu items with transition */
+.v-navigation-drawer--rail .v-list-group__items {
+  display: none !important;
 }
 
-.sidebar-custom.sidebar-collapsed .v-list-item .v-list-item__prepend {
-  margin-right: 0 !important;
+/* Smooth fade for header */
+.pa-4 {
+  animation: fadeIn 0.3s ease-in-out;
 }
 
-.sidebar-custom.sidebar-collapsed .v-list-group__items .v-list-item {
-  padding-left: 16px !important;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
-/* Ensure text doesn't overflow */
-.sidebar-custom .v-list-item-title {
-  white-space: normal;
-  word-wrap: break-word;
-  overflow: visible;
-}
-
-.sidebar-custom .v-list-item {
-  min-height: auto;
-  height: auto;
+/* Border and shadow styling */
+.v-navigation-drawer {
+  border-right: 2px solid rgba(25, 118, 210, 0.2) !important;
+  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
 }
 
 /* Mobile responsive adjustments */
 @media (max-width: 1023px) {
-  .sidebar-custom {
-    border-radius: 0;
+  .v-navigation-drawer {
+    border-radius: 0 !important;
     border-right: none !important;
   }
-}
-
-/* Custom scrollbar for sidebar */
-.sidebar-custom ::-webkit-scrollbar {
-  width: 6px;
-}
-
-.sidebar-custom ::-webkit-scrollbar-track {
-  background: #f1f1f1;
-  border-radius: 3px;
-}
-
-.sidebar-custom ::-webkit-scrollbar-thumb {
-  background: #c1c1c1;
-  border-radius: 3px;
-}
-
-.sidebar-custom ::-webkit-scrollbar-thumb:hover {
-  background: #a8a8a8;
+  
+  .logo-sidebar {
+    max-width: 180px;
+    max-height: 60px;
+  }
 }
 </style>

@@ -15,7 +15,7 @@ export const forumCategories = pgTable('forum_categories', {
 
 export const forumUsers = pgTable('forum_users', {
   id: serial('id').primaryKey(),
-  userId: integer('user_id').references(() => users.id, { onDelete: 'cascade' }),
+  userId: integer('user_id'),
   username: varchar('username', { length: 50 }).notNull(),
   email: varchar('email', { length: 255 }).notNull(),
   displayName: varchar('display_name', { length: 100 }),
@@ -51,7 +51,7 @@ export const forumThreads = pgTable('forum_threads', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumReplies = pgTable('forum_replies', {
+export const forumReplies: any = pgTable('forum_replies', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   authorId: integer('author_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -101,7 +101,7 @@ export const forumReplyLikes = pgTable('forum_reply_likes', {
 export const forumThreadViews = pgTable('forum_thread_views', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
-  userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'setNull' }),
+  userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'set null' }),
   ipAddress: inet('ip_address'),
   userAgent: text('user_agent'),
   viewedAt: timestamp('viewed_at', { withTimezone: true }).defaultNow(),
@@ -122,7 +122,7 @@ export const forumReports = pgTable('forum_reports', {
   reportType: varchar('report_type', { length: 50 }).notNull(),
   reason: text('reason').notNull(),
   status: varchar('status', { length: 20 }).default('pending'),
-  moderatorId: integer('moderator_id').references(() => forumUsers.id, { onDelete: 'setNull' }),
+  moderatorId: integer('moderator_id').references(() => forumUsers.id, { onDelete: 'set null' }),
   resolvedAt: timestamp('resolved_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
