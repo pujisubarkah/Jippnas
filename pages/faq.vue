@@ -41,7 +41,19 @@
 
       <!-- FAQ List -->
       <div class="space-y-6" id="contentFaq">
+        <div v-if="loading" class="text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p class="mt-4 text-gray-600">Memuat FAQ...</p>
+        </div>
+        <div v-else-if="error" class="text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Error memuat FAQ</h3>
+          <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
+        </div>
         <div
+          v-else
           v-for="(faq, index) in displayedFaqs"
           :key="faq.id"
           class="group"
@@ -53,9 +65,9 @@
               class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200"
               :aria-expanded="faq.isOpen"
             >
-              <div class="flex items-center space-x-4">
-                <div class="shrink-0 w-12 h-12 bg-linear-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-md">
-                  <svg class="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div class="flex items-center space-x-6">
+                <div class="shrink-0 w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md border-2 border-blue-300">
+                  <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getFaqIcon(faq.id)"/>
                   </svg>
                 </div>
@@ -97,7 +109,7 @@
       </div>
 
       <!-- Load More Button -->
-      <div v-if="hasMore" class="text-center mt-12">
+      <div v-if="!loading && !error && hasMore" class="text-center mt-12">
         <button
           type="button"
           class="bg-linear-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center gap-3"
@@ -111,7 +123,7 @@
       </div>
 
       <!-- Empty State -->
-      <div v-if="displayedFaqs.length === 0 && searchQuery" class="text-center py-16">
+      <div v-if="displayedFaqs.length === 0 && searchQuery && !loading" class="text-center py-16">
         <div class="max-w-md mx-auto">
           <div class="w-24 h-24 bg-linear-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center mx-auto mb-6">
             <svg class="w-12 h-12 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -181,57 +193,39 @@ import { ref, computed, onMounted } from 'vue'
 
 const searchQuery = ref('')
 const displayedCount = ref(5) // Show 5 initially
+const loading = ref(true)
+const error = ref(null)
 
-const faqs = ref([
-  {
-    id: 1,
-    question: 'apa saja jenis inovasi yang ditampilkan pada JIPPNas?',
-    answer: 'Jaringan Inovasi Pelayanan Publik Nasional (JIPPNas) adalah website yang menyediakan informasi terkait praktik baik inovasi pelayanan publik. tujuannya adalah antara lain agar informasi inovasi yang disampaikan dapat memberikan pengaruh positif kepada kinerja pemerintah, untuk mempelajari dan direplikasi sehingga menumbuhkan model inovasi pelayanan publik baru dan kendala dalam memberikan pelayanan publik yang tidak merata dapat diperbaiki. Mimpi besarnya adalah JIPPNas menjadi knowledge management system yang menyampaikan segala sesuatu yang menciptakan siklus perbaikan dan peningkatan kualitas pelayanan publik melalui penyebarluasan praktik baik inovasi pelayanan publik yang terarah. 5 tahun pertama tujuan JIPPNas tercapai yaitu mejududkan JIPPNas sebagai direktori praktik terbaik inovasi pelayanan publik. hal ini karena telah dilakukan serangkaian program yang menyatukan dan menyediakan informasi praktik baik inovasi pelayanan publik yang bersumber dari para pemangku pekentingan JIPPNas yaitu Kompetisi inovasi pelayanan publik (KIPP) yang bersumber dari Kementerian Pendayagunaan Aparatur Negara dan Reformasi Birokrasi (KemenPANRB), Innovative government award bersumber Kementerian Dalam Negeri (Kemendagri), dan Inovasi Inoland bersumber dari Lembaga Administrasi Negara (LAN).',
-    isOpen: false
-  },
-  {
-    id: 2,
-    question: 'Apa pengertian inovasi pelayanan publik?',
-    answer: 'Inovasi adalah terobosan gagasan kreatif, orisinil/adaptasi, bermanfaat buat publik. Inovasi pelayanan publik merupakan penerapan ide-ide baru dalam proses, produk, atau prosedur yang dapat meningkatkan efisiensi, efektivitas, dan kualitas pelayanan kepada masyarakat.',
-    isOpen: false
-  },
-  {
-    id: 3,
-    question: 'Kenapa inovasi tidak ada foto atau gambarnya?',
-    answer: 'Inovasi tidak muncul foto atau gambarnya dikarenakan inovator tidak mengunggah foto atau gambar di halaman inovasinya. Untuk meningkatkan kualitas tampilan inovasi, disarankan untuk melengkapi dokumentasi dengan foto atau gambar yang relevan.',
-    isOpen: false
-  },
-  {
-    id: 4,
-    question: 'Bagaimana cara mengikuti kompetisi inovasi?',
-    answer: 'Untuk mengikuti kompetisi inovasi pelayanan publik (KIPP), Anda dapat mendaftar melalui website resmi KemenPANRB. Persiapkan proposal inovasi, dokumentasi lengkap, dan pastikan inovasi Anda memenuhi kriteria penilaian yang ditentukan.',
-    isOpen: false
-  },
-  {
-    id: 5,
-    question: 'Apa manfaat mengikuti program inovasi di JIPPNas?',
-    answer: 'Manfaat mengikuti program inovasi di JIPPNas antara lain: mendapatkan pengakuan nasional, berbagi pengetahuan dengan inovator lainnya, meningkatkan kompetensi, mendapatkan kesempatan replikasi inovasi, dan berkontribusi dalam peningkatan kualitas pelayanan publik di Indonesia.',
-    isOpen: false
-  },
-  {
-    id: 6,
-    question: 'Siapa saja yang bisa mengakses JIPPNas?',
-    answer: 'JIPPNas dapat diakses oleh semua pihak yang tertarik dengan inovasi pelayanan publik, termasuk aparatur sipil negara, akademisi, praktisi, masyarakat umum, dan stakeholder terkait. Platform ini terbuka untuk semua orang yang ingin belajar dan berkontribusi dalam pengembangan inovasi.',
-    isOpen: false
-  },
-  {
-    id: 7,
-    question: 'Bagaimana cara mengajukan inovasi baru?',
-    answer: 'Untuk mengajukan inovasi baru, Anda dapat mendaftar melalui portal KIPP di website KemenPANRB. Siapkan proposal yang lengkap dengan deskripsi inovasi, dampak yang diharapkan, dan dokumentasi pendukung.',
-    isOpen: false
-  },
-  {
-    id: 8,
-    question: 'Apa kriteria penilaian inovasi?',
-    answer: 'Kriteria penilaian inovasi meliputi: kebaruan (novelty), manfaat (benefit), dampak (impact), keberlanjutan (sustainability), dan kemudahan replikasi (replicability). Inovasi dinilai oleh tim juri yang kompeten di bidangnya.',
-    isOpen: false
+const faqs = ref([])
+
+const fetchFaqs = async () => {
+  try {
+    loading.value = true
+    const response = await $fetch('/api/faq')
+    if (response.success) {
+      faqs.value = response.data.map(item => ({
+        id: item.id,
+        question: item.pertanyaan,
+        answer: item.jawaban,
+        status: item.status,
+        created_at: item.created_at,
+        updated_at: item.updated_at,
+        isOpen: false
+      }))
+    } else {
+      error.value = 'Failed to fetch FAQs'
+    }
+  } catch (err) {
+    console.error('Fetch error:', err)
+    error.value = err.message || 'Error fetching FAQs'
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchFaqs()
+})
 
 const filteredFaqs = computed(() => {
   if (!searchQuery.value) return faqs.value

@@ -19,7 +19,19 @@
       </div>
 
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="contentUnduhan">
+        <div v-if="loading" class="col-span-full text-center py-12">
+          <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <p class="mt-4 text-gray-600">Memuat unduhan...</p>
+        </div>
+        <div v-else-if="error" class="col-span-full text-center py-12">
+          <svg class="mx-auto h-12 w-12 text-red-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L4.082 16.5c-.77.833.192 2.5 1.732 2.5z"/>
+          </svg>
+          <h3 class="mt-2 text-sm font-medium text-gray-900">Error memuat unduhan</h3>
+          <p class="mt-1 text-sm text-gray-500">{{ error }}</p>
+        </div>
         <div
+          v-else
           v-for="download in displayedDownloads"
           :key="download.id"
           class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
@@ -48,18 +60,9 @@
               <p class="text-gray-600 text-sm">{{ download.description }}</p>
             </div>
 
-            <div class="flex items-center justify-between text-sm text-gray-500 mb-4">
-              <span class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 4V2a1 1 0 011-1h8a1 1 0 011 1v2m-9 0h10m-9 0V1m10 3V1m0 3l1 1v16a2 2 0 01-2 2H6a2 2 0 01-2-2V5l1-1z"/>
-                </svg>
-                {{ download.size }}
-              </span>
-              <span class="flex items-center">
-                <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3a2 2 0 012-2h4a2 2 0 012 2v4m-6 4v10m0 0l-2-2m2 2l2-2m6-6v6m0 0l2-2m-2 2l-2-2"/>
-                </svg>
-                {{ download.downloads }}
+            <div v-if="download.status" class="flex items-center justify-center mb-4">
+              <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" :class="download.status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
+                {{ download.status }}
               </span>
             </div>
 
@@ -77,20 +80,42 @@
         </div>
       </div>
 
-      <div v-if="hasMore" class="text-center mt-12">
-        <button
-          type="button"
-          class="bg-blue-600 text-white px-8 py-4 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center gap-3"
-          @click="loadMoreDataUnduhan"
-        >
-          <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
-          </svg>
-          Muat Lebih Banyak
-        </button>
+      <!-- Pagination -->
+      <div v-if="!loading && !error && totalPages > 1" class="flex justify-center mt-12">
+        <nav class="flex items-center space-x-1">
+          <button
+            @click="changePage(currentPage - 1)"
+            :disabled="currentPage === 1"
+            class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Previous
+          </button>
+          
+          <template v-for="page in Array.from({ length: totalPages }, (_, i) => i + 1)" :key="page">
+            <button
+              @click="changePage(page)"
+              :class="[
+                'px-3 py-2 text-sm font-medium border',
+                page === currentPage
+                  ? 'text-blue-600 bg-blue-50 border-blue-500'
+                  : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+              ]"
+            >
+              {{ page }}
+            </button>
+          </template>
+          
+          <button
+            @click="changePage(currentPage + 1)"
+            :disabled="currentPage === totalPages"
+            class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            Next
+          </button>
+        </nav>
       </div>
 
-      <div v-if="displayedDownloads.length === 0 && searchQuery" class="text-center py-12">
+      <div v-if="displayedDownloads.length === 0 && searchQuery && !loading" class="text-center py-12">
         <svg class="mx-auto h-12 w-12 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.172 16.172a4 4 0 015.656 0M9 12h6m-6-4h6m2 5.291A7.962 7.962 0 0112 15c-2.34 0-4.29-.98-5.5-2.5m.5-4H7a2 2 0 00-2 2v6a2 2 0 002 2h10a2 2 0 002-2v-6a2 2 0 00-2-2h-.5M12 7v3"/>
         </svg>
@@ -105,77 +130,65 @@
 import { ref, computed, onMounted } from 'vue'
 
 const searchQuery = ref('')
-const displayedCount = ref(5) // Show 5 initially
+const currentPage = ref(1)
+const itemsPerPage = 8
+const loading = ref(true)
+const error = ref(null)
 
-const downloads = ref([
-  {
-    id: 1,
-    title: 'Laporan Hasil Pemantauan dan Evaluasi Kinerja Penyelenggaraan Pelayanan Publik Nasional Tahun 2023',
-    description: 'Laporan komprehensif mengenai pemantauan dan evaluasi kinerja pelayanan publik nasional tahun 2023',
-    image: 'storage/images/unduhan//y1ZZDkSAsqvCheTt.jpg',
-    downloadUrl: 'storage/pdf/unduhan//4pQIhBNNmeT2da8k6agNQaBneTb5yBZq5FotJSle.pdf',
-    size: '2.5 MB',
-    downloads: '1.2K'
-  },
-  {
-    id: 2,
-    title: 'Buku Transformasi Administrasi Publik Menjawab Tantangan Era Disrupsi',
-    description: 'Panduan lengkap transformasi administrasi publik di era digital dan disrupsi teknologi',
-    image: 'storage/images/unduhan//sXgOJ6T58WvAt9El.jpg',
-    downloadUrl: 'storage/pdf/unduhan//GFRbJV0rCBJKkht6fLs0omm5OO9bzYI3Nqdg2wxW.pdf',
-    size: '5.1 MB',
-    downloads: '856'
-  },
-  {
-    id: 3,
-    title: 'Peraturan Kepala LAN Nomor 7 Tahun 2023',
-    description: 'Peraturan resmi tentang pengelolaan dan pengembangan aparatur sipil negara',
-    image: 'storage/images/unduhan//s4M0BBTsS8RjFe17.jpg',
-    downloadUrl: 'storage/pdf/unduhan//gS6lJMh5JNnJx9fzOZeXtGdZH4zZPstjhpFTQPRc.pdf',
-    size: '1.8 MB',
-    downloads: '2.1K'
-  },
-  {
-    id: 4,
-    title: 'Peraturan Menteri PANRB Nomor 89 Tahun 2020',
-    description: 'Peraturan tentang sistem merit dalam pengelolaan pegawai negeri sipil',
-    image: 'storage/images/unduhan//PiJvcdpPx0ybTWUg.jpg',
-    downloadUrl: 'storage/pdf/unduhan//guUS5BQ1Dm4pjmPFdakX2JFJCjV8pbNdhDUuad2n.pdf',
-    size: '3.2 MB',
-    downloads: '1.8K'
-  },
-  {
-    id: 5,
-    title: 'PP Nomor 38 Tahun 2017',
-    description: 'Peraturan Pemerintah tentang pengelolaan keuangan badan layanan umum',
-    image: 'storage/images/unduhan//B4EmboMn30elxHma.jpg',
-    downloadUrl: 'storage/pdf/unduhan//C1Ln2FZse662qwVRJ6PppibkLpPkvuw2iOMz7rdp.pdf',
-    size: '2.9 MB',
-    downloads: '3.4K'
+const downloads = ref([])
+
+const fetchDownloads = async () => {
+  try {
+    loading.value = true
+    const response = await $fetch('/api/unduhan')
+    if (response.success) {
+      downloads.value = response.data.map(item => ({
+        id: item.id,
+        title: item.judul,
+        description: item.deskripsi,
+        image: item.gambar,
+        downloadUrl: item.pdf_url,
+        status: item.status,
+        created_at: item.created_at,
+        updated_at: item.updated_at
+      }))
+    } else {
+      error.value = 'Failed to fetch downloads'
+    }
+  } catch (err) {
+    console.error('Fetch error:', err)
+    error.value = err.message || 'Error fetching downloads'
+  } finally {
+    loading.value = false
   }
-])
+}
+
+onMounted(() => {
+  fetchDownloads()
+})
 
 const filteredDownloads = computed(() => {
   if (!searchQuery.value) return downloads.value
   return downloads.value.filter(download =>
-    download.title.toLowerCase().includes(searchQuery.value.toLowerCase())
+    download.title.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    download.description.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 })
 
-const displayedDownloads = computed(() => {
-  return filteredDownloads.value.slice(0, displayedCount.value)
-})
+const totalPages = computed(() => Math.ceil(filteredDownloads.value.length / itemsPerPage))
 
-const hasMore = computed(() => {
-  return displayedCount.value < filteredDownloads.value.length
+const displayedDownloads = computed(() => {
+  const start = (currentPage.value - 1) * itemsPerPage
+  const end = start + itemsPerPage
+  return filteredDownloads.value.slice(start, end)
 })
 
 const filterDownloads = () => {
-  displayedCount.value = 5 // Reset to initial count when searching
+  currentPage.value = 1 // Reset to first page when searching
 }
 
-const loadMoreDataUnduhan = () => {
-  displayedCount.value += 5
+const changePage = (page) => {
+  currentPage.value = page
 }
 </script>
 
