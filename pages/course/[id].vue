@@ -185,6 +185,9 @@
       </div>
     </div>
   </div>
+
+  <!-- Live Chat Component -->
+  <LiveChat :materi="materi" />
 </template>
 
 <script setup>

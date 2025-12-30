@@ -17,3 +17,5 @@ export * from './forum';
 export * from './sdgs';
 export * from './penghargaan';
 export * from './wilayah';
+export * from './course';
+export * from './chat';

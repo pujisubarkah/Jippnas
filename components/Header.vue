@@ -122,7 +122,7 @@
               <v-list-item-title>Settings</v-list-item-title>
             </v-list-item>
             <v-divider></v-divider>
-            <v-list-item @click="logout">
+            <v-list-item @click="handleLogout">
               <v-list-item-title class="text-error">Logout</v-list-item-title>
             </v-list-item>
           </v-list>
@@ -263,11 +263,9 @@ const changePasswordSuccess = ref('')
 const handleLogout = () => {
   showDropdown.value = false
   loggingOut.value = true
-  setTimeout(() => {
-    logout()
-    router.push('/')
-    loggingOut.value = false
-  }, 600)
+  logout()
+  router.push('/')
+  loggingOut.value = false
 }
 
 const openChangePassword = () => {

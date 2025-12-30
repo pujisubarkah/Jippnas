@@ -16,12 +16,15 @@
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"/>
       </svg>
     </button>
+    <!-- Global Live Chat -->
+    <GlobalLiveChat />
   </div>
 </template>
 
 <script setup>
 import Navbar from '~/components/Navbar.vue'
 import Footer from '~/components/Footer.vue'
+import GlobalLiveChat from '~/components/GlobalLiveChat.vue'
 import { ref, onMounted, onBeforeUnmount } from 'vue'
 
 const showToTop = ref(false)

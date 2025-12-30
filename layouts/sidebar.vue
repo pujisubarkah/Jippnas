@@ -90,7 +90,7 @@
                 <v-list-item-title>Settings</v-list-item-title>
               </v-list-item>
               <v-divider></v-divider>
-              <v-list-item @click="logout">
+              <v-list-item @click="handleLogout">
                 <v-list-item-title class="text-error">Logout</v-list-item-title>
               </v-list-item>
             </v-list>
@@ -114,8 +114,10 @@ import Sidebar from '~/components/Sidebar.vue';
 import FooterSidebar from '~/components/footer_sidebar.vue';
 import { useAuth } from '~/composables/useAuth';
 import { computed, ref } from 'vue';
+import { useRouter } from 'vue-router';
 
 const { user, logout } = useAuth();
+const router = useRouter();
 const role = computed(() => user.value?.role || 'user');
 
 // Sidebar state
@@ -123,6 +125,11 @@ const sidebarOpen = ref(true);
 
 const toggleSidebar = () => {
   sidebarOpen.value = !sidebarOpen.value;
+};
+
+const handleLogout = () => {
+  logout();
+  router.push('/');
 };
 </script>
 

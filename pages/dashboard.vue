@@ -162,7 +162,7 @@
 
 <script setup>
 definePageMeta({
-  middleware: 'auth'
+  middleware: ['auth', 'role-redirect']
 })
 
 // Redirect if not logged in (fallback)
@@ -175,7 +175,7 @@ if (!isLoggedIn.value) {
   })
 }
 
-const router = useRouter()
+// const router = useRouter()
 
 // Mock user level
 const userLevel = ref('Pemula')
