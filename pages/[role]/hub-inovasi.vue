@@ -4,7 +4,7 @@
     <v-card>
       <v-card-header>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="openAddModal">
+        <v-btn color="primary" @click="openAddModal" :disabled="loading">
           Tambah Survey Baru
         </v-btn>
       </v-card-header>
@@ -13,6 +13,7 @@
           :headers="headers"
           :items="surveys"
           :items-per-page="10"
+          :loading="loading"
           class="elevation-1"
         >
           <template v-slot:item.isActive="{ item }">
@@ -243,12 +244,12 @@
         </v-card-text>
         <v-card-actions class="pa-0 mt-6">
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="closeModal">Batal</v-btn>
-          <v-btn variant="outlined" color="primary" @click="previewSurvey">
+          <v-btn variant="text" @click="closeModal" :disabled="loading">Batal</v-btn>
+          <v-btn variant="outlined" color="primary" @click="previewSurvey" :disabled="loading">
             <v-icon left>mdi-eye</v-icon>
             Preview
           </v-btn>
-          <v-btn color="primary" @click="saveSurvey">
+          <v-btn color="primary" @click="saveSurvey" :loading="loading" :disabled="loading">
             {{ isEditing ? 'Update' : 'Simpan' }}
           </v-btn>
         </v-card-actions>
@@ -330,8 +331,10 @@
 </template>
 
 <script setup>
-import { ref, reactive } from 'vue'
-import { toast } from 'vue-sonner'
+import { ref, reactive, onMounted } from 'vue'
+import { useToast } from 'vue-toastification'
+
+const toast = useToast()
 
 definePageMeta({
   layout: 'sidebar'
@@ -342,6 +345,7 @@ const showModal = ref(false)
 const showPreview = ref(false)
 const isEditing = ref(false)
 const editingId = ref(null)
+const loading = ref(false)
 
 // Data table headers
 const headers = [
@@ -355,61 +359,38 @@ const headers = [
 ]
 
 // Survey List
-const surveys = ref([
-  {
-    id: 1,
-    title: 'Kuesioner Evaluasi Inovasi Daerah',
-    description: 'Evaluasi tingkat kepuasan dan kualitas inovasi yang telah diimplementasikan',
-    isActive: true,
-    responses: 45,
-    aspects: [
-      {
-        name: 'Kepuasan Pengguna',
-        questions: [
-          {
-            text: 'Seberapa puas Anda dengan inovasi yang ada?',
-            type: 'single',
-            required: true,
-            requireEvidence: true,
-            evidenceLabel: 'Jelaskan alasan kepuasan Anda',
-            options: [
-              { text: 'Sangat Puas', score: 5 },
-              { text: 'Puas', score: 4 },
-              { text: 'Cukup Puas', score: 3 },
-              { text: 'Kurang Puas', score: 2 },
-              { text: 'Tidak Puas', score: 1 }
-            ]
-          }
-        ]
-      },
-      {
-        name: 'Kualitas Layanan',
-        questions: [
-          {
-            text: 'Bagaimana kualitas layanan yang diberikan?',
-            type: 'single',
-            required: true,
-            requireEvidence: true,
-            evidenceLabel: 'Berikan contoh atau penjelasan',
-            options: [
-              { text: 'Sangat Baik', score: 5 },
-              { text: 'Baik', score: 4 },
-              { text: 'Cukup', score: 3 },
-              { text: 'Kurang', score: 2 },
-              { text: 'Buruk', score: 1 }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-])
+const surveys = ref([])
 
 // Current Survey Form
 const currentSurvey = reactive({
   title: '',
   description: '',
   aspects: []
+})
+
+// Fetch surveys from API
+const fetchSurveys = async () => {
+  loading.value = true
+  try {
+    const response = await $fetch('/api/survey-instruments')
+    if (response.success) {
+      surveys.value = response.data.map(survey => ({
+        ...survey,
+        responses: 0, // TODO: count from responses table
+        aspects: survey.aspects || []
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching surveys:', error)
+    toast.error('Gagal memuat data survey')
+  } finally {
+    loading.value = false
+  }
+}
+
+// Lifecycle
+onMounted(() => {
+  fetchSurveys()
 })
 
 // Methods
@@ -470,7 +451,7 @@ const removeOption = (aspectIndex, questionIndex, optionIndex) => {
   currentSurvey.aspects[aspectIndex].questions[questionIndex].options.splice(optionIndex, 1)
 }
 
-const saveSurvey = () => {
+const saveSurvey = async () => {
   // Validation
   if (!currentSurvey.title.trim()) {
     toast.error('Judul survey harus diisi')
@@ -516,33 +497,46 @@ const saveSurvey = () => {
     }
   }
 
-  if (isEditing.value) {
-    // Update existing survey
-    const index = surveys.value.findIndex(s => s.id === editingId.value)
-    if (index !== -1) {
-      surveys.value[index] = {
-        ...surveys.value[index],
-        title: currentSurvey.title,
-        description: currentSurvey.description,
-        aspects: JSON.parse(JSON.stringify(currentSurvey.aspects))
-      }
-      toast.success('Survey berhasil diupdate')
-    }
-  } else {
-    // Create new survey
-    const newSurvey = {
-      id: Date.now(),
+  loading.value = true
+  try {
+    const payload = {
       title: currentSurvey.title,
       description: currentSurvey.description,
       isActive: false,
-      responses: 0,
       aspects: JSON.parse(JSON.stringify(currentSurvey.aspects))
     }
-    surveys.value.unshift(newSurvey)
-    toast.success('Survey berhasil dibuat')
-  }
 
-  closeModal()
+    if (isEditing.value) {
+      // Update existing survey
+      const response = await $fetch(`/api/survey-instruments/${editingId.value}`, {
+        method: 'PUT',
+        body: payload
+      })
+      
+      if (response.success) {
+        toast.success('Survey berhasil diupdate')
+        await fetchSurveys()
+      }
+    } else {
+      // Create new survey
+      const response = await $fetch('/api/survey-instruments', {
+        method: 'POST',
+        body: payload
+      })
+      
+      if (response.success) {
+        toast.success('Survey berhasil dibuat')
+        await fetchSurveys()
+      }
+    }
+
+    closeModal()
+  } catch (error) {
+    console.error('Error saving survey:', error)
+    toast.error('Gagal menyimpan survey')
+  } finally {
+    loading.value = false
+  }
 }
 
 const editSurvey = (survey) => {
@@ -561,19 +555,50 @@ const viewSurvey = (survey) => {
   showPreview.value = true
 }
 
-const deleteSurvey = (survey) => {
+const deleteSurvey = async (survey) => {
   if (confirm(`Yakin ingin menghapus survey "${survey.title}"?`)) {
-    const index = surveys.value.findIndex(s => s.id === survey.id)
-    if (index !== -1) {
-      surveys.value.splice(index, 1)
-      toast.success('Survey berhasil dihapus')
+    loading.value = true
+    try {
+      const response = await $fetch(`/api/survey-instruments/${survey.id}`, {
+        method: 'DELETE'
+      })
+      
+      if (response.success) {
+        toast.success('Survey berhasil dihapus')
+        await fetchSurveys()
+      }
+    } catch (error) {
+      console.error('Error deleting survey:', error)
+      toast.error('Gagal menghapus survey')
+    } finally {
+      loading.value = false
     }
   }
 }
 
-const toggleSurveyStatus = (survey) => {
-  survey.isActive = !survey.isActive
-  toast.success(survey.isActive ? 'Survey diaktifkan' : 'Survey dinonaktifkan')
+const toggleSurveyStatus = async (survey) => {
+  loading.value = true
+  try {
+    const response = await $fetch(`/api/survey-instruments/${survey.id}`, {
+      method: 'PUT',
+      body: {
+        title: survey.title,
+        description: survey.description,
+        isActive: !survey.isActive,
+        aspects: survey.aspects
+      }
+    })
+    
+    if (response.success) {
+      toast.success(response.data.isActive ? 'Survey diaktifkan' : 'Survey dinonaktifkan')
+      await fetchSurveys()
+    }
+  } catch (error) {
+    console.error('Error toggling survey status:', error)
+    toast.error('Gagal mengubah status survey')
+  } finally {
+    loading.value = false
+  }
 }
 
 const previewSurvey = () => {
