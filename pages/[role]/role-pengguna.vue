@@ -9,7 +9,7 @@
           </template>
         </v-breadcrumbs>
         <v-spacer></v-spacer>
-        <v-btn color="primary" @click="openAddModal">
+        <v-btn color="primary" @click="openAddModal" :loading="loading">
           Tambah Peran
         </v-btn>
       </v-card-header>
@@ -29,10 +29,21 @@
           class="elevation-1"
           :loading="loading"
         >
+          <template v-slot:item.created_at="{ item }">
+            {{ item.created_at ? new Date(item.created_at).toLocaleDateString('id-ID') : '-' }}
+          </template>
+          <template v-slot:item.updated_at="{ item }">
+            {{ item.updated_at ? new Date(item.updated_at).toLocaleDateString('id-ID') : '-' }}
+          </template>
           <template v-slot:item.action="{ item }">
-            <v-btn icon small color="primary" @click="editRole(item)" title="Edit">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
+            <div class="d-flex justify-center">
+              <v-btn icon small color="primary" @click="editRole(item)" title="Edit" :disabled="loading">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon small color="error" @click="deleteRole(item)" title="Hapus" :disabled="loading">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
@@ -53,6 +64,7 @@
               maxlength="255"
               variant="outlined"
               placeholder="Masukkan nama peran"
+              :disabled="loading"
             ></v-text-field>
 
             <v-textarea
@@ -61,13 +73,14 @@
               rows="4"
               variant="outlined"
               placeholder="Masukkan keterangan peran"
+              :disabled="loading"
             ></v-textarea>
           </v-form>
         </v-card-text>
         <v-card-actions class="pa-0 mt-6">
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="closeModal">Batal</v-btn>
-          <v-btn color="primary" @click="saveRole">
+          <v-btn variant="text" @click="closeModal" :disabled="loading">Batal</v-btn>
+          <v-btn color="primary" @click="saveRole" :loading="loading">
             {{ isEditing ? 'Update' : 'Simpan' }}
           </v-btn>
         </v-card-actions>
@@ -85,22 +98,13 @@ definePageMeta({
 })
 
 const search = ref('')
-const roleData = ref([
-  { no: 1, nama: 'Member', keterangan: 'Member' },
-  { no: 2, nama: 'Super Admin', keterangan: 'Super Admin' },
-  { no: 3, nama: 'Admin Pembina', keterangan: 'Admin Pusat' },
-  { no: 4, nama: 'Admin Instansi', keterangan: 'Admin Lokal' },
-  { no: 5, nama: 'Admin Upp', keterangan: 'Admin Upp' },
-  { no: 6, nama: 'UPP', keterangan: 'UPP' },
-  { no: 7, nama: '<h1>admin upp</h1>', keterangan: 'admin upp' },
-  { no: 8, nama: 'Tes', keterangan: '"&gt;&lt;script&gt;alert(Tes1)&lt;/script&gt;' }
-])
+const roleData = ref([])
 const loading = ref(false)
 
 // Modal state
 const showModal = ref(false)
 const isEditing = ref(false)
-const editingIndex = ref(null)
+const editingItem = ref(null)
 
 // Form data
 const form = ref({
@@ -116,16 +120,36 @@ const breadcrumbItems = [
 ]
 
 const headers = [
-  { title: 'No', key: 'no', width: '50px' },
+  { title: 'ID', key: 'id', width: '80px' },
   { title: 'Nama', key: 'nama' },
   { title: 'Keterangan', key: 'keterangan' },
-  { title: 'Action', key: 'action', sortable: false, width: '100px' }
+  { title: 'Dibuat', key: 'created_at', width: '120px' },
+  { title: 'Diupdate', key: 'updated_at', width: '120px' },
+  { title: 'Action', key: 'action', sortable: false, width: '120px' }
 ]
+
+// Fetch data from API
+const fetchRoles = async () => {
+  loading.value = true
+  try {
+    const response = await $fetch('/api/peran')
+    if (response.success) {
+      roleData.value = response.data
+    } else {
+      toast.error('Gagal memuat data peran')
+    }
+  } catch (error) {
+    console.error('Error fetching roles:', error)
+    toast.error('Terjadi kesalahan saat memuat data')
+  } finally {
+    loading.value = false
+  }
+}
 
 // Modal functions
 const openAddModal = () => {
   isEditing.value = false
-  editingIndex.value = null
+  editingItem.value = null
   form.value = {
     nama: '',
     keterangan: ''
@@ -143,7 +167,7 @@ const closeModal = () => {
 
 const editRole = (item) => {
   isEditing.value = true
-  editingIndex.value = roleData.value.indexOf(item)
+  editingItem.value = item
   form.value = {
     nama: item.nama,
     keterangan: item.keterangan
@@ -152,73 +176,77 @@ const editRole = (item) => {
 }
 
 const deleteRole = async (item) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus peran "${item.nama}"?`)) {
-    roleData.value = roleData.value.filter(r => r.no !== item.no)
-    toast.success('Peran berhasil dihapus')
+  if (!confirm(`Apakah Anda yakin ingin menghapus peran "${item.nama}"?`)) {
+    return
+  }
+
+  loading.value = true
+  try {
+    const response = await $fetch('/api/peran', {
+      method: 'DELETE',
+      body: { id: item.id }
+    })
+
+    if (response.success) {
+      toast.success('Peran berhasil dihapus')
+      await fetchRoles()
+    } else {
+      toast.error(response.error || 'Gagal menghapus peran')
+    }
+  } catch (error) {
+    console.error('Error deleting role:', error)
+    toast.error('Terjadi kesalahan saat menghapus peran')
+  } finally {
+    loading.value = false
   }
 }
 
-const saveRole = () => {
+const saveRole = async () => {
   if (!form.value.nama.trim()) {
     toast.warning('Nama peran harus diisi')
     return
   }
 
-  if (isEditing.value) {
-    // Update
-    roleData.value[editingIndex.value] = {
-      ...roleData.value[editingIndex.value],
-      nama: form.value.nama.trim(),
-      keterangan: form.value.keterangan.trim()
+  loading.value = true
+  try {
+    let response
+    if (isEditing.value) {
+      // Update
+      response = await $fetch('/api/peran', {
+        method: 'PUT',
+        body: {
+          id: editingItem.value.id,
+          nama: form.value.nama.trim(),
+          keterangan: form.value.keterangan.trim()
+        }
+      })
+    } else {
+      // Create
+      response = await $fetch('/api/peran', {
+        method: 'POST',
+        body: {
+          nama: form.value.nama.trim(),
+          keterangan: form.value.keterangan.trim()
+        }
+      })
     }
-    toast.success('Peran berhasil diupdate')
-  } else {
-    // Add new
-    const newNo = roleData.value.length + 1
-    roleData.value.push({
-      no: newNo,
-      nama: form.value.nama.trim(),
-      keterangan: form.value.keterangan.trim()
-    })
-    toast.success('Peran berhasil ditambahkan')
-  }
 
-  closeModal()
+    if (response.success) {
+      toast.success(isEditing.value ? 'Peran berhasil diupdate' : 'Peran berhasil ditambahkan')
+      await fetchRoles()
+      closeModal()
+    } else {
+      toast.error(response.error || 'Gagal menyimpan peran')
+    }
+  } catch (error) {
+    console.error('Error saving role:', error)
+    toast.error('Terjadi kesalahan saat menyimpan peran')
+  } finally {
+    loading.value = false
+  }
 }
 
 onMounted(() => {
-  // Data already loaded
+  fetchRoles()
 })
 </script>
-
-<style scoped>
-.text-red {
-  color: #dc3545;
-}
-
-.text-red-md {
-  color: #c82333;
-}
-
-.text-bold {
-  font-weight: bold;
-}
-
-.bg-semi-reds {
-  background-color: #f8d7da;
-}
-
-.table-hovered tbody tr:hover {
-  background-color: #f5f5f5;
-}
-
-.breadcrumb {
-  background-color: transparent;
-  border-bottom: 1px solid #dee2e6;
-}
-
-.breadcrumb-item.active {
-  color: #c82333;
-  font-weight: bold;
-}
-</style>
