@@ -16,10 +16,22 @@ export default defineEventHandler(async (event) => {
     try {
       const allUsers = await db.select({
         id: users.id,
+        id_pengguna: users.id_pengguna,
+        id_peran: users.id_peran,
+        id_instansi: users.id_instansi,
+        id_wilayah: users.id_wilayah,
+        id_upp: users.id_upp,
+        name: users.name,
         username: users.username,
         email: users.email,
-        role: users.role,
-        is_verified: users.is_verified,
+        telp: users.telp,
+        nm_peran: users.nm_peran,
+        nm_instansi: users.nm_instansi,
+        nm_upp: users.nm_upp,
+        nm_wilayah: users.nm_wilayah,
+        is_active: users.is_active,
+        is_del: users.is_del,
+        last_login: users.last_login,
         created_at: users.created_at,
         updated_at: users.updated_at
       }).from(users);
@@ -32,10 +44,10 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'POST') {
     try {
       const body = await readBody(event);
-      const { username, email, password, role } = body;
+      const { username, email, password, name, id_peran, id_instansi, id_wilayah, telp } = body;
 
-      if (!username || !email || !password || !role) {
-        return { error: 'Username, email, password, and role are required.' };
+      if (!username || !email || !password) {
+        return { error: 'Username, email, and password are required.' };
       }
 
       // Hash password
@@ -45,14 +57,28 @@ export default defineEventHandler(async (event) => {
         username,
         email,
         password: hashedPassword,
-        role,
-        is_verified: false
-      }).returning({
+        name,
+        id_peran,
+        id_instansi,
+        id_wilayah,
+        telp,
+        is_active: '1',
+        is_del: '0',
+        is_changepass: '0',
+        created_at: new Date(),
+        updated_at: new Date()
+      } as any).returning({
         id: users.id,
+        id_pengguna: users.id_pengguna,
+        id_peran: users.id_peran,
+        id_instansi: users.id_instansi,
+        name: users.name,
         username: users.username,
         email: users.email,
-        role: users.role,
-        is_verified: users.is_verified,
+        telp: users.telp,
+        nm_peran: users.nm_peran,
+        nm_instansi: users.nm_instansi,
+        is_active: users.is_active,
         created_at: users.created_at,
         updated_at: users.updated_at
       });

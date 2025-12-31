@@ -24,24 +24,26 @@
         <span class="text-h6 font-weight-bold text-primary mr-3">
           Jippnas Admin
         </span>
-        <v-chip
-          v-if="user?.role === 'admin'"
-          color="primary"
-          variant="flat"
-          size="small"
-          class="font-weight-medium"
-        >
-          Admin
-        </v-chip>
-        <v-chip
-          v-else
-          color="success"
-          variant="flat"
-          size="small"
-          class="font-weight-medium"
-        >
-          User
-        </v-chip>
+        <ClientOnly>
+          <v-chip
+            v-if="user?.role === 'admin'"
+            color="primary"
+            variant="flat"
+            size="small"
+            class="font-weight-medium"
+          >
+            Admin
+          </v-chip>
+          <v-chip
+            v-else
+            color="success"
+            variant="flat"
+            size="small"
+            class="font-weight-medium"
+          >
+            User
+          </v-chip>
+        </ClientOnly>
       </v-toolbar-title>
 
       <v-spacer />
@@ -83,50 +85,52 @@
         </v-btn>
 
         <!-- User Menu -->
-        <v-menu offset-y>
-          <template v-slot:activator="{ props }">
-            <v-btn
-              v-bind="props"
-              class="ml-2"
-              variant="text"
-              color="primary"
-            >
-              <v-avatar size="36" color="primary" class="mr-2">
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  class="text-white"
-                >
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-              </v-avatar>
-              <span class="text-body-2 font-weight-medium hidden-sm-and-down">
-                {{ user?.username || 'User' }}
-              </span>
-              <v-icon class="ml-1">mdi-chevron-down</v-icon>
-            </v-btn>
-          </template>
+        <ClientOnly>
+          <v-menu offset-y>
+            <template v-slot:activator="{ props }">
+              <v-btn
+                v-bind="props"
+                class="ml-2"
+                variant="text"
+                color="primary"
+              >
+                <v-avatar size="36" color="primary" class="mr-2">
+                  <svg
+                    width="20"
+                    height="20"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    class="text-white"
+                  >
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                </v-avatar>
+                <span class="text-body-2 font-weight-medium hidden-sm-and-down">
+                  {{ user?.name || user?.username || 'User' }}
+                </span>
+                <v-icon class="ml-1">mdi-chevron-down</v-icon>
+              </v-btn>
+            </template>
 
-          <v-list>
-            <v-list-item>
-              <v-list-item-title>Profile</v-list-item-title>
-            </v-list-item>
-            <v-list-item>
-              <v-list-item-title>Settings</v-list-item-title>
-            </v-list-item>
-            <v-divider></v-divider>
-            <v-list-item @click="handleLogout">
-              <v-list-item-title class="text-error">Logout</v-list-item-title>
-            </v-list-item>
-          </v-list>
-        </v-menu>
+            <v-list>
+              <v-list-item>
+                <v-list-item-title>Profile</v-list-item-title>
+              </v-list-item>
+              <v-list-item>
+                <v-list-item-title>Settings</v-list-item-title>
+              </v-list-item>
+              <v-divider></v-divider>
+              <v-list-item @click="handleLogout">
+                <v-list-item-title class="text-error">Logout</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-menu>
+        </ClientOnly>
       </div>
     </v-container>
 
@@ -179,7 +183,7 @@
               type="password"
               label="Konfirmasi Password Baru"
               variant="outlined"
-              :rules="[
+              :rules=" [
                 v => !!v || 'Konfirmasi password wajib diisi',
                 v => v === changePasswordForm.newPassword || 'Konfirmasi password tidak cocok'
               ]"
@@ -304,11 +308,6 @@ const submitChangePassword = async () => {
   }
 
   // TODO: Call API to change password
-  // Example:
-  // const res = await $fetch('/api/change-password', { method: 'POST', body: { oldPassword, newPassword } });
-  // if (res.success) { changePasswordSuccess.value = 'Password berhasil diubah.' } else { changePasswordError.value = res.error }
-
-  // Simulate API call
   setTimeout(() => {
     changePasswordSuccess.value = 'Password berhasil diubah (simulasi).'
     changePasswordForm.value = {
@@ -330,7 +329,6 @@ const submitChangePassword = async () => {
   border-bottom: 3px solid #1976D2;
 }
 
-/* Custom animations for Vuetify transitions */
 .v-enter-active,
 .v-leave-active {
   transition: opacity 0.3s ease;
@@ -341,7 +339,6 @@ const submitChangePassword = async () => {
   opacity: 0;
 }
 
-/* Loading state styling */
 .v-btn--loading .v-btn__content {
   opacity: 0.8;
 }

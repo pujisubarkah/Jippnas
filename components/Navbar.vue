@@ -81,13 +81,13 @@
                 class="px-3 d-none d-md-flex"
               >
                 <v-icon start>mdi-account-circle</v-icon>
-                {{ user.name }}
+                {{ user?.name || user?.username || 'User' }}
                 <v-icon end size="small">mdi-chevron-down</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-item>
-                <v-list-item-title class="font-weight-bold">{{ user.name }}</v-list-item-title>
+                <v-list-item-title class="font-weight-bold">{{ user?.name || user?.username || 'User' }}</v-list-item-title>
                 <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
               </v-list-item>
               <v-divider />

@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Find user by username or email
-  let user;
+  let user: any[] = [];
   if (username) {
     user = await db.select().from(users).where(eq(users.username, username)).limit(1);
   } else if (email) {
@@ -28,12 +28,41 @@ export default defineEventHandler(async (event) => {
   }
 
   const foundUser = user[0];
+  
+  // Check if user is deleted or inactive
+  if (foundUser.is_del === '1' || foundUser.is_active === '0') {
+    return { error: 'Account is not active.' };
+  }
+  
   const passwordMatch = await bcrypt.compare(password, String(foundUser.password));
+  
   if (!passwordMatch) {
     return { error: 'Invalid credentials.' };
   }
 
-  // Optionally, return user info (without password)
+  // Update last login
+  await db.update(users)
+    .set({ last_login: new Date() })
+    .where(eq(users.id, foundUser.id));
+
+  // Determine role and redirect path
+  let role = 'user';
+  let redirectPath = '/';
+  
+  if (foundUser.id_peran === 2) {
+    role = 'admin';
+    redirectPath = '/admin';
+  } else if (foundUser.id_peran) {
+    // You can add more role mappings here
+    redirectPath = `/${foundUser.nm_peran?.toLowerCase() || 'dashboard'}`;
+  }
+
+  // Return user info (without password)
   const { password: _, ...userData } = foundUser;
-  return { success: true, user: userData };
+  return { 
+    success: true, 
+    user: userData,
+    role: role,
+    redirectPath: redirectPath
+  };
 });

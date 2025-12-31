@@ -6,12 +6,14 @@ export const useAuth = () => {
 
   // Login function
   const login = (userData) => {
+    console.log('🔐 useAuth.login called with:', userData)
     isLoggedIn.value = true
     user.value = userData
     // In real app, save to localStorage or cookie
     if (process.client) {
       localStorage.setItem('user', JSON.stringify(userData))
       localStorage.setItem('isLoggedIn', 'true')
+      console.log('💾 Saved to localStorage:', localStorage.getItem('user'))
     }
   }
 
@@ -32,9 +34,13 @@ export const useAuth = () => {
       const loggedIn = localStorage.getItem('isLoggedIn') === 'true'
       const userData = localStorage.getItem('user')
 
+      console.log('🔍 checkAuth - loggedIn:', loggedIn)
+      console.log('🔍 checkAuth - userData:', userData)
+
       if (loggedIn && userData) {
         isLoggedIn.value = true
         user.value = JSON.parse(userData)
+        console.log('✅ checkAuth - user.value set to:', user.value)
       }
     }
   }
@@ -45,8 +51,8 @@ export const useAuth = () => {
   }
 
   return {
-    isLoggedIn: readonly(isLoggedIn),
-    user: readonly(user),
+    isLoggedIn,
+    user,
     login,
     logout,
     checkAuth

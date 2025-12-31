@@ -27,24 +27,26 @@
           <span class="text-h6 font-weight-bold text-primary mr-3">
             Jippnas Admin
           </span>
-          <v-chip
-            v-if="user?.role === 'admin'"
-            color="primary"
-            variant="flat"
-            size="small"
-            class="font-weight-medium"
-          >
-            Admin
-          </v-chip>
-          <v-chip
-            v-else
-            color="success"
-            variant="flat"
-            size="small"
-            class="font-weight-medium"
-          >
-            User
-          </v-chip>
+          <ClientOnly>
+            <v-chip
+              v-if="user?.role === 'admin'"
+              color="primary"
+              variant="flat"
+              size="small"
+              class="font-weight-medium"
+            >
+              Admin
+            </v-chip>
+            <v-chip
+              v-else
+              color="success"
+              variant="flat"
+              size="small"
+              class="font-weight-medium"
+            >
+              User
+            </v-chip>
+          </ClientOnly>
         </v-toolbar-title>
 
         <v-spacer />
