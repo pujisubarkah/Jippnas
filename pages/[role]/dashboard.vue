@@ -193,7 +193,9 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 
-definePageMeta({ layout: 'sidebar' })
+definePageMeta({ 
+  layout: 'sidebar'
+})
 
 const route = useRoute()
 const role = route.params.role === 'admin' ? 'admin' : 'user'

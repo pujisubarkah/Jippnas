@@ -81,13 +81,13 @@
                 class="px-3 d-none d-md-flex"
               >
                 <v-icon start>mdi-account-circle</v-icon>
-                {{ user?.name || user?.username || 'User' }}
+                Selamat datang {{ user?.name || user?.username || 'User' }}
                 <v-icon end size="small">mdi-chevron-down</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-item>
-                <v-list-item-title class="font-weight-bold">{{ user?.name || user?.username || 'User' }}</v-list-item-title>
+                <v-list-item-title class="font-weight-bold">Selamat datang {{ user?.name || user?.username || 'User' }}</v-list-item-title>
                 <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
               </v-list-item>
               <v-divider />
@@ -419,13 +419,18 @@ const handleLogin = async () => {
   if (!email || !password) return appToast.warn('Harap isi semua field!')
 
   await apiLogin({ email, password })
-  if (apiUser.value?.role) {
+  console.log('🔍 apiUser.value after login:', apiUser.value)
+  console.log('🔍 redirectPath:', apiUser.value?.redirectPath)
+  
+  if (apiUser.value) {
     login(apiUser.value)
     showLoginModal.value = false
     loginForm.value = { email: '', password: '' }
     appToast.success('🎉 Login Berhasil!', { description: 'Selamat datang kembali!' })
     // Use navigateTo for better Nuxt routing
-    await navigateTo(`/${apiUser.value.role}/dashboard`)
+    const targetPath = apiUser.value.redirectPath || `/${apiUser.value.role}/dashboard`
+    console.log('🚀 Navigating to:', targetPath)
+    await navigateTo(targetPath)
   } else {
     appToast.error(loginError.value || 'Login gagal. Cek email & password.')
   }
@@ -508,7 +513,7 @@ const handleRegister = () => {
 // 🔑 Logout
 const handleLogout = () => {
   logout()
-  appToast.info('Anda telah logout.')
+  appToast.success('👋 Anda telah logout.')
 }
 
 // 🔑 Search — SPA-friendly

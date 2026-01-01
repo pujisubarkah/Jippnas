@@ -1,8 +1,8 @@
 // composables/useAuth.js
 export const useAuth = () => {
-  // Reactive state for authentication
-  const isLoggedIn = ref(false)
-  const user = ref(null)
+  // Reactive state for authentication using useState for global persistence
+  const isLoggedIn = useState('isLoggedIn', () => false)
+  const user = useState('user', () => null)
 
   // Login function
   const login = (userData) => {

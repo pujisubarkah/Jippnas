@@ -28,24 +28,9 @@
             Jippnas Admin
           </span>
           <ClientOnly>
-            <v-chip
-              v-if="user?.role === 'admin'"
-              color="primary"
-              variant="flat"
-              size="small"
-              class="font-weight-medium"
-            >
-              Admin
-            </v-chip>
-            <v-chip
-              v-else
-              color="success"
-              variant="flat"
-              size="small"
-              class="font-weight-medium"
-            >
-              User
-            </v-chip>
+            <span class="text-body-1 font-weight-medium">
+              Selamat datang {{ user?.name || user?.username || 'User' }}
+            </span>
           </ClientOnly>
         </v-toolbar-title>
 
@@ -74,11 +59,11 @@
               >
                 <v-avatar size="36" color="primary" class="mr-2">
                   <span class="text-white text-subtitle-2">
-                    {{ user?.username?.charAt(0).toUpperCase() || 'U' }}
+                    {{ user?.name?.charAt(0).toUpperCase() || user?.username?.charAt(0).toUpperCase() || 'U' }}
                   </span>
                 </v-avatar>
                 <span class="text-body-2 font-weight-medium hidden-sm-and-down">
-                  {{ user?.username || 'User' }}
+                  {{ user?.name || user?.username || 'User' }}
                 </span>
                 <v-icon class="ml-1">mdi-chevron-down</v-icon>
               </v-btn>

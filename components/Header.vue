@@ -41,7 +41,7 @@
             size="small"
             class="font-weight-medium"
           >
-            User
+            {{ user?.name || user?.username || 'User' }}
           </v-chip>
         </ClientOnly>
       </v-toolbar-title>
@@ -94,26 +94,9 @@
                 variant="text"
                 color="primary"
               >
-                <v-avatar size="36" color="primary" class="mr-2">
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    class="text-white"
-                  >
-                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                    <circle cx="12" cy="7" r="4"></circle>
-                  </svg>
-                </v-avatar>
-                <span class="text-body-2 font-weight-medium hidden-sm-and-down">
-                  {{ user?.name || user?.username || 'User' }}
-                </span>
-                <v-icon class="ml-1">mdi-chevron-down</v-icon>
+                <v-icon start>mdi-account-circle</v-icon>
+                {{ user?.name || user?.username || 'User' }}
+                <v-icon end>mdi-chevron-down</v-icon>
               </v-btn>
             </template>
 

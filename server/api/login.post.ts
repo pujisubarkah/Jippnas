@@ -51,10 +51,12 @@ export default defineEventHandler(async (event) => {
   
   if (foundUser.id_peran === 2) {
     role = 'admin';
-    redirectPath = '/admin';
-  } else if (foundUser.id_peran) {
-    // You can add more role mappings here
-    redirectPath = `/${foundUser.nm_peran?.toLowerCase() || 'dashboard'}`;
+    redirectPath = '/user/dashboard';
+  } else if (foundUser.id_peran === 1) {
+    redirectPath = '/';
+  } else {
+    // For other roles, redirect to /[role]/dashboard
+    redirectPath = `/${role}/dashboard`;
   }
 
   // Return user info (without password)
