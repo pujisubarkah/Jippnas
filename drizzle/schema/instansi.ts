@@ -1,12 +1,19 @@
-import { pgTable, serial, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-export const instansi = pgTable('instansi', {
-  id: serial('id').primaryKey(),
-  nama: varchar('nama', { length: 255 }),
+export const instansi = pgTable('master_instansi', {
+  id: varchar('id', { length: 100 }).primaryKey(),
+  id_wilayah: varchar('id_wilayah', { length: 100 }),
+  nama: text('nama'),
   singkatan: varchar('singkatan', { length: 100 }),
+  jenis: varchar('jenis', { length: 100 }),
+  logo: text('logo'),
+  koordinator: text('koordinator'),
   alamat: text('alamat'),
-  telp: varchar('telp', { length: 20 }),
-  status_hub: boolean('status_hub').default(false),
+  telepon: varchar('telepon', { length: 20 }),
+  lat: varchar('lat', { length: 50 }),
+  lng: varchar('lng', { length: 50 }),
+  stshub: boolean('stshub'),
+  is_active: boolean('is_active'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

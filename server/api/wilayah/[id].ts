@@ -8,15 +8,15 @@ const db = drizzle(client);
 
 export default defineEventHandler(async (event) => {
   const method = event.node.req.method;
-  const id = getRouterParam(event, 'id');
+  const kode = getRouterParam(event, 'id');
 
-  if (!id) {
-    return { error: 'Wilayah ID is required' };
+  if (!kode) {
+    return { error: 'Wilayah kode is required' };
   }
 
   if (method === 'GET') {
     try {
-      const wilayahItem = await db.select().from(wilayah).where(eq(wilayah.id, id)).limit(1);
+      const wilayahItem = await db.select().from(wilayah).where(eq(wilayah.kode, kode)).limit(1);
 
       if (!wilayahItem || wilayahItem.length === 0) {
         return { error: 'Wilayah not found' };
@@ -30,17 +30,23 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'PUT') {
     try {
       const body = await readBody(event);
-      const { nama, jenis, ibukota } = body;
+      const { nama, ibukota, lat, lng, elv, tz, luas, penduduk, path, status } = body;
 
       const updateData: any = {};
       if (nama !== undefined) updateData.nama = nama;
-      if (jenis !== undefined) updateData.jenis = jenis;
       if (ibukota !== undefined) updateData.ibukota = ibukota;
-      updateData.updated_at = new Date();
+      if (lat !== undefined) updateData.lat = lat;
+      if (lng !== undefined) updateData.lng = lng;
+      if (elv !== undefined) updateData.elv = elv;
+      if (tz !== undefined) updateData.tz = tz;
+      if (luas !== undefined) updateData.luas = luas;
+      if (penduduk !== undefined) updateData.penduduk = penduduk;
+      if (path !== undefined) updateData.path = path;
+      if (status !== undefined) updateData.status = status;
 
       const updatedWilayah = await db.update(wilayah)
         .set(updateData)
-        .where(eq(wilayah.id, id))
+        .where(eq(wilayah.kode, kode))
         .returning();
 
       if (!updatedWilayah || updatedWilayah.length === 0) {
@@ -54,8 +60,8 @@ export default defineEventHandler(async (event) => {
     }
   } else if (method === 'DELETE') {
     try {
-      const deletedWilayah = await db.delete(wilayah).where(eq(wilayah.id, id)).returning({
-        id: wilayah.id,
+      const deletedWilayah = await db.delete(wilayah).where(eq(wilayah.kode, kode)).returning({
+        kode: wilayah.kode,
         nama: wilayah.nama
       });
 

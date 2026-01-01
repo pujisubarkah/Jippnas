@@ -19,17 +19,24 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'POST') {
     try {
       const body = await readBody(event);
-      const { id, nama, jenis, ibukota } = body;
+      const { kode, nama, ibukota, lat, lng, elv, tz, luas, penduduk, path, status } = body;
 
-      if (!id || !nama) {
-        return { error: 'id and nama are required.' };
+      if (!kode || !nama) {
+        return { error: 'kode and nama are required.' };
       }
 
       const newWilayah = await db.insert(wilayah).values({
-        id,
+        kode,
         nama,
-        jenis,
-        ibukota
+        ibukota,
+        lat,
+        lng,
+        elv,
+        tz,
+        luas,
+        penduduk,
+        path,
+        status
       }).returning();
 
       return { success: true, data: newWilayah[0] };

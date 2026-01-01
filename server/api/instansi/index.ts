@@ -1,5 +1,4 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm';
 import postgres from 'postgres';
 import { instansi } from '../../../drizzle/schema/instansi';
 
@@ -13,11 +12,18 @@ export default defineEventHandler(async (event) => {
     try {
       const allInstansi = await db.select({
         id: instansi.id,
+        id_wilayah: instansi.id_wilayah,
         nama: instansi.nama,
         singkatan: instansi.singkatan,
+        jenis: instansi.jenis,
+        logo: instansi.logo,
+        koordinator: instansi.koordinator,
         alamat: instansi.alamat,
-        telp: instansi.telp,
-        status_hub: instansi.status_hub,
+        telepon: instansi.telepon,
+        lat: instansi.lat,
+        lng: instansi.lng,
+        stshub: instansi.stshub,
+        is_active: instansi.is_active,
         created_at: instansi.created_at,
         updated_at: instansi.updated_at
       }).from(instansi);
@@ -30,25 +36,40 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'POST') {
     try {
       const body = await readBody(event);
-      const { nama, singkatan, alamat, telp, status_hub } = body;
+      const { id, id_wilayah, nama, singkatan, jenis, logo, koordinator, alamat, telepon, lat, lng, stshub, is_active } = body;
 
-      if (!nama) {
-        return { error: 'Nama is required.' };
+      if (!id || !nama) {
+        return { error: 'ID and Nama are required.' };
       }
 
       const newInstansi = await db.insert(instansi).values({
+        id,
+        id_wilayah,
         nama,
         singkatan,
+        jenis,
+        logo,
+        koordinator,
         alamat,
-        telp,
-        status_hub: status_hub || false
+        telepon,
+        lat,
+        lng,
+        stshub: stshub || false,
+        is_active: is_active !== undefined ? is_active : true
       }).returning({
         id: instansi.id,
+        id_wilayah: instansi.id_wilayah,
         nama: instansi.nama,
         singkatan: instansi.singkatan,
+        jenis: instansi.jenis,
+        logo: instansi.logo,
+        koordinator: instansi.koordinator,
         alamat: instansi.alamat,
-        telp: instansi.telp,
-        status_hub: instansi.status_hub,
+        telepon: instansi.telepon,
+        lat: instansi.lat,
+        lng: instansi.lng,
+        stshub: instansi.stshub,
+        is_active: instansi.is_active,
         created_at: instansi.created_at,
         updated_at: instansi.updated_at
       });

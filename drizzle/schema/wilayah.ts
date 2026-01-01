@@ -1,10 +1,15 @@
-import { pgTable, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, varchar, doublePrecision, real, smallint, text } from 'drizzle-orm/pg-core';
 
-export const wilayah = pgTable('wilayah', {
-  id: text('id').primaryKey(), // String karena kode seperti '96', '92.71'
-  nama: text('nama').notNull(),
-  jenis: text('jenis'), // Nullable, e.g., 'Pemkab', 'Pemkot'
-  ibukota: text('ibukota'), // Nullable
-  created_at: timestamp('created_at').defaultNow(),
-  updated_at: timestamp('updated_at').defaultNow(),
+export const wilayah = pgTable('master_wilayah', {
+  kode: varchar('kode').primaryKey(),
+  nama: varchar('nama').notNull(),
+  ibukota: varchar('ibukota'),
+  lat: doublePrecision('lat'),
+  lng: doublePrecision('lng'),
+  elv: real('elv'),
+  tz: smallint('tz'),
+  luas: doublePrecision('luas'),
+  penduduk: doublePrecision('penduduk'),
+  path: text('path'),
+  status: smallint('status'),
 });

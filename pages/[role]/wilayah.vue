@@ -30,6 +30,9 @@
         >
           <template v-slot:item.action="{ item }">
             <div class="d-flex">
+              <v-btn icon small color="green" @click="viewPath(item)" title="View Path">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
               <v-btn icon small color="blue" @click="logWilayah(item)" title="Log">
                 <v-icon>mdi-card-account-details</v-icon>
               </v-btn>
@@ -51,12 +54,11 @@
         <v-card-text class="pa-0">
           <v-form @submit.prevent="saveWilayah" class="space-y-4">
             <v-text-field
-              v-model="form.id"
-              label="ID Wilayah *"
+              v-model="form.kode"
+              label="Kode Wilayah *"
               required
-              maxlength="10"
               variant="outlined"
-              placeholder="Masukkan ID wilayah"
+              placeholder="Masukkan kode wilayah"
               :disabled="isEditing"
             ></v-text-field>
 
@@ -64,25 +66,83 @@
               v-model="form.nama"
               label="Nama Wilayah *"
               required
-              maxlength="255"
               variant="outlined"
               placeholder="Masukkan nama wilayah"
             ></v-text-field>
 
             <v-text-field
-              v-model="form.jenis"
-              label="Jenis"
-              maxlength="50"
+              v-model="form.ibukota"
+              label="Ibukota"
               variant="outlined"
-              placeholder="Masukkan jenis wilayah"
+              placeholder="Masukkan ibukota wilayah"
             ></v-text-field>
 
             <v-text-field
-              v-model="form.ibukota"
-              label="Ibukota"
-              maxlength="100"
+              v-model.number="form.lat"
+              label="Latitude"
+              type="number"
+              step="any"
               variant="outlined"
-              placeholder="Masukkan ibukota wilayah"
+              placeholder="Masukkan latitude"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.lng"
+              label="Longitude"
+              type="number"
+              step="any"
+              variant="outlined"
+              placeholder="Masukkan longitude"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.elv"
+              label="Elevation"
+              type="number"
+              step="any"
+              variant="outlined"
+              placeholder="Masukkan elevation"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.tz"
+              label="Timezone"
+              type="number"
+              variant="outlined"
+              placeholder="Masukkan timezone"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.luas"
+              label="Luas"
+              type="number"
+              step="any"
+              variant="outlined"
+              placeholder="Masukkan luas"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.penduduk"
+              label="Penduduk"
+              type="number"
+              variant="outlined"
+              placeholder="Masukkan jumlah penduduk"
+            ></v-text-field>
+
+            <v-textarea
+              v-model="form.path"
+              label="Path"
+              variant="outlined"
+              placeholder="Masukkan path"
+              rows="3"
+            ></v-textarea>
+
+            <v-text-field
+              v-model.number="form.status"
+              label="Status"
+              type="number"
+              variant="outlined"
+              placeholder="Masukkan status (0 atau 1)"
             ></v-text-field>
           </v-form>
         </v-card-text>
@@ -92,6 +152,22 @@
           <v-btn color="primary" @click="saveWilayah">
             {{ isEditing ? 'Update' : 'Simpan' }}
           </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Modal View Path -->
+    <v-dialog v-model="showPathModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          Peta Wilayah: {{ selectedWilayahName }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <div id="map" style="height: 400px;"></div>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closePathModal">Tutup</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -120,28 +196,47 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'sidebar'
 })
 
+useHead({
+  link: [
+    { rel: 'stylesheet', href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' }
+  ],
+  script: [
+    { src: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js' }
+  ]
+})
+
 const search = ref('')
 const rawWilayahData = ref([])
 const showModal = ref(false)
 const isEditing = ref(false)
-const editingId = ref(null)
+const editingKode = ref(null)
+const showPathModal = ref(false)
+const selectedPath = ref('')
+const mapInstance = ref(null)
 const showLogModal = ref(false)
 const selectedWilayahName = ref('')
 const logData = ref([])
 
 // Form data
 const form = ref({
-  id: '',
+  kode: '',
   nama: '',
-  jenis: '',
-  ibukota: ''
+  ibukota: '',
+  lat: null,
+  lng: null,
+  elv: null,
+  tz: 7,
+  luas: null,
+  penduduk: null,
+  path: '',
+  status: 1
 })
 
 const breadcrumbItems = [
@@ -153,11 +248,13 @@ const breadcrumbItems = [
 
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
-  { title: 'ID', key: 'id', width: '80px' },
+  { title: 'Kode', key: 'kode', width: '80px' },
   { title: 'Nama', key: 'nama' },
-  { title: 'Jenis', key: 'jenis', width: '80px' },
   { title: 'Ibukota', key: 'ibukota', width: '100px' },
-  { title: 'Action', key: 'action', sortable: false, width: '100px' }
+  { title: 'Lat', key: 'lat', width: '80px' },
+  { title: 'Lng', key: 'lng', width: '80px' },
+  { title: 'Status', key: 'status', width: '60px' },
+  { title: 'Action', key: 'action', sortable: false, width: '150px' }
 ]
 
 const logHeaders = [
@@ -196,12 +293,19 @@ onMounted(() => {
 // Modal functions
 const openAddModal = () => {
   isEditing.value = false
-  editingId.value = null
+  editingKode.value = null
   form.value = {
-    id: '',
+    kode: '',
     nama: '',
-    jenis: '',
-    ibukota: ''
+    ibukota: '',
+    lat: null,
+    lng: null,
+    elv: null,
+    tz: 7,
+    luas: null,
+    penduduk: null,
+    path: '',
+    status: 1
   }
   showModal.value = true
 }
@@ -209,41 +313,62 @@ const openAddModal = () => {
 const closeModal = () => {
   showModal.value = false
   form.value = {
-    id: '',
+    kode: '',
     nama: '',
-    jenis: '',
-    ibukota: ''
+    ibukota: '',
+    lat: null,
+    lng: null,
+    elv: null,
+    tz: 7,
+    luas: null,
+    penduduk: null,
+    path: '',
+    status: 1
   }
 }
 
 const editWilayah = (item) => {
   isEditing.value = true
-  editingId.value = item.id
+  editingKode.value = item.kode
   form.value = {
-    id: item.id,
+    kode: item.kode,
     nama: item.nama,
-    jenis: item.jenis,
-    ibukota: item.ibukota
+    ibukota: item.ibukota,
+    lat: item.lat,
+    lng: item.lng,
+    elv: item.elv,
+    tz: item.tz,
+    luas: item.luas,
+    penduduk: item.penduduk,
+    path: item.path,
+    status: item.status
   }
   showModal.value = true
 }
 
 const saveWilayah = async () => {
   try {
-    if (!form.value.id.trim() || !form.value.nama.trim()) {
-      toast.warning('ID dan Nama wilayah harus diisi')
+    if (!form.value.kode.trim() || !form.value.nama.trim()) {
+      toast.warning('Kode dan Nama wilayah harus diisi')
       return
     }
 
     let response
     if (isEditing.value) {
       // Update existing wilayah
-      response = await $fetch(`/api/wilayah/${editingId.value}`, {
+      response = await $fetch(`/api/wilayah/${editingKode.value}`, {
         method: 'PUT',
         body: {
           nama: form.value.nama.trim(),
-          jenis: form.value.jenis.trim(),
-          ibukota: form.value.ibukota.trim()
+          ibukota: form.value.ibukota.trim(),
+          lat: form.value.lat,
+          lng: form.value.lng,
+          elv: form.value.elv,
+          tz: form.value.tz,
+          luas: form.value.luas,
+          penduduk: form.value.penduduk,
+          path: form.value.path.trim(),
+          status: form.value.status
         }
       })
     } else {
@@ -251,10 +376,17 @@ const saveWilayah = async () => {
       response = await $fetch('/api/wilayah', {
         method: 'POST',
         body: {
-          id: form.value.id.trim(),
+          kode: form.value.kode.trim(),
           nama: form.value.nama.trim(),
-          jenis: form.value.jenis.trim(),
-          ibukota: form.value.ibukota.trim()
+          ibukota: form.value.ibukota.trim(),
+          lat: form.value.lat,
+          lng: form.value.lng,
+          elv: form.value.elv,
+          tz: form.value.tz,
+          luas: form.value.luas,
+          penduduk: form.value.penduduk,
+          path: form.value.path.trim(),
+          status: form.value.status
         }
       })
     }
@@ -270,13 +402,66 @@ const saveWilayah = async () => {
   }
 }
 
+const viewPath = async (item) => {
+  selectedWilayahName.value = item.nama
+  selectedPath.value = item.path
+  showPathModal.value = true
+
+  await nextTick()
+
+  if (typeof window !== 'undefined' && window.L) {
+    // Destroy previous map if exists
+    if (mapInstance.value) {
+      mapInstance.value.remove()
+    }
+
+    // Initialize map centered on Indonesia
+    mapInstance.value = window.L.map('map').setView([-2, 118], 5)
+
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(mapInstance.value)
+
+    try {
+      const pathData = JSON.parse(selectedPath.value)
+      if (Array.isArray(pathData) && pathData.length > 0) {
+        const bounds = []
+        pathData.forEach(polygonCoords => {
+          if (Array.isArray(polygonCoords) && polygonCoords.length > 0) {
+            const polygon = window.L.polygon(polygonCoords).addTo(mapInstance.value)
+            bounds.push(polygon.getBounds())
+          }
+        })
+        if (bounds.length > 0) {
+          const group = new window.L.featureGroup(bounds.map(b => window.L.rectangle(b)))
+          mapInstance.value.fitBounds(group.getBounds())
+        }
+      }
+    } catch (error) {
+      console.error('Error parsing path:', error)
+      toast.error('Gagal memuat peta wilayah')
+    }
+  } else {
+    toast.error('Leaflet tidak tersedia')
+  }
+}
+
+const closePathModal = () => {
+  showPathModal.value = false
+  selectedPath.value = ''
+  if (mapInstance.value) {
+    mapInstance.value.remove()
+    mapInstance.value = null
+  }
+}
+
 const logWilayah = (item) => {
   selectedWilayahName.value = item.nama
   // Dummy log data - replace with actual API call
   logData.value = [
     { no: 1, nama: 'Update Nama', updated_by: 'Admin', tanggal: '2023-10-01' },
-    { no: 2, nama: 'Update Jenis', updated_by: 'User1', tanggal: '2023-10-02' },
-    { no: 3, nama: 'Update Ibukota', updated_by: 'Admin', tanggal: '2023-10-03' }
+    { no: 2, nama: 'Update Ibukota', updated_by: 'User1', tanggal: '2023-10-02' },
+    { no: 3, nama: 'Update Status', updated_by: 'Admin', tanggal: '2023-10-03' }
   ]
   showLogModal.value = true
 }

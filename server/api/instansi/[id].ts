@@ -18,14 +18,21 @@ export default defineEventHandler(async (event) => {
     try {
       const instansiData = await db.select({
         id: instansi.id,
+        id_wilayah: instansi.id_wilayah,
         nama: instansi.nama,
         singkatan: instansi.singkatan,
+        jenis: instansi.jenis,
+        logo: instansi.logo,
+        koordinator: instansi.koordinator,
         alamat: instansi.alamat,
-        telp: instansi.telp,
-        status_hub: instansi.status_hub,
+        telepon: instansi.telepon,
+        lat: instansi.lat,
+        lng: instansi.lng,
+        stshub: instansi.stshub,
+        is_active: instansi.is_active,
         created_at: instansi.created_at,
         updated_at: instansi.updated_at
-      }).from(instansi).where(eq(instansi.id, parseInt(id))).limit(1);
+      }).from(instansi).where(eq(instansi.id, id)).limit(1);
 
       if (!instansiData || instansiData.length === 0) {
         return { error: 'Instansi not found' };
@@ -39,26 +46,40 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'PUT') {
     try {
       const body = await readBody(event);
-      const { nama, singkatan, alamat, telp, status_hub } = body;
+      const { id_wilayah, nama, singkatan, jenis, logo, koordinator, alamat, telepon, lat, lng, stshub, is_active } = body;
 
       const updateData: any = {};
-      if (nama) updateData.nama = nama;
-      if (singkatan) updateData.singkatan = singkatan;
-      if (alamat) updateData.alamat = alamat;
-      if (telp) updateData.telp = telp;
-      if (status_hub !== undefined) updateData.status_hub = status_hub;
+      if (id_wilayah !== undefined) updateData.id_wilayah = id_wilayah;
+      if (nama !== undefined) updateData.nama = nama;
+      if (singkatan !== undefined) updateData.singkatan = singkatan;
+      if (jenis !== undefined) updateData.jenis = jenis;
+      if (logo !== undefined) updateData.logo = logo;
+      if (koordinator !== undefined) updateData.koordinator = koordinator;
+      if (alamat !== undefined) updateData.alamat = alamat;
+      if (telepon !== undefined) updateData.telepon = telepon;
+      if (lat !== undefined) updateData.lat = lat;
+      if (lng !== undefined) updateData.lng = lng;
+      if (stshub !== undefined) updateData.stshub = stshub;
+      if (is_active !== undefined) updateData.is_active = is_active;
       updateData.updated_at = new Date();
 
       const updatedInstansi = await db.update(instansi)
         .set(updateData)
-        .where(eq(instansi.id, parseInt(id)))
+        .where(eq(instansi.id, id))
         .returning({
           id: instansi.id,
+          id_wilayah: instansi.id_wilayah,
           nama: instansi.nama,
           singkatan: instansi.singkatan,
+          jenis: instansi.jenis,
+          logo: instansi.logo,
+          koordinator: instansi.koordinator,
           alamat: instansi.alamat,
-          telp: instansi.telp,
-          status_hub: instansi.status_hub,
+          telepon: instansi.telepon,
+          lat: instansi.lat,
+          lng: instansi.lng,
+          stshub: instansi.stshub,
+          is_active: instansi.is_active,
           created_at: instansi.created_at,
           updated_at: instansi.updated_at
         });
@@ -74,18 +95,19 @@ export default defineEventHandler(async (event) => {
     }
   } else if (method === 'DELETE') {
     try {
-      const deletedInstansi = await db.delete(instansi)
-        .where(eq(instansi.id, parseInt(id)))
+      const deletedInstansi = await db.update(instansi)
+        .set({ is_active: false, updated_at: new Date() })
+        .where(eq(instansi.id, id))
         .returning({ id: instansi.id });
 
       if (!deletedInstansi || deletedInstansi.length === 0) {
         return { error: 'Instansi not found' };
       }
 
-      return { success: true, message: 'Instansi deleted successfully' };
+      return { success: true, message: 'Instansi deactivated successfully' };
     } catch (error) {
-      console.error('Error deleting instansi:', error);
-      return { error: 'Failed to delete instansi' };
+      console.error('Error deactivating instansi:', error);
+      return { error: 'Failed to deactivate instansi' };
     }
   } else {
     return { error: 'Method not allowed' };
