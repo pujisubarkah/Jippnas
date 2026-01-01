@@ -28,18 +28,21 @@
           :items-per-page="10"
           class="elevation-1"
         >
-          <template v-slot:item.statusHub="{ item }">
-            <v-chip :color="item.statusHub === 'Memiliki Hub' ? 'green' : 'red'" dark>{{ item.statusHub }}</v-chip>
+          <template v-slot:item.stshub="{ item }">
+            <v-chip :color="item.stshub ? 'green' : 'red'" dark>{{ item.stshub ? 'Memiliki Hub' : 'Belum Memiliki Hub' }}</v-chip>
+          </template>
+          <template v-slot:item.is_active="{ item }">
+            <v-chip :color="item.is_active ? 'green' : 'red'" dark>{{ item.is_active ? 'Aktif' : 'Tidak Aktif' }}</v-chip>
           </template>
           <template v-slot:item.action="{ item }">
             <div class="d-flex">
-              <v-btn icon small color="blue" @click="logInstansi(item)" title="Log">
-                <v-icon>mdi-card-account-details</v-icon>
+              <v-btn icon small color="blue" @click="detailInstansi(item)" title="Detail">
+                <v-icon>mdi-information</v-icon>
               </v-btn>
               <v-btn icon small color="primary" @click="editInstansi(item)" title="Edit">
                 <v-icon>mdi-pencil</v-icon>
               </v-btn>
-              <v-btn icon small color="red" @click="deleteInstansi(item)" title="Delete">
+              <v-btn icon small color="red" @click="deactivateInstansi(item)" title="Deactivate">
                 <v-icon>mdi-delete</v-icon>
               </v-btn>
               <v-btn icon small color="green" @click="statusHubInstansi(item)" title="Status Hub">
@@ -60,10 +63,25 @@
         <v-card-text class="pa-0">
           <v-form @submit.prevent="saveInstansi" class="space-y-4">
             <v-text-field
+              v-model="form.id"
+              label="ID Instansi *"
+              required
+              variant="outlined"
+              placeholder="Masukkan ID instansi"
+              :disabled="isEditing"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.id_wilayah"
+              label="ID Wilayah"
+              variant="outlined"
+              placeholder="Masukkan ID wilayah"
+            ></v-text-field>
+
+            <v-text-field
               v-model="form.nama"
               label="Nama Instansi *"
               required
-              maxlength="255"
               variant="outlined"
               placeholder="Masukkan nama instansi"
             ></v-text-field>
@@ -71,9 +89,22 @@
             <v-text-field
               v-model="form.singkatan"
               label="Singkatan"
-              maxlength="100"
               variant="outlined"
               placeholder="Masukkan singkatan instansi"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.jenis"
+              label="Jenis"
+              variant="outlined"
+              placeholder="Masukkan jenis instansi"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.koordinator"
+              label="Koordinator"
+              variant="outlined"
+              placeholder="Masukkan koordinator"
             ></v-text-field>
 
             <v-textarea
@@ -85,20 +116,49 @@
             ></v-textarea>
 
             <v-text-field
-              v-model="form.telp"
+              v-model="form.telepon"
               label="Telepon"
-              maxlength="20"
               variant="outlined"
               placeholder="Masukkan nomor telepon"
             ></v-text-field>
 
+            <v-text-field
+              v-model.number="form.lat"
+              label="Latitude"
+              type="number"
+              step="any"
+              variant="outlined"
+              placeholder="Masukkan latitude"
+            ></v-text-field>
+
+            <v-text-field
+              v-model.number="form.lng"
+              label="Longitude"
+              type="number"
+              step="any"
+              variant="outlined"
+              placeholder="Masukkan longitude"
+            ></v-text-field>
+
             <v-select
-              v-model="form.status_hub"
+              v-model="form.stshub"
               :items="[
                 { title: 'Belum Memiliki Hub', value: false },
                 { title: 'Memiliki Hub', value: true }
               ]"
               label="Status Hub"
+              variant="outlined"
+              item-title="title"
+              item-value="value"
+            ></v-select>
+
+            <v-select
+              v-model="form.is_active"
+              :items="[
+                { title: 'Tidak Aktif', value: false },
+                { title: 'Aktif', value: true }
+              ]"
+              label="Status Aktif"
               variant="outlined"
               item-title="title"
               item-value="value"
@@ -111,6 +171,34 @@
           <v-btn color="primary" @click="saveInstansi">
             {{ isEditing ? 'Update' : 'Simpan' }}
           </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+
+    <!-- Modal Detail Instansi -->
+    <v-dialog v-model="showDetailModal" max-width="800px" persistent>
+      <v-card class="pa-6">
+        <v-card-title class="text-h5 pa-0 mb-4">
+          Detail Instansi: {{ selectedInstansiName }}
+        </v-card-title>
+        <v-card-text class="pa-0">
+          <div v-if="selectedLogo" class="mb-4">
+            <img :src="selectedLogo" alt="Logo Instansi" style="max-width: 100%; max-height: 200px;" />
+          </div>
+          <div v-else class="mb-4">
+            <p>Logo tidak tersedia</p>
+          </div>
+          <div v-if="selectedLat && selectedLng" class="mb-4">
+            <h6>Lokasi:</h6>
+            <div id="detailMap" style="height: 300px;"></div>
+          </div>
+          <div v-else>
+            <p>Koordinat tidak tersedia</p>
+          </div>
+        </v-card-text>
+        <v-card-actions class="pa-0 mt-6">
+          <v-spacer></v-spacer>
+          <v-btn variant="text" @click="closeDetailModal">Tutup</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -139,11 +227,20 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, nextTick } from 'vue'
 import { toast } from 'vue-sonner'
 
 definePageMeta({
   layout: 'sidebar'
+})
+
+useHead({
+  link: [
+    { rel: 'stylesheet', href: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.css' }
+  ],
+  script: [
+    { src: 'https://unpkg.com/leaflet@1.9.4/dist/leaflet.js' }
+  ]
 })
 
 const search = ref('')
@@ -151,17 +248,29 @@ const rawInstansiData = ref([])
 const showModal = ref(false)
 const isEditing = ref(false)
 const editingId = ref(null)
+const showDetailModal = ref(false)
+const selectedLogo = ref('')
+const selectedLat = ref(null)
+const selectedLng = ref(null)
+const detailMapInstance = ref(null)
 const showLogModal = ref(false)
 const selectedInstansiName = ref('')
 const logData = ref([])
 
 // Form data
 const form = ref({
+  id: '',
+  id_wilayah: '',
   nama: '',
   singkatan: '',
+  jenis: '',
+  koordinator: '',
   alamat: '',
-  telp: '',
-  status_hub: false
+  telepon: '',
+  lat: null,
+  lng: null,
+  stshub: false,
+  is_active: true
 })
 
 const breadcrumbItems = [
@@ -173,12 +282,15 @@ const breadcrumbItems = [
 
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
+  { title: 'ID', key: 'id', width: '80px' },
   { title: 'Nama', key: 'nama' },
   { title: 'Singkatan', key: 'singkatan', width: '100px' },
+  { title: 'Jenis', key: 'jenis', width: '80px' },
   { title: 'Alamat', key: 'alamat' },
-  { title: 'Telp', key: 'telp', width: '80px' },
-  { title: 'Status Hub', key: 'statusHub', width: '100px' },
-  { title: 'Action', key: 'action', sortable: false, width: '150px' }
+  { title: 'Telepon', key: 'telepon', width: '80px' },
+  { title: 'Status Hub', key: 'stshub', width: '100px' },
+  { title: 'Status Aktif', key: 'is_active', width: '100px' },
+  { title: 'Action', key: 'action', sortable: false, width: '200px' }
 ]
 
 const logHeaders = [
@@ -191,8 +303,7 @@ const logHeaders = [
 const instansiData = computed(() => {
   return rawInstansiData.value.map((item, index) => ({
     ...item,
-    no: index + 1,
-    statusHub: item.status_hub ? 'Memiliki Hub' : 'Belum Memiliki Hub'
+    no: index + 1
   }))
 })
 
@@ -220,11 +331,18 @@ const openAddModal = () => {
   isEditing.value = false
   editingId.value = null
   form.value = {
+    id: '',
+    id_wilayah: '',
     nama: '',
     singkatan: '',
+    jenis: '',
+    koordinator: '',
     alamat: '',
-    telp: '',
-    status_hub: false
+    telepon: '',
+    lat: null,
+    lng: null,
+    stshub: false,
+    is_active: true
   }
   showModal.value = true
 }
@@ -232,11 +350,18 @@ const openAddModal = () => {
 const closeModal = () => {
   showModal.value = false
   form.value = {
+    id: '',
+    id_wilayah: '',
     nama: '',
     singkatan: '',
+    jenis: '',
+    koordinator: '',
     alamat: '',
-    telp: '',
-    status_hub: false
+    telepon: '',
+    lat: null,
+    lng: null,
+    stshub: false,
+    is_active: true
   }
 }
 
@@ -244,19 +369,26 @@ const editInstansi = (item) => {
   isEditing.value = true
   editingId.value = item.id
   form.value = {
+    id: item.id,
+    id_wilayah: item.id_wilayah,
     nama: item.nama,
     singkatan: item.singkatan,
+    jenis: item.jenis,
+    koordinator: item.koordinator,
     alamat: item.alamat,
-    telp: item.telp,
-    status_hub: item.status_hub
+    telepon: item.telepon,
+    lat: item.lat,
+    lng: item.lng,
+    stshub: item.stshub,
+    is_active: item.is_active
   }
   showModal.value = true
 }
 
 const saveInstansi = async () => {
   try {
-    if (!form.value.nama.trim()) {
-      toast.warning('Nama instansi harus diisi')
+    if (!form.value.id.trim() || !form.value.nama.trim()) {
+      toast.warning('ID dan Nama instansi harus diisi')
       return
     }
 
@@ -266,11 +398,17 @@ const saveInstansi = async () => {
       response = await $fetch(`/api/instansi/${editingId.value}`, {
         method: 'PUT',
         body: {
+          id_wilayah: form.value.id_wilayah.trim(),
           nama: form.value.nama.trim(),
           singkatan: form.value.singkatan.trim(),
+          jenis: form.value.jenis.trim(),
+          koordinator: form.value.koordinator.trim(),
           alamat: form.value.alamat.trim(),
-          telp: form.value.telp.trim(),
-          status_hub: form.value.status_hub
+          telepon: form.value.telepon.trim(),
+          lat: form.value.lat,
+          lng: form.value.lng,
+          stshub: form.value.stshub,
+          is_active: form.value.is_active
         }
       })
     } else {
@@ -278,11 +416,18 @@ const saveInstansi = async () => {
       response = await $fetch('/api/instansi', {
         method: 'POST',
         body: {
+          id: form.value.id.trim(),
+          id_wilayah: form.value.id_wilayah.trim(),
           nama: form.value.nama.trim(),
           singkatan: form.value.singkatan.trim(),
+          jenis: form.value.jenis.trim(),
+          koordinator: form.value.koordinator.trim(),
           alamat: form.value.alamat.trim(),
-          telp: form.value.telp.trim(),
-          status_hub: form.value.status_hub
+          telepon: form.value.telepon.trim(),
+          lat: form.value.lat,
+          lng: form.value.lng,
+          stshub: form.value.stshub,
+          is_active: form.value.is_active
         }
       })
     }
@@ -298,20 +443,55 @@ const saveInstansi = async () => {
   }
 }
 
-const deleteInstansi = async (item) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus "${item.nama}"?`)) {
+const deactivateInstansi = async (item) => {
+  if (confirm(`Apakah Anda yakin ingin menonaktifkan "${item.nama}"?`)) {
     try {
       const response = await $fetch(`/api/instansi/${item.id}`, {
         method: 'DELETE'
       })
       if (response.success) {
         await fetchInstansi() // Refresh data
-        toast.success('Instansi berhasil dihapus')
+        toast.success('Instansi berhasil dinonaktifkan')
       }
     } catch (error) {
-      console.error('Error deleting instansi:', error)
-      toast.error('Gagal menghapus instansi')
+      console.error('Error deactivating instansi:', error)
+      toast.error('Gagal menonaktifkan instansi')
     }
+  }
+}
+
+const detailInstansi = async (item) => {
+  selectedInstansiName.value = item.nama
+  selectedLogo.value = item.logo ? `data:image/png;base64,${item.logo}` : null
+  selectedLat.value = item.lat
+  selectedLng.value = item.lng
+  showDetailModal.value = true
+
+  await nextTick()
+
+  if (selectedLat.value && selectedLng.value && typeof window !== 'undefined' && window.L) {
+    if (detailMapInstance.value) {
+      detailMapInstance.value.remove()
+    }
+
+    detailMapInstance.value = window.L.map('detailMap').setView([selectedLat.value, selectedLng.value], 13)
+
+    window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap contributors'
+    }).addTo(detailMapInstance.value)
+
+    window.L.marker([selectedLat.value, selectedLng.value]).addTo(detailMapInstance.value)
+  }
+}
+
+const closeDetailModal = () => {
+  showDetailModal.value = false
+  selectedLogo.value = ''
+  selectedLat.value = null
+  selectedLng.value = null
+  if (detailMapInstance.value) {
+    detailMapInstance.value.remove()
+    detailMapInstance.value = null
   }
 }
 
