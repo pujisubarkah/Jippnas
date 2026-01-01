@@ -16,13 +16,13 @@
           class="elevation-1"
         >
           <template v-slot:item.gambar="{ item }">
-            <v-img :src="item.gambar" width="100" height="100" contain></v-img>
+            <v-img :src="item.gambar || 'https://jippnas.menpan.go.id/fronts/assets/images/no-image.png'" width="100" height="100" contain></v-img>
           </template>
           <template v-slot:item.keterangan="{ item }">
             <div v-html="item.keterangan"></div>
           </template>
           <template v-slot:item.status="{ item }">
-            <v-chip :color="item.status === 'Aktif' ? 'green' : 'red'" dark>{{ item.status }}</v-chip>
+            <v-chip :color="item.is_active === '1' ? 'green' : 'red'" dark>{{ item.is_active === '1' ? 'Aktif' : 'Tidak Aktif' }}</v-chip>
           </template>
           <template v-slot:item.action="{ item }">
             <div class="d-flex">
@@ -47,7 +47,7 @@
         <v-card-text class="pa-0">
           <v-form @submit.prevent="saveAcara" class="space-y-4">
             <v-text-field
-              v-model="form.judul"
+              v-model="form.title"
               label="Judul *"
               required
               maxlength="255"
@@ -56,18 +56,32 @@
             ></v-text-field>
 
             <v-text-field
-              v-model="form.tanggal"
-              label="Tanggal *"
+              v-model="form.tgl_acara"
+              label="Tanggal Acara *"
               type="date"
               required
               variant="outlined"
             ></v-text-field>
 
             <v-text-field
-              v-model="form.jam"
-              label="Jam *"
+              v-model="form.jam_acara"
+              label="Jam Acara *"
               type="time"
               required
+              variant="outlined"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.start_date"
+              label="Tanggal Mulai"
+              type="date"
+              variant="outlined"
+            ></v-text-field>
+
+            <v-text-field
+              v-model="form.end_date"
+              label="Tanggal Selesai"
+              type="date"
               variant="outlined"
             ></v-text-field>
 
@@ -88,7 +102,7 @@
             ></v-textarea>
 
             <v-text-field
-              v-model="form.penyelenggara"
+              v-model="form.nm_penyelenggara"
               label="Penyelenggara"
               maxlength="255"
               variant="outlined"
@@ -96,8 +110,11 @@
             ></v-text-field>
 
             <v-select
-              v-model="form.status"
-              :items="['Aktif', 'Tidak Aktif']"
+              v-model="form.is_active"
+              :items="[
+                { title: 'Aktif', value: '1' },
+                { title: 'Tidak Aktif', value: '0' }
+              ]"
               label="Status"
               variant="outlined"
             ></v-select>
@@ -120,102 +137,73 @@ definePageMeta({
   layout: 'sidebar'
 })
 
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { toast } from 'vue-sonner'
 
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
-  { title: 'Judul', key: 'judul' },
-  { title: 'Tanggal', key: 'tanggal', width: '100px' },
-  { title: 'Jam', key: 'jam', width: '80px' },
+  { title: 'Judul', key: 'title' },
+  { title: 'Tanggal Acara', key: 'tgl_acara', width: '100px' },
+  { title: 'Jam Acara', key: 'jam_acara', width: '80px' },
+  { title: 'Tanggal Mulai', key: 'start_date', width: '100px' },
+  { title: 'Tanggal Selesai', key: 'end_date', width: '100px' },
   { title: 'Gambar', key: 'gambar', width: '120px' },
   { title: 'Keterangan', key: 'keterangan' },
-  { title: 'Penyelenggara', key: 'penyelenggara' },
+  { title: 'Penyelenggara', key: 'nm_penyelenggara' },
   { title: 'Status', key: 'status', width: '80px' },
   { title: 'Action', key: 'action', sortable: false, width: '80px' }
 ]
 
-const acaraData = ref([
-  {
-    no: 1,
-    judul: 'Testing Event',
-    tanggal: '2024-12-28',
-    jam: '00:01:00',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/acara//r02brWqVP5k5baYi.jpg',
-    keterangan: '<p>Test test event</p>',
-    penyelenggara: 'Super Admin',
-    status: 'Aktif'
-  },
-  {
-    no: 2,
-    judul: 'New Year Eve',
-    tanggal: '2024-12-31',
-    jam: '20:00:00',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/acara//TGSjWz9PnB2JDlGB.jpg',
-    keterangan: '',
-    penyelenggara: 'Super Admin',
-    status: 'Aktif'
-  },
-  {
-    no: 3,
-    judul: 'uji coba',
-    tanggal: '2024-12-26',
-    jam: '11:30:00',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/acara//ISFG7s0JAUojsyXk.jpg',
-    keterangan: '<p>untuk uji coba</p>',
-    penyelenggara: 'Super Admin',
-    status: 'Aktif'
-  },
-  {
-    no: 4,
-    judul: 'Perayaan Natal 2024',
-    tanggal: '2024-12-25',
-    jam: '10:00:00',
-    gambar: 'https://jippnas.menpan.go.id/storage/images/acara//PXwLS4YHbFx5Jp6M.jpg',
-    keterangan: '<p>Perayaan Natal 2024 pada tanggal 25 Desember 2024. Masyarakat merayakan natal bersama keluarga tercinta</p>',
-    penyelenggara: 'Super Admin',
-    status: 'Aktif'
-  },
-  {
-    no: 5,
-    judul: 'UAT Optimalisasi Web JIPPNas',
-    tanggal: '2024-12-16',
-    jam: '09:45:00',
-    gambar: 'https://jippnas.menpan.go.id/fronts/assets/images/no-image.png',
-    keterangan: '<p>UAT JIPPNas setelah optimalisasi web&nbsp;</p>',
-    penyelenggara: 'Super Admin',
-    status: 'Aktif'
+const acaraData = ref([])
+
+// Fetch data from API
+const fetchAcara = async () => {
+  try {
+    const response = await $fetch('/api/acara')
+    if (response.success) {
+      acaraData.value = response.data.map((item, index) => ({
+        ...item,
+        no: index + 1
+      }))
+    }
+  } catch (error) {
+    console.error('Error fetching acara:', error)
+    toast.error('Gagal memuat data acara')
   }
-])
+}
 
 // Reactive data
 const showModal = ref(false)
 const isEditing = ref(false)
-const editingIndex = ref(null)
+const editingId = ref(null)
 
 // Form data
 const form = ref({
-  judul: '',
-  tanggal: '',
-  jam: '',
+  title: '',
+  tgl_acara: '',
+  jam_acara: '',
+  start_date: '',
+  end_date: '',
   gambar: '',
   keterangan: '',
-  penyelenggara: '',
-  status: 'Aktif'
+  nm_penyelenggara: '',
+  is_active: '1'
 })
 
 // Modal functions
 const openAddModal = () => {
   isEditing.value = false
-  editingIndex.value = null
+  editingId.value = null
   form.value = {
-    judul: '',
-    tanggal: '',
-    jam: '',
+    title: '',
+    tgl_acara: '',
+    jam_acara: '',
+    start_date: '',
+    end_date: '',
     gambar: '',
     keterangan: '',
-    penyelenggara: '',
-    status: 'Aktif'
+    nm_penyelenggara: '',
+    is_active: '1'
   }
   showModal.value = true
 }
@@ -223,75 +211,108 @@ const openAddModal = () => {
 const closeModal = () => {
   showModal.value = false
   form.value = {
-    judul: '',
-    tanggal: '',
-    jam: '',
+    title: '',
+    tgl_acara: '',
+    jam_acara: '',
+    start_date: '',
+    end_date: '',
     gambar: '',
     keterangan: '',
-    penyelenggara: '',
-    status: 'Aktif'
+    nm_penyelenggara: '',
+    is_active: '1'
   }
 }
 
 const editItem = (item) => {
   isEditing.value = true
-  editingIndex.value = acaraData.value.findIndex(acara => acara.no === item.no)
+  editingId.value = item.id
   form.value = {
-    judul: item.judul,
-    tanggal: item.tanggal,
-    jam: item.jam,
-    gambar: item.gambar,
-    keterangan: item.keterangan,
-    penyelenggara: item.penyelenggara,
-    status: item.status
+    title: item.title || '',
+    tgl_acara: item.tgl_acara || '',
+    jam_acara: item.jam_acara || '',
+    start_date: item.start_date || '',
+    end_date: item.end_date || '',
+    gambar: item.gambar || '',
+    keterangan: item.keterangan || '',
+    nm_penyelenggara: item.nm_penyelenggara || '',
+    is_active: item.is_active || '1'
   }
   showModal.value = true
 }
 
-const deleteItem = (item) => {
-  if (confirm(`Apakah Anda yakin ingin menghapus acara "${item.judul}"?`)) {
-    const index = acaraData.value.findIndex(acara => acara.no === item.no)
-    if (index > -1) {
-      acaraData.value.splice(index, 1)
-      toast.success('Acara berhasil dihapus')
+const deleteItem = async (item) => {
+  if (confirm(`Apakah Anda yakin ingin menghapus acara "${item.title}"?`)) {
+    try {
+      const response = await $fetch(`/api/acara/${item.id}`, {
+        method: 'DELETE'
+      })
+      if (response.success) {
+        toast.success('Acara berhasil dihapus')
+        await fetchAcara()
+      } else {
+        toast.error('Gagal menghapus acara')
+      }
+    } catch (error) {
+      console.error('Error deleting acara:', error)
+      toast.error('Gagal menghapus acara')
     }
   }
 }
 
-const saveAcara = () => {
-  if (!form.value.judul.trim() || !form.value.tanggal || !form.value.jam) {
-    toast.warning('Judul, tanggal, dan jam harus diisi')
+const saveAcara = async () => {
+  if (!form.value.title.trim() || !form.value.tgl_acara || !form.value.jam_acara) {
+    toast.warning('Judul, tanggal acara, dan jam acara harus diisi')
     return
   }
 
-  if (isEditing.value) {
-    // Update
-    acaraData.value[editingIndex.value] = {
-      ...acaraData.value[editingIndex.value],
-      judul: form.value.judul.trim(),
-      tanggal: form.value.tanggal,
-      jam: form.value.jam,
+  try {
+    const payload = {
+      title: form.value.title.trim(),
+      tgl_acara: form.value.tgl_acara,
+      jam_acara: form.value.jam_acara,
+      start_date: form.value.start_date || form.value.tgl_acara,
+      end_date: form.value.end_date || form.value.tgl_acara,
       gambar: form.value.gambar.trim(),
       keterangan: form.value.keterangan.trim(),
-      penyelenggara: form.value.penyelenggara.trim(),
-      status: form.value.status
+      nm_penyelenggara: form.value.nm_penyelenggara.trim(),
+      is_active: form.value.is_active
     }
-    toast.success('Acara berhasil diupdate')
-  } else {
-    // Add new
-    const newNo = acaraData.value.length > 0 ? Math.max(...acaraData.value.map(a => a.no)) + 1 : 1
-    acaraData.value.push({
-      no: newNo,
-      judul: form.value.judul.trim(),
-      tanggal: form.value.tanggal,
-      jam: form.value.jam,
-      gambar: form.value.gambar.trim(),
-      keterangan: form.value.keterangan.trim(),
-      penyelenggara: form.value.penyelenggara.trim(),
-      status: form.value.status
-    })
-    toast.success('Acara berhasil ditambahkan')
+
+    if (isEditing.value) {
+      // Update
+      const response = await $fetch(`/api/acara/${editingId.value}`, {
+        method: 'PUT',
+        body: payload
+      })
+      if (response.success) {
+        toast.success('Acara berhasil diupdate')
+        await fetchAcara()
+        closeModal()
+      } else {
+        toast.error('Gagal mengupdate acara')
+      }
+    } else {
+      // Add new
+      const response = await $fetch('/api/acara', {
+        method: 'POST',
+        body: payload
+      })
+      if (response.success) {
+        toast.success('Acara berhasil ditambahkan')
+        await fetchAcara()
+        closeModal()
+      } else {
+        toast.error('Gagal menambahkan acara')
+      }
+    }
+  } catch (error) {
+    console.error('Error saving acara:', error)
+    toast.error('Gagal menyimpan acara')
   }
-  closeModal()
 }
+
+// Fetch data on mount
+onMounted(() => {
+  fetchAcara()
+})
 </script>
