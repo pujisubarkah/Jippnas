@@ -34,15 +34,16 @@ export default defineEventHandler(async (event) => {
     // Update kategori_umum by ID
     try {
       const body = await readBody(event)
-      const { nama, gambar, keterangan, tahun, jenis, status } = body
+      const { id_jenis, nm_jenis, nama, keterangan, tahun, is_active, is_del } = body
 
       const updatedKategori = await db.update(kategoriUmum).set({
+        id_jenis,
+        nm_jenis,
         nama,
-        gambar,
         keterangan,
         tahun,
-        jenis,
-        status,
+        is_active,
+        is_del,
         updated_at: new Date()
       }).where(eq(kategoriUmum.id, id)).returning()
 

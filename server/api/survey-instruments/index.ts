@@ -36,6 +36,7 @@ export default defineEventHandler(async (event) => {
               required: question.isRequired,
               requireEvidence: question.requireEvidence,
               evidenceLabel: question.evidenceLabel,
+              weight: question.weight,
               options: options.map(opt => ({
                 text: opt.optionText,
                 score: opt.score

@@ -11,7 +11,7 @@ export default defineEventHandler(async (event) => {
   if (method === 'GET') {
     // Get all
     try {
-      const data = await db.select().from(kategoriKompetisi).orderBy(kategoriKompetisi.createdAt);
+      const data = await db.select().from(kategoriKompetisi).orderBy(kategoriKompetisi.created_at);
       return { success: true, data };
     } catch (error) {
       console.error('Error fetching kategori_kompetisi:', error);
@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
     // Create new
     try {
       const body = await readBody(event);
-      const { nama, gambar, keterangan, status } = body;
+      const { id_instansi, nama, keterangan, gambar, is_active } = body;
 
       if (!nama) {
         throw createError({
@@ -38,12 +38,13 @@ export default defineEventHandler(async (event) => {
       const inserted = await db
         .insert(kategoriKompetisi)
         .values({
+          id_instansi,
           nama,
-          gambar,
           keterangan,
-          status: status !== undefined ? status : 'Tidak Aktif',
-          createdAt: new Date(),
-          updatedAt: new Date(),
+          gambar,
+          is_active: is_active !== undefined ? is_active : false,
+          created_at: new Date(),
+          updated_at: new Date(),
         })
         .returning();
       return { success: true, data: inserted[0] };

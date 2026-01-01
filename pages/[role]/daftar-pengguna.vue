@@ -92,11 +92,72 @@
             <v-select
               v-model="form.id_peran"
               :items="roleOptions"
-              item-title="nama"
-              item-value="id"
-              label="Role *"
+              item-title="title"
+              item-value="value"
+              label="Nama Peran *"
               variant="outlined"
-              placeholder="Pilih role"
+              placeholder="Pilih peran"
+              :disabled="loading"
+            ></v-select>
+
+            <v-select
+              v-model="form.id_instansi"
+              :items="instansiOptions"
+              item-title="title"
+              item-value="value"
+              label="Nama Instansi"
+              variant="outlined"
+              placeholder="Pilih instansi"
+              :disabled="loading"
+            ></v-select>
+
+            <v-select
+              v-model="form.id_upp"
+              :items="uppOptions"
+              item-title="title"
+              item-value="value"
+              label="Nama UPP"
+              variant="outlined"
+              placeholder="Pilih UPP"
+              :disabled="loading"
+            ></v-select>
+
+            <v-text-field
+              v-model="form.username"
+              label="Username *"
+              required
+              maxlength="255"
+              variant="outlined"
+              placeholder="Masukkan username"
+              :disabled="loading"
+            ></v-text-field>
+
+            <v-text-field
+              v-if="!isEditing"
+              v-model="form.password"
+              label="Password *"
+              type="password"
+              required
+              variant="outlined"
+              placeholder="Masukkan password"
+              :disabled="loading"
+            ></v-text-field>
+
+            <v-select
+              v-model="form.is_active"
+              :items="['Aktif', 'Non Aktif']"
+              label="Status"
+              variant="outlined"
+              placeholder="Pilih status"
+              :disabled="loading"
+            ></v-select>
+
+            <v-select
+              v-model="form.is_pkri"
+              :items="['Y', 'N']"
+              label="Status Akun PKRI"
+              variant="outlined"
+              placeholder="Pilih status PKRI"
               :disabled="loading"
             ></v-select>
           </v-form>
@@ -134,7 +195,13 @@ const form = ref({
   name: '',
   email: '',
   telp: '',
-  id_peran: null
+  id_peran: null,
+  id_instansi: '',
+  id_upp: null,
+  username: '',
+  password: '',
+  is_active: 'Aktif',
+  is_pkri: 'N'
 })
 
 const headers = [
@@ -154,6 +221,8 @@ const headers = [
 ]
 
 const roleOptions = ref([])
+const instansiOptions = ref([])
+const uppOptions = ref([])
 
 const fetchUsers = async () => {
   loading.value = true
@@ -163,7 +232,7 @@ const fetchUsers = async () => {
       items.value = response.data.map((item, index) => ({
         ...item,
         no: index + 1,
-        pkri: item.is_del ? 'Y' : 'N',
+        pkri: item.is_pkri || 'N',
         gagal_login: '' // Not in API, set to empty
       }))
     } else {
@@ -189,6 +258,28 @@ const fetchRoles = async () => {
   }
 }
 
+const fetchInstansi = async () => {
+  try {
+    const response = await $fetch('/api/instansi')
+    if (response.success) {
+      instansiOptions.value = response.data.map(inst => ({ title: inst.nama, value: inst.id }))
+    }
+  } catch (error) {
+    console.error('Error fetching instansi:', error)
+  }
+}
+
+const fetchUpp = async () => {
+  try {
+    const response = await $fetch('/api/upp')
+    if (response.success) {
+      uppOptions.value = response.data.map(upp => ({ title: upp.nama, value: upp.id }))
+    }
+  } catch (error) {
+    console.error('Error fetching upp:', error)
+  }
+}
+
 // Modal functions
 const openAddModal = () => {
   isEditing.value = false
@@ -197,7 +288,13 @@ const openAddModal = () => {
     name: '',
     email: '',
     telp: '',
-    id_peran: null
+    id_peran: null,
+    id_instansi: '',
+    id_upp: null,
+    username: '',
+    password: '',
+    is_active: 'Aktif',
+    is_pkri: 'N'
   }
   showModal.value = true
 }
@@ -208,7 +305,13 @@ const closeModal = () => {
     name: '',
     email: '',
     telp: '',
-    id_peran: null
+    id_peran: null,
+    id_instansi: '',
+    id_upp: null,
+    username: '',
+    password: '',
+    is_active: 'Aktif',
+    is_pkri: 'N'
   }
 }
 
@@ -219,7 +322,13 @@ const editUser = (item) => {
     name: item.name,
     email: item.email,
     telp: item.telp,
-    id_peran: item.id_peran
+    id_peran: item.id_peran,
+    id_instansi: item.id_instansi,
+    id_upp: item.id_upp,
+    username: item.username,
+    password: '', // Don't populate password for security
+    is_active: item.is_active,
+    is_pkri: item.is_pkri || 'N'
   }
   showModal.value = true
 }
@@ -250,35 +359,46 @@ const deleteUser = async (item) => {
 }
 
 const saveUser = async () => {
-  if (!form.value.name.trim() || !form.value.email.trim() || !form.value.id_peran) {
-    toast.warning('Nama, email, dan role harus diisi')
+  if (!form.value.name.trim() || !form.value.email.trim() || !form.value.id_peran || !form.value.username.trim()) {
+    toast.warning('Nama, email, username, dan role harus diisi')
+    return
+  }
+
+  if (!isEditing.value && !form.value.password.trim()) {
+    toast.warning('Password harus diisi untuk pengguna baru')
     return
   }
 
   loading.value = true
   try {
     let response
+    const body = {
+      name: form.value.name.trim(),
+      email: form.value.email.trim(),
+      telp: form.value.telp.trim(),
+      id_peran: form.value.id_peran,
+      id_instansi: form.value.id_instansi,
+      id_upp: form.value.id_upp,
+      username: form.value.username.trim(),
+      is_active: form.value.is_active,
+      is_pkri: form.value.is_pkri
+    }
+
+    if (!isEditing.value) {
+      body.password = form.value.password.trim()
+    }
+
     if (isEditing.value) {
       // Update
       response = await $fetch(`/api/users/${editingItem.value.id}`, {
         method: 'PUT',
-        body: {
-          name: form.value.name.trim(),
-          email: form.value.email.trim(),
-          telp: form.value.telp.trim(),
-          id_peran: form.value.id_peran
-        }
+        body
       })
     } else {
       // Create
       response = await $fetch('/api/users', {
         method: 'POST',
-        body: {
-          name: form.value.name.trim(),
-          email: form.value.email.trim(),
-          telp: form.value.telp.trim(),
-          id_peran: form.value.id_peran
-        }
+        body
       })
     }
 
@@ -299,6 +419,8 @@ const saveUser = async () => {
 
 onMounted(async () => {
   await fetchRoles()
+  await fetchInstansi()
+  await fetchUpp()
   await fetchUsers()
 })
 </script>

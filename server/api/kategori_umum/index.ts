@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
-import { eq } from 'drizzle-orm'
+import { eq, sql, desc } from 'drizzle-orm'
 import postgres from 'postgres'
 import { kategoriUmum } from '~/drizzle/schema/kategori_umum'
 
@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   if (method === 'GET') {
     // Get all kategori_umum
     try {
-      const kategoriList = await db.select().from(kategoriUmum).orderBy(kategoriUmum.created_at)
+      const kategoriList = await db.select().from(kategoriUmum).orderBy(sql`${kategoriUmum.tahun} IS NULL ASC`, desc(kategoriUmum.tahun))
       return { success: true, data: kategoriList }
     } catch (error) {
       console.error('Error fetching kategori_umum:', error)
@@ -27,7 +27,7 @@ export default defineEventHandler(async (event) => {
     // Create new kategori_umum
     try {
       const body = await readBody(event)
-      const { nama, gambar, keterangan, tahun, jenis, status } = body
+      const { id_jenis, nm_jenis, nama, keterangan, tahun, is_active, is_del } = body
 
       if (!nama) {
         throw createError({
@@ -37,12 +37,13 @@ export default defineEventHandler(async (event) => {
       }
 
       const newKategori = await db.insert(kategoriUmum).values({
+        id_jenis,
+        nm_jenis,
         nama,
-        gambar,
         keterangan,
         tahun,
-        jenis,
-        status: status !== undefined ? status : true,
+        is_active: is_active !== undefined ? is_active : '1',
+        is_del: is_del !== undefined ? is_del : '0',
         created_at: new Date(),
         updated_at: new Date()
       }).returning()

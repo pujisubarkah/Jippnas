@@ -182,6 +182,18 @@ const fetchSurveys = async () => {
     const response = await $fetch('/api/survey-instruments')
     
     if (response.success && response.data.length > 0) {
+      // Normalisasi bobot per aspek agar total bobot = 1
+      response.data.forEach(survey => {
+        survey.aspects.forEach(aspect => {
+          const totalWeight = aspect.questions.reduce((sum, q) => sum + parseFloat(q.weight || '1'), 0)
+          if (totalWeight > 0) {
+            aspect.questions.forEach(q => {
+              q.weight = (parseFloat(q.weight || '1') / totalWeight).toFixed(2)
+            })
+          }
+        })
+      })
+      
       // Ambil survey pertama yang aktif
       activeSurvey.value = response.data.find(s => s.isActive) || response.data[0]
     }

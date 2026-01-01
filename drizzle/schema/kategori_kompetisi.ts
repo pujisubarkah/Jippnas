@@ -1,11 +1,12 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, bigserial, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-export const kategoriKompetisi = pgTable('kategori_kompetisi', {
-  id: serial('id').primaryKey(),
-  nama: varchar('nama', { length: 255 }).notNull(),
-  keterangan: text('keterangan'),
+export const kategoriKompetisi = pgTable('master_kompetisi', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  id_instansi: varchar('id_instansi'),
+  nama: varchar('nama'),
+  keterangan: varchar('keterangan'),
   gambar: text('gambar'),
-  status: varchar('status', { length: 50 }).notNull(),
-  createdAt: timestamp('created_at', { withTimezone: false }).defaultNow(),
-  updatedAt: timestamp('updated_at', { withTimezone: false }).defaultNow(),
+  is_active: boolean('is_active'),
+  created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
+  updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

@@ -1,13 +1,14 @@
-import { pgTable, serial, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgTable, bigserial, bigint, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const kategoriUmum = pgTable('kategori_umum', {
-  id: serial('id').primaryKey(),
-  nama: text('nama').notNull(),
-  gambar: text('gambar'),
+export const kategoriUmum = pgTable('master_kategori', {
+  id: bigserial('id', { mode: 'number' }).primaryKey(),
+  id_jenis: bigint('id_jenis', { mode: 'number' }),
+  nm_jenis: varchar('nm_jenis'),
+  nama: text('nama'),
   keterangan: text('keterangan'),
-  tahun: text('tahun'),
-  jenis: text('jenis'),
-  status: boolean('status').default(true),
+  tahun: varchar('tahun'),
+  is_active: text('is_active'),
+  is_del: text('is_del'),
   created_at: timestamp('created_at', { withTimezone: true }).defaultNow(),
   updated_at: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });

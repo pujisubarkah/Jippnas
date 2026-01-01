@@ -7,95 +7,93 @@
       <h1 class="text-2xl font-bold">Rekap Kuesioner - {{ surveyTitle }}</h1>
     </div>
 
-    <v-card class="mb-6">
-      <v-card-text>
-        <div class="d-flex justify-space-between align-center">
-          <div>
-            <h3 class="text-h6 mb-2">Statistik Responden</h3>
-            <p class="text-body-2 text-grey">Total: {{ responses.length }} Instansi</p>
-          </div>
-          <div class="d-flex gap-2">
-            <v-chip color="green" variant="flat">
-              {{ verifiedCount }} Terverifikasi
-            </v-chip>
-            <v-chip color="orange" variant="flat">
-              {{ pendingCount }} Pending
-            </v-chip>
-            <v-chip color="red" variant="flat">
-              {{ rejectedCount }} Ditolak
-            </v-chip>
-          </div>
-        </div>
+    <v-card v-if="loading" class="mb-6">
+      <v-card-text class="text-center py-8">
+        <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+        <p class="mt-4 text-grey">Memuat data responden...</p>
       </v-card-text>
     </v-card>
 
-    <v-card>
-      <v-card-header>
-        <div class="d-flex justify-space-between align-center w-100">
-          <h2 class="text-h6">Daftar Responden</h2>
-          <v-text-field
-            v-model="search"
-            prepend-inner-icon="mdi-magnify"
-            label="Cari Instansi"
-            variant="outlined"
-            density="compact"
-            hide-details
-            style="max-width: 300px;"
-          ></v-text-field>
-        </div>
-      </v-card-header>
-      <v-card-text>
-        <v-data-table
-          :headers="headers"
-          :items="filteredResponses"
-          :items-per-page="10"
-          class="elevation-1"
-        >
-          <template v-slot:item.originalTotalScore="{ item }">
-            <v-chip color="blue" size="small">
-              {{ item.originalTotalScore }} poin
-            </v-chip>
-          </template>
+    <template v-else>
+      <v-card class="mb-6">
+        <v-card-text>
+          <div class="d-flex justify-space-between align-center">
+            <div>
+              <h3 class="text-h6 mb-2">Statistik Responden</h3>
+              <p class="text-body-2 text-grey">Total: {{ responses.length }} Instansi</p>
+            </div>
+            <div class="d-flex gap-2">
+              <v-chip color="green" variant="flat">
+                {{ verifiedCount }} Terverifikasi
+              </v-chip>
+              <v-chip color="orange" variant="flat">
+                {{ pendingCount }} Pending
+              </v-chip>
+              <v-chip color="red" variant="flat">
+                {{ rejectedCount }} Ditolak
+              </v-chip>
+            </div>
+          </div>
+        </v-card-text>
+      </v-card>
 
-          <template v-slot:item.verifiedTotalScore="{ item }">
-            <v-chip 
-              :color="item.originalTotalScore !== item.verifiedTotalScore ? 'orange' : 'green'" 
-              size="small"
-            >
-              {{ item.verifiedTotalScore }} poin
-              <v-icon v-if="item.originalTotalScore !== item.verifiedTotalScore" size="small" class="ml-1">
-                mdi-alert-circle
-              </v-icon>
-            </v-chip>
-          </template>
+      <v-card>
+        <v-card-header>
+          <div class="d-flex justify-space-between align-center w-100">
+            <h2 class="text-h6">Daftar Responden</h2>
+            <v-text-field
+              v-model="search"
+              prepend-inner-icon="mdi-magnify"
+              label="Cari Instansi"
+              variant="outlined"
+              density="compact"
+              hide-details
+              style="max-width: 300px;"
+            ></v-text-field>
+          </div>
+        </v-card-header>
+        <v-card-text>
+          <v-data-table
+            :headers="headers"
+            :items="filteredResponses"
+            :items-per-page="10"
+            :loading="loading"
+            class="elevation-1"
+          >
+            <template v-slot:item.totalScore="{ item }">
+              <v-chip color="blue" size="small">
+                {{ item.totalScore }} poin
+              </v-chip>
+            </template>
 
-          <template v-slot:item.verificationStatus="{ item }">
-            <v-chip 
-              :color="getStatusColor(item.verificationStatus)" 
-              size="small"
-            >
-              {{ getStatusText(item.verificationStatus) }}
-            </v-chip>
-          </template>
+            <template v-slot:item.verificationStatus="{ item }">
+              <v-chip 
+                :color="getStatusColor(item.verificationStatus)" 
+                size="small"
+              >
+                {{ getStatusText(item.verificationStatus) }}
+              </v-chip>
+            </template>
 
-          <template v-slot:item.submittedAt="{ item }">
-            {{ formatDate(item.submittedAt) }}
-          </template>
+            <template v-slot:item.submittedAt="{ item }">
+              {{ formatDate(item.submittedAt) }}
+            </template>
 
-          <template v-slot:item.aksi="{ item }">
-            <v-btn 
-              icon 
-              small 
-              color="primary" 
-              @click="viewDetail(item)" 
-              title="Lihat Detail"
-            >
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-          </template>
-        </v-data-table>
-      </v-card-text>
-    </v-card>
+            <template v-slot:item.aksi="{ item }">
+              <v-btn 
+                icon 
+                small 
+                color="primary" 
+                @click="viewDetail(item)" 
+                title="Lihat Detail"
+              >
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+            </template>
+          </v-data-table>
+        </v-card-text>
+      </v-card>
+    </template>
 
     <!-- Detail & Verification Modal -->
     <v-dialog v-model="showDetailModal" max-width="1200px" scrollable>
@@ -111,7 +109,12 @@
         </v-card-title>
 
         <v-card-text class="pa-0" style="max-height: 70vh;">
-          <div v-if="selectedResponse">
+          <div v-if="loadingDetail" class="text-center py-8">
+            <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+            <p class="mt-4 text-grey">Memuat detail jawaban...</p>
+          </div>
+
+          <div v-else-if="selectedResponse">
             <!-- Response Info -->
             <v-card class="mb-4" elevation="0" color="grey-lighten-4">
               <v-card-text>
@@ -173,7 +176,7 @@
                 <v-card-title class="bg-primary text-white">
                   {{ aspect.aspectName }}
                   <v-chip size="small" class="ml-2" color="white" text-color="primary">
-                    {{ calculateAspectScore(aspect) }} poin
+                    {{ calculateAspectScore(aspect).toFixed(2) }} poin
                   </v-chip>
                   <v-chip 
                     v-if="hasAspectScoreChanged(aspect)"
@@ -194,6 +197,9 @@
                       <!-- Question -->
                       <h4 class="text-subtitle-1 font-weight-bold mb-3">
                         {{ qIndex + 1 }}. {{ question.questionText }}
+                        <v-chip v-if="question.questionWeight && question.questionWeight !== '1.00'" size="x-small" color="info" variant="tonal" class="ml-2">
+                          Bobot: {{ question.questionWeight }}
+                        </v-chip>
                       </h4>
 
                       <!-- Answer -->
@@ -301,15 +307,15 @@
                           <div class="d-flex align-center justify-space-between">
                             <span class="text-caption">
                               Skor diubah: 
-                              <span class="text-decoration-line-through">{{ getOriginalScore(question) }} poin</span>
+                              <span class="text-decoration-line-through">{{ getOriginalScore(question).toFixed(2) }} poin</span>
                               →
-                              <span class="font-weight-bold">{{ getVerifiedScore(question) }} poin</span>
+                              <span class="font-weight-bold">{{ getVerifiedScore(question).toFixed(2) }} poin</span>
                             </span>
                             <v-chip 
                               :color="getScoreDiff(question) > 0 ? 'success' : 'error'" 
                               size="x-small"
                             >
-                              {{ getScoreDiff(question) > 0 ? '+' : '' }}{{ getScoreDiff(question) }}
+                              {{ getScoreDiff(question) > 0 ? '+' : '' }}{{ getScoreDiff(question).toFixed(2) }}
                             </v-chip>
                           </div>
                         </v-alert>
@@ -350,7 +356,7 @@
         <v-card-actions class="pa-0 mt-6">
           <v-spacer></v-spacer>
           <v-btn variant="text" @click="showDetailModal = false">Tutup</v-btn>
-          <v-btn color="primary" @click="saveVerification">
+          <v-btn color="primary" @click="saveVerification" :loading="saving">
             Simpan Verifikasi
           </v-btn>
         </v-card-actions>
@@ -360,27 +366,34 @@
 </template>
 
 <script setup>
-import { ref, computed } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { toast } from 'vue-sonner'
+import { useRoute } from 'vue-router'
 
 definePageMeta({
   layout: 'sidebar'
 })
+
+const route = useRoute()
+const instrumentId = computed(() => route.query.instrumentId)
 
 // State
 const surveyTitle = ref('Kuesioner Evaluasi Inovasi Daerah')
 const search = ref('')
 const showDetailModal = ref(false)
 const selectedResponse = ref(null)
+const loading = ref(true)
+const loadingDetail = ref(false)
+const saving = ref(false)
+const responses = ref([])
 
 // Table headers
 const headers = [
   { title: 'ID', key: 'id', width: '80px' },
   { title: 'Instansi', key: 'instansi' },
-  { title: 'Total Skor Responden', key: 'originalTotalScore', width: '150px' },
-  { title: 'Total Skor Verifikator', key: 'verifiedTotalScore', width: '150px' },
+  { title: 'Total Skor', key: 'totalScore', width: '150px' },
   { title: 'Status', key: 'verificationStatus', width: '150px' },
-  { title: 'Tanggal', key: 'submittedAt', width: '150px' },
+  { title: 'Tanggal', key: 'submittedAt', width: '180px' },
   { title: 'Aksi', key: 'aksi', sortable: false, width: '100px' }
 ]
 
@@ -391,183 +404,120 @@ const verificationOptions = [
   { title: 'Ditolak', value: 'rejected' }
 ]
 
-// Sample responses data
-const responses = ref([
-  {
-    id: 1,
-    instansi: 'Dinas Komunikasi dan Informatika',
-    originalTotalScore: 85,
-    verifiedTotalScore: 85,
-    verificationStatus: 'verified',
-    submittedAt: '2025-12-20T10:30:00',
-    answers: [
-      {
-        aspectName: 'Kepuasan Pengguna',
-        aspectScore: 45,
-        questions: [
-          {
-            questionText: 'Seberapa puas Anda dengan inovasi yang ada?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Sangat Puas', score: 5, value: 'a' }
-            ],
-            verifiedAnswer: 'a', // Default sama dengan jawaban responden
-            availableOptions: [
-              { text: 'Sangat Puas', score: 5, value: 'a' },
-              { text: 'Puas', score: 4, value: 'b' },
-              { text: 'Cukup Puas', score: 3, value: 'c' },
-              { text: 'Kurang Puas', score: 2, value: 'd' },
-              { text: 'Tidak Puas', score: 1, value: 'e' }
-            ],
-            evidence: 'Inovasi aplikasi sangat membantu dalam meningkatkan layanan publik. Respon masyarakat sangat positif.',
-            verificationStatus: 'verified',
-            verificationNote: 'Sesuai dengan bukti yang diberikan'
-          }
-        ]
-      },
-      {
-        aspectName: 'Kualitas Layanan',
-        aspectScore: 40,
-        questions: [
-          {
-            questionText: 'Bagaimana kualitas layanan yang diberikan?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Sangat Baik', score: 5, value: 'a' }
-            ],
-            verifiedAnswer: 'a',
-            availableOptions: [
-              { text: 'Sangat Baik', score: 5, value: 'a' },
-              { text: 'Baik', score: 4, value: 'b' },
-              { text: 'Cukup', score: 3, value: 'c' },
-              { text: 'Kurang', score: 2, value: 'd' },
-              { text: 'Buruk', score: 1, value: 'e' }
-            ],
-            evidence: 'Layanan sangat responsif, waktu penyelesaian cepat, dan sistem mudah digunakan.',
-            verificationStatus: 'verified',
-            verificationNote: ''
-          }
-        ]
+// Fetch responses from API
+const fetchResponses = async () => {
+  loading.value = true
+  try {
+    const response = await $fetch('/api/instrument-responses')
+    if (response.success) {
+      let data = response.data
+      
+      // Filter by instrumentId if provided
+      if (instrumentId.value) {
+        data = data.filter(r => r.instrumentId === parseInt(instrumentId.value))
       }
-    ]
-  },
-  {
-    id: 2,
-    instansi: 'Badan Perencanaan Pembangunan Daerah',
-    originalTotalScore: 72,
-    verifiedTotalScore: 72,
-    verificationStatus: 'pending',
-    submittedAt: '2025-12-21T14:15:00',
-    answers: [
-      {
-        aspectName: 'Kepuasan Pengguna',
-        aspectScore: 36,
-        questions: [
-          {
-            questionText: 'Seberapa puas Anda dengan inovasi yang ada?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Puas', score: 4, value: 'b' }
-            ],
-            verifiedAnswer: 'b',
-            availableOptions: [
-              { text: 'Sangat Puas', score: 5, value: 'a' },
-              { text: 'Puas', score: 4, value: 'b' },
-              { text: 'Cukup Puas', score: 3, value: 'c' },
-              { text: 'Kurang Puas', score: 2, value: 'd' },
-              { text: 'Tidak Puas', score: 1, value: 'e' }
-            ],
-            evidence: 'Secara umum sudah baik, namun masih ada beberapa fitur yang perlu ditingkatkan.',
-            verificationStatus: 'pending',
-            verificationNote: ''
-          }
-        ]
-      },
-      {
-        aspectName: 'Kualitas Layanan',
-        aspectScore: 36,
-        questions: [
-          {
-            questionText: 'Bagaimana kualitas layanan yang diberikan?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Baik', score: 4, value: 'b' }
-            ],
-            verifiedAnswer: 'b',
-            availableOptions: [
-              { text: 'Sangat Baik', score: 5, value: 'a' },
-              { text: 'Baik', score: 4, value: 'b' },
-              { text: 'Cukup', score: 3, value: 'c' },
-              { text: 'Kurang', score: 2, value: 'd' },
-              { text: 'Buruk', score: 1, value: 'e' }
-            ],
-            evidence: 'Kualitas baik, tapi masih perlu peningkatan di sisi kecepatan respons.',
-            verificationStatus: 'pending',
-            verificationNote: ''
-          }
-        ]
-      }
-    ]
-  },
-  {
-    id: 3,
-    instansi: 'Dinas Pendidikan',
-    originalTotalScore: 58,
-    verifiedTotalScore: 45, // Verifikator mengubah skor
-    verificationStatus: 'rejected',
-    submittedAt: '2025-12-22T09:45:00',
-    answers: [
-      {
-        aspectName: 'Kepuasan Pengguna',
-        aspectScore: 27,
-        questions: [
-          {
-            questionText: 'Seberapa puas Anda dengan inovasi yang ada?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Cukup Puas', score: 3, value: 'c' }
-            ],
-            verifiedAnswer: 'd', // Verifikator mengubah ke "Kurang Puas"
-            availableOptions: [
-              { text: 'Sangat Puas', score: 5, value: 'a' },
-              { text: 'Puas', score: 4, value: 'b' },
-              { text: 'Cukup Puas', score: 3, value: 'c' },
-              { text: 'Kurang Puas', score: 2, value: 'd' },
-              { text: 'Tidak Puas', score: 1, value: 'e' }
-            ],
-            evidence: 'Inovasi masih perlu penyempurnaan.',
-            verificationStatus: 'rejected',
-            verificationNote: 'Bukti kurang lengkap dan detail, skor diturunkan'
-          }
-        ]
-      },
-      {
-        aspectName: 'Kualitas Layanan',
-        aspectScore: 31,
-        questions: [
-          {
-            questionText: 'Bagaimana kualitas layanan yang diberikan?',
-            questionType: 'single',
-            selectedAnswers: [
-              { text: 'Cukup', score: 3, value: 'c' }
-            ],
-            verifiedAnswer: 'd', // Verifikator mengubah ke "Kurang"
-            availableOptions: [
-              { text: 'Sangat Baik', score: 5, value: 'a' },
-              { text: 'Baik', score: 4, value: 'b' },
-              { text: 'Cukup', score: 3, value: 'c' },
-              { text: 'Kurang', score: 2, value: 'd' },
-              { text: 'Buruk', score: 1, value: 'e' }
-            ],
-            evidence: 'Perlu perbaikan sistem.',
-            verificationStatus: 'rejected',
-            verificationNote: 'Penjelasan tidak cukup spesifik, tidak sesuai dengan standar'
-          }
-        ]
-      }
-    ]
+      
+      responses.value = data
+    }
+  } catch (error) {
+    console.error('Error fetching responses:', error)
+    toast.error('Gagal memuat data responden')
+  } finally {
+    loading.value = false
   }
-])
+}
+
+// Fetch detail response
+const viewDetail = async (response) => {
+  loadingDetail.value = true
+  showDetailModal.value = true
+  
+  try {
+    const detail = await $fetch(`/api/instrument-responses/${response.id}/detail`)
+    if (detail.success) {
+      // Transform data untuk modal
+      selectedResponse.value = {
+        id: detail.data.id,
+        instansi: detail.data.instansi,
+        originalTotalScore: detail.data.originalTotalScore,
+        verifiedTotalScore: detail.data.verifiedTotalScore,
+        verificationStatus: detail.data.verificationStatus,
+        submittedAt: detail.data.submittedAt,
+        verifiedAt: detail.data.verifiedAt,
+        answers: detail.data.answers.map(aspect => ({
+          aspectName: aspect.aspectName,
+          questions: aspect.questions.map(q => ({
+            answerId: q.answerId,
+            questionText: q.questionText,
+            questionType: q.questionType,
+            questionWeight: q.questionWeight,
+            selectedAnswers: q.selectedOption ? [{
+              text: q.selectedOption.text,
+              score: q.selectedOption.score,
+              value: q.selectedOption.value
+            }] : [],
+            verifiedAnswer: q.selectedOption?.value || null,
+            verifiedAnswers: q.selectedOption ? [q.selectedOption.value] : [],
+            availableOptions: q.availableOptions,
+            evidence: q.evidence,
+            originalScore: q.originalScore,
+            verifiedScore: q.verifiedScore,
+            verificationStatus: 'pending',
+            verificationNote: ''
+          }))
+        }))
+      }
+    }
+  } catch (error) {
+    console.error('Error fetching response detail:', error)
+    toast.error('Gagal memuat detail responden')
+    showDetailModal.value = false
+  } finally {
+    loadingDetail.value = false
+  }
+}
+
+// Save verification
+const saveVerification = async () => {
+  if (!selectedResponse.value) return
+
+  saving.value = true
+  try {
+    // Recalculate total score based on verified answers
+    selectedResponse.value.verifiedTotalScore = calculateTotalScore(selectedResponse.value)
+
+    // Update verification status
+    const allVerified = selectedResponse.value.answers.every(aspect =>
+      aspect.questions.every(q => q.verificationStatus === 'verified')
+    )
+    const anyRejected = selectedResponse.value.answers.some(aspect =>
+      aspect.questions.some(q => q.verificationStatus === 'rejected')
+    )
+
+    if (allVerified) {
+      selectedResponse.value.verificationStatus = 'verified'
+    } else if (anyRejected) {
+      selectedResponse.value.verificationStatus = 'rejected'
+    } else {
+      selectedResponse.value.verificationStatus = 'pending'
+    }
+
+    // Update in main responses array
+    const index = responses.value.findIndex(r => r.id === selectedResponse.value.id)
+    if (index !== -1) {
+      responses.value[index].totalScore = selectedResponse.value.verifiedTotalScore
+      responses.value[index].verificationStatus = selectedResponse.value.verificationStatus
+    }
+
+    toast.success('Verifikasi berhasil disimpan')
+    showDetailModal.value = false
+  } catch (error) {
+    console.error('Error saving verification:', error)
+    toast.error('Gagal menyimpan verifikasi')
+  } finally {
+    saving.value = false
+  }
+}
 
 // Computed
 const filteredResponses = computed(() => {
@@ -609,6 +559,7 @@ const getStatusText = (status) => {
 }
 
 const formatDate = (dateString) => {
+  if (!dateString) return '-'
   const date = new Date(dateString)
   return date.toLocaleDateString('id-ID', {
     day: '2-digit',
@@ -619,69 +570,33 @@ const formatDate = (dateString) => {
   })
 }
 
-const viewDetail = (response) => {
-  selectedResponse.value = JSON.parse(JSON.stringify(response))
-  showDetailModal.value = true
-}
-
-const saveVerification = () => {
-  if (!selectedResponse.value) return
-
-  // Recalculate total score based on verified answers
-  selectedResponse.value.verifiedTotalScore = calculateTotalScore(selectedResponse.value)
-
-  // Update verification status for overall response
-  const allVerified = selectedResponse.value.answers.every(aspect =>
-    aspect.questions.every(q => q.verificationStatus === 'verified')
-  )
-  const anyRejected = selectedResponse.value.answers.some(aspect =>
-    aspect.questions.some(q => q.verificationStatus === 'rejected')
-  )
-
-  if (allVerified) {
-    selectedResponse.value.verificationStatus = 'verified'
-  } else if (anyRejected) {
-    selectedResponse.value.verificationStatus = 'rejected'
-  } else {
-    selectedResponse.value.verificationStatus = 'pending'
-  }
-
-  // Update in main responses array
-  const index = responses.value.findIndex(r => r.id === selectedResponse.value.id)
-  if (index !== -1) {
-    responses.value[index] = JSON.parse(JSON.stringify(selectedResponse.value))
-    toast.success('Verifikasi berhasil disimpan')
-    showDetailModal.value = false
-  }
-}
-
 // Helper functions for verification
 const isOriginalAnswer = (question, option) => {
-  if (question.questionType === 'single') {
-    return question.selectedAnswers.some(a => a.value === option.value)
-  } else {
-    return question.selectedAnswers.some(a => a.value === option.value)
-  }
+  return question.selectedAnswers.some(a => a.value === option.value)
 }
 
 const getOriginalScore = (question) => {
-  return question.selectedAnswers.reduce((sum, ans) => sum + ans.score, 0)
+  return question.originalScore || 0
 }
 
 const getVerifiedScore = (question) => {
   if (question.questionType === 'single') {
     const option = question.availableOptions.find(o => o.value === question.verifiedAnswer)
-    return option ? option.score : 0
+    const score = option ? option.score : 0
+    const weight = parseFloat(question.questionWeight || '1')
+    return score * weight
   } else {
     return question.verifiedAnswers.reduce((sum, val) => {
       const option = question.availableOptions.find(o => o.value === val)
-      return sum + (option ? option.score : 0)
+      const score = option ? option.score : 0
+      const weight = parseFloat(question.questionWeight || '1')
+      return sum + (score * weight)
     }, 0)
   }
 }
 
 const hasScoreChanged = (question) => {
-  return getOriginalScore(question) !== getVerifiedScore(question)
+  return Math.abs(getOriginalScore(question) - getVerifiedScore(question)) > 0.01
 }
 
 const getScoreDiff = (question) => {
@@ -695,7 +610,7 @@ const calculateAspectScore = (aspect) => {
 const hasAspectScoreChanged = (aspect) => {
   const originalScore = aspect.questions.reduce((sum, q) => sum + getOriginalScore(q), 0)
   const verifiedScore = calculateAspectScore(aspect)
-  return originalScore !== verifiedScore
+  return Math.abs(originalScore - verifiedScore) > 0.01
 }
 
 const calculateTotalScore = (response) => {
@@ -709,10 +624,22 @@ const hasAnyScoreChanged = (response) => {
   if (!response || !response.answers) return false
   return response.answers.some(aspect => hasAspectScoreChanged(aspect))
 }
+
+onMounted(() => {
+  fetchResponses()
+})
 </script>
 
 <style scoped>
 .gap-2 {
   gap: 8px;
+}
+
+.bg-primary {
+  background-color: #1976D2 !important;
+}
+
+.text-white {
+  color: white !important;
 }
 </style>

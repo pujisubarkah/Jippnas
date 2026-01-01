@@ -156,6 +156,18 @@
                       hide-details
                     ></v-select>
 
+                    <v-text-field
+                      v-model="question.weight"
+                      label="Bobot Pertanyaan"
+                      type="number"
+                      step="0.01"
+                      variant="outlined"
+                      density="compact"
+                      class="mb-3"
+                      hide-details
+                      placeholder="1.00"
+                    ></v-text-field>
+
                     <div class="mb-3">
                       <label class="text-caption font-weight-medium">Pilihan Jawaban & Skor *</label>
                       <div
@@ -427,6 +439,7 @@ const addQuestion = (aspectIndex) => {
     required: true,
     requireEvidence: false,
     evidenceLabel: '',
+    weight: '1.00',
     options: [
       { text: '', score: 0 },
       { text: '', score: 0 }

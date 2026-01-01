@@ -36,11 +36,12 @@ export default defineEventHandler(async (event) => {
       const body = await readBody(event);
       await db.update(kategoriKompetisi)
         .set({
+          id_instansi: body.id_instansi,
           nama: body.nama,
           keterangan: body.keterangan,
           gambar: body.gambar,
-          status: body.status,
-          updatedAt: new Date(),
+          is_active: body.is_active,
+          updated_at: new Date(),
         })
         .where(eq(kategoriKompetisi.id, id));
       return { success: true };
