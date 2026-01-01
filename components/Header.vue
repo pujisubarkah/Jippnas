@@ -50,39 +50,117 @@
 
       <!-- Notification Icons -->
       <div class="d-flex align-center ga-2">
-        <v-btn
-          icon
-          variant="text"
-          color="primary"
-          class="mx-1"
-          :aria-label="'Notifikasi - 3 pesan belum dibaca'"
-        >
-          <v-icon>mdi-bell</v-icon>
-          <v-badge
-            color="error"
-            content="3"
-            floating
-            offset-x="8"
-            offset-y="8"
-          ></v-badge>
-        </v-btn>
+        <!-- Notifications Dropdown -->
+        <v-menu offset-y>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon
+              variant="text"
+              color="primary"
+              class="mx-1"
+              :aria-label="`Notifikasi - ${unreadNotifications.length} pesan belum dibaca`"
+            >
+              <v-icon>mdi-bell</v-icon>
+              <v-badge
+                v-if="unreadNotifications.length > 0"
+                color="error"
+                :content="unreadNotifications.length"
+                floating
+                offset-x="8"
+                offset-y="8"
+              ></v-badge>
+            </v-btn>
+          </template>
 
-        <v-btn
-          icon
-          variant="text"
-          color="primary"
-          class="mx-1"
-          :aria-label="'Pesan - 5 pesan belum dibaca'"
-        >
-          <v-icon>mdi-email</v-icon>
-          <v-badge
-            color="error"
-            content="5"
-            floating
-            offset-x="8"
-            offset-y="8"
-          ></v-badge>
-        </v-btn>
+          <v-card width="400" class="notification-dropdown">
+            <v-card-title class="text-h6 font-weight-bold text-primary">
+              Notifikasi
+              <v-spacer />
+              <v-btn icon small variant="text" @click="markAllNotificationsAsRead">
+                <v-icon>mdi-check-all</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-list>
+                <v-list-item
+                  v-for="notification in notifications"
+                  :key="notification.id"
+                  :class="{ 'bg-blue-lighten-5': !notification.read }"
+                  @click="markNotificationAsRead(notification)"
+                >
+                  <template v-slot:prepend>
+                    <v-icon :color="notification.type === 'success' ? 'success' : notification.type === 'warning' ? 'warning' : 'primary'">
+                      {{ notification.icon }}
+                    </v-icon>
+                  </template>
+                  <v-list-item-title class="text-body-2">{{ notification.title }}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">{{ notification.message }}</v-list-item-subtitle>
+                  <v-list-item-subtitle class="text-caption text-grey">{{ formatDate(notification.createdAt) }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item v-if="notifications.length === 0">
+                  <v-list-item-title class="text-center text-grey">Tidak ada notifikasi</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
+
+        <!-- Messages Dropdown -->
+        <v-menu offset-y>
+          <template v-slot:activator="{ props }">
+            <v-btn
+              v-bind="props"
+              icon
+              variant="text"
+              color="primary"
+              class="mx-1"
+              :aria-label="`Pesan - ${unreadMessages.length} pesan belum dibaca`"
+            >
+              <v-icon>mdi-email</v-icon>
+              <v-badge
+                v-if="unreadMessages.length > 0"
+                color="error"
+                :content="unreadMessages.length"
+                floating
+                offset-x="8"
+                offset-y="8"
+              ></v-badge>
+            </v-btn>
+          </template>
+
+          <v-card width="400" class="message-dropdown">
+            <v-card-title class="text-h6 font-weight-bold text-primary">
+              Pesan
+              <v-spacer />
+              <v-btn icon small variant="text" @click="markAllMessagesAsRead">
+                <v-icon>mdi-check-all</v-icon>
+              </v-btn>
+            </v-card-title>
+            <v-card-text class="pa-0">
+              <v-list>
+                <v-list-item
+                  v-for="message in messages"
+                  :key="message.id"
+                  :class="{ 'bg-blue-lighten-5': !message.read }"
+                  @click="markMessageAsRead(message)"
+                >
+                  <template v-slot:prepend>
+                    <v-avatar size="40">
+                      <v-img :src="message.senderAvatar || '/default-avatar.png'" />
+                    </v-avatar>
+                  </template>
+                  <v-list-item-title class="text-body-2">{{ message.sender }}</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">{{ message.subject }}</v-list-item-subtitle>
+                  <v-list-item-subtitle class="text-caption text-grey">{{ formatDate(message.createdAt) }}</v-list-item-subtitle>
+                </v-list-item>
+                <v-list-item v-if="messages.length === 0">
+                  <v-list-item-title class="text-center text-grey">Tidak ada pesan</v-list-item-title>
+                </v-list-item>
+              </v-list>
+            </v-card-text>
+          </v-card>
+        </v-menu>
 
         <!-- User Menu -->
         <ClientOnly>
@@ -219,7 +297,7 @@
 </template>
 
 <script setup>
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 import { useRouter } from 'vue-router'
 
@@ -245,6 +323,72 @@ const changePasswordForm = ref({
 })
 const changePasswordError = ref('')
 const changePasswordSuccess = ref('')
+
+// Notifications state
+const notifications = ref([
+  {
+    id: 1,
+    title: 'Survey Baru Tersedia',
+    message: 'Survey Hub Inovasi untuk periode 2026 telah dibuka',
+    type: 'info',
+    icon: 'mdi-clipboard-text',
+    read: false,
+    createdAt: new Date(Date.now() - 2 * 60 * 60 * 1000) // 2 hours ago
+  },
+  {
+    id: 2,
+    title: 'Inovasi Disetujui',
+    message: 'Inovasi "Sistem Digitalisasi Layanan" telah disetujui',
+    type: 'success',
+    icon: 'mdi-check-circle',
+    read: false,
+    createdAt: new Date(Date.now() - 5 * 60 * 60 * 1000) // 5 hours ago
+  },
+  {
+    id: 3,
+    title: 'Deadline Mendekat',
+    message: 'Deadline pengumpulan inovasi tinggal 3 hari lagi',
+    type: 'warning',
+    icon: 'mdi-clock-alert',
+    read: true,
+    createdAt: new Date(Date.now() - 24 * 60 * 60 * 1000) // 1 day ago
+  }
+])
+
+// Messages state
+const messages = ref([
+  {
+    id: 1,
+    sender: 'Admin JIPPNAS',
+    senderAvatar: null,
+    subject: 'Pembaruan Sistem',
+    content: 'Sistem akan mengalami maintenance pada tanggal 15 Januari 2026',
+    read: false,
+    createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000) // 1 hour ago
+  },
+  {
+    id: 2,
+    sender: 'Tim Verifikasi',
+    senderAvatar: null,
+    subject: 'Hasil Verifikasi Inovasi',
+    content: 'Inovasi Anda telah diverifikasi dengan skor 85/100',
+    read: false,
+    createdAt: new Date(Date.now() - 6 * 60 * 60 * 1000) // 6 hours ago
+  },
+  {
+    id: 3,
+    sender: 'Koordinator Wilayah',
+    senderAvatar: null,
+    subject: 'Undangan Webinar',
+    content: 'Anda diundang untuk mengikuti webinar inovasi daerah',
+    read: true,
+    createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000) // 2 days ago
+  }
+])
+
+// Computed properties
+const unreadNotifications = computed(() => notifications.value.filter(n => !n.read))
+const unreadMessages = computed(() => messages.value.filter(m => !m.read))
 
 // Methods
 const handleLogout = () => {
@@ -300,6 +444,51 @@ const submitChangePassword = async () => {
     }
     submitting.value = false
   }, 1000)
+}
+
+// Notification methods
+const markNotificationAsRead = (notification) => {
+  notification.read = true
+  // TODO: Call API to mark as read
+  console.log('Marked notification as read:', notification.id)
+}
+
+const markAllNotificationsAsRead = () => {
+  notifications.value.forEach(notification => {
+    notification.read = true
+  })
+  // TODO: Call API to mark all as read
+  console.log('Marked all notifications as read')
+}
+
+// Message methods
+const markMessageAsRead = (message) => {
+  message.read = true
+  // TODO: Call API to mark as read
+  console.log('Marked message as read:', message.id)
+}
+
+const markAllMessagesAsRead = () => {
+  messages.value.forEach(message => {
+    message.read = true
+  })
+  // TODO: Call API to mark all as read
+  console.log('Marked all messages as read')
+}
+
+// Utility methods
+const formatDate = (date) => {
+  const now = new Date()
+  const diff = now - new Date(date)
+  const minutes = Math.floor(diff / 60000)
+  const hours = Math.floor(diff / 3600000)
+  const days = Math.floor(diff / 86400000)
+
+  if (minutes < 1) return 'Baru saja'
+  if (minutes < 60) return `${minutes} menit yang lalu`
+  if (hours < 24) return `${hours} jam yang lalu`
+  if (days < 7) return `${days} hari yang lalu`
+  return new Date(date).toLocaleDateString('id-ID')
 }
 </script>
 

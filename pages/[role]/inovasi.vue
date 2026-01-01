@@ -52,8 +52,7 @@
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">No Registrasi</th>
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Judul Inovasi</th>
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Badge</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Instansi</th>
-              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Wilayah</th>
+              <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">UPP (Unit Kerja)</th>
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">SDG's</th>
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Nama Inovator</th>
               <th class="px-4 py-2 text-left text-sm font-medium text-gray-700">Nama Pemangku</th>
@@ -73,8 +72,7 @@
                   {{ inovasi.badge || 'Inovasi' }}
                 </span>
               </td>
-              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.instansi || 'Instansi A' }}</td>
-              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.wilayah || inovasi.provinsi }}</td>
+              <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.upp || 'Unit Kerja' }}</td>
               <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.sdgs || 'SDG 3' }}</td>
               <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.innovator || 'Nama Inovator' }}</td>
               <td class="px-4 py-3 text-sm text-gray-600">{{ inovasi.pemangku || 'Nama Pemangku' }}</td>
@@ -100,7 +98,7 @@
               </td>
             </tr>
             <tr v-if="filteredInovasis.length === 0">
-              <td colspan="13" class="px-4 py-6 text-center text-gray-500">
+              <td colspan="12" class="px-4 py-6 text-center text-gray-500">
                 Tidak ada inovasi ditemukan.
               </td>
             </tr>
@@ -197,8 +195,7 @@ const inovasis = ref([
     registrationNumber: 'REG-001',
     title: 'Inovasi Teknologi Pertanian',
     badge: 'Inovasi',
-    instansi: 'Dinas Pertanian',
-    wilayah: 'Jawa Timur',
+    upp: 'Unit TI',
     sdgs: 'SDG 2',
     innovator: 'Ahmad Surya',
     pemangku: 'Budi Santoso',
@@ -216,8 +213,7 @@ const inovasis = ref([
     registrationNumber: 'REG-002',
     title: 'Sistem Pendidikan Online',
     badge: 'Inovasi',
-    instansi: 'Dinas Pendidikan',
-    wilayah: 'DKI Jakarta',
+    upp: 'Unit Pendidikan',
     sdgs: 'SDG 4',
     innovator: 'Siti Aminah',
     pemangku: 'Rudi Hartono',
@@ -235,8 +231,7 @@ const inovasis = ref([
     registrationNumber: 'REG-003',
     title: 'Bisnis Ramah Lingkungan',
     badge: 'Inovasi',
-    instansi: 'Kementerian Lingkungan',
-    wilayah: 'Jawa Barat',
+    upp: 'Unit Lingkungan',
     sdgs: 'SDG 13',
     innovator: 'Dewi Lestari',
     pemangku: 'Agus Wijaya',

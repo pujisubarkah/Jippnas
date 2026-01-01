@@ -1,18 +1,28 @@
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-6">Manajemen List Inovasi</h1>
+    <h1 class="text-2xl font-bold mb-6">Inovasi {{ userInstansi }}</h1>
 
     <!-- Action Buttons -->
-    <v-card class="mb-6">
+    <v-card class="mb-6" v-if="isAdmin">
       <v-card-header>
         <v-spacer></v-spacer>
-        <v-btn color="primary" class="me-2" to="/dashboard/inovasi/forms">
+        <v-btn color="primary" class="me-2" :to="`/${role}/inovasi/forms`">
           <v-icon left>mdi-plus</v-icon>
           Tambah Inovasi
         </v-btn>
-        <v-btn color="secondary" to="/dashboard/inovasi/form">
+        <v-btn color="secondary" :to="`/${role}/inovasi/form`">
           <v-icon left>mdi-plus-multiple</v-icon>
           Tambah Sekaligus
+        </v-btn>
+      </v-card-header>
+    </v-card>
+
+    <v-card class="mb-6" v-else>
+      <v-card-header>
+        <v-spacer></v-spacer>
+        <v-btn color="primary" :to="`/${role}/inovasi/forms`">
+          <v-icon left>mdi-plus</v-icon>
+          Tambah Inovasi Baru
         </v-btn>
       </v-card-header>
     </v-card>
@@ -23,6 +33,11 @@
         <v-breadcrumbs :items="breadcrumbItems" divider=">"></v-breadcrumbs>
       </v-card-text>
     </v-card>
+
+    <!-- Info Instansi untuk User -->
+    <v-alert v-if="!isAdmin && userInstansi" type="info" variant="tonal" class="mb-6">
+      <strong>Menampilkan inovasi untuk:</strong> {{ userInstansi }}
+    </v-alert>
 
     <!-- Filters -->
     <v-card class="mb-6">
@@ -56,7 +71,7 @@
                 variant="outlined"
               ></v-select>
             </v-col>
-            <v-col cols="12" md="3">
+            <v-col cols="12" md="3" v-if="isAdmin">
               <v-select
                 v-model="institutionFilter"
                 :items="institutionOptions"
@@ -116,7 +131,13 @@ definePageMeta({
   layout: 'sidebar'
 })
 
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
+import { useAuth } from '~/composables/useAuth'
+import { useRoute } from 'vue-router'
+
+const { user } = useAuth()
+const route = useRoute()
+const role = computed(() => route.params.role || 'user')
 
 // Reactive data
 const searchQuery = ref('')
@@ -124,13 +145,14 @@ const statusFilter = ref('')
 const categoryFilter = ref('')
 const institutionFilter = ref('')
 const loading = ref(false)
+const userInstansi = ref('')
+const isAdmin = computed(() => user.value?.id_peran === 2)
 
 // Breadcrumb items
-const breadcrumbItems = [
-  { title: 'Dashboard', href: '/dashboard' },
-  { title: 'Inovasi', href: '/dashboard/inovasi' },
-  { title: 'Daftar Inovasi', disabled: true }
-]
+const breadcrumbItems = computed(() => [
+  { title: 'Dashboard', href: `/${role.value}/dashboard` },
+  { title: 'Inovasi', disabled: true }
+])
 
 // Options for filters
 const statusOptions = [
@@ -156,9 +178,7 @@ const headers = [
   { title: 'No Registrasi', key: 'noRegistrasi', align: 'start' },
   { title: 'Judul Inovasi', key: 'judul' },
   { title: 'Jenis Inovasi', key: 'jenis' },
-  { title: 'Institusi', key: 'institusi' },
-  { title: 'Instansi', key: 'instansi' },
-  { title: 'Wilayah', key: 'wilayah' },
+  { title: 'UPP (Unit Kerja)', key: 'upp' },
   { title: 'Status', key: 'status' },
   { title: 'Actions', key: 'actions', sortable: false }
 ]
@@ -169,9 +189,7 @@ const innovations = ref([
     noRegistrasi: '609805',
     judul: 'Tes ITSA LAGI',
     jenis: 'Digital',
-    institusi: 'Provinsi',
-    instansi: 'itsa',
-    wilayah: 'DKI JAKARTA',
+    upp: 'Unit TI',
     status: 'Belum Lengkap'
   },
   // Add more sample data
@@ -209,8 +227,45 @@ const exportData = () => {
 }
 
 onMounted(() => {
-  // Fetch data on mount
+  // Ambil data user dari localStorage
+  if (process.client) {
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      const parsedUser = JSON.parse(userData)
+      userInstansi.value = parsedUser.nm_instansi || 'Tidak Diketahui'
+      
+      // Jika bukan admin, set filter instansi otomatis
+      if (!isAdmin.value) {
+        institutionFilter.value = userInstansi.value
+      }
+    }
+  }
+  
+  // Fetch data inovasi
+  fetchInnovations()
 })
+
+const fetchInnovations = async () => {
+  loading.value = true
+  try {
+    // TODO: Implement API call
+    // const response = await $fetch('/api/master-inovasi', {
+    //   params: {
+    //     instansi: !isAdmin.value ? userInstansi.value : institutionFilter.value,
+    //     search: searchQuery.value,
+    //     status: statusFilter.value,
+    //     category: categoryFilter.value
+    //   }
+    // })
+    // innovations.value = response.data
+    
+    console.log('Fetching innovations for instansi:', userInstansi.value)
+  } catch (error) {
+    console.error('Error fetching innovations:', error)
+  } finally {
+    loading.value = false
+  }
+}
 </script>
 
 <style scoped>

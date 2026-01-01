@@ -2,6 +2,41 @@
   <div>
     <h1 class="text-2xl font-bold mb-6 text-primary">Survey Hub Inovasi</h1>
     
+    <!-- Loading Overlay saat Submit -->
+    <v-overlay v-model="submitting" class="align-center justify-center" persistent>
+      <v-card class="pa-8 text-center">
+        <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
+        <p class="mt-4 text-h6">Mengirim Survey...</p>
+        <p class="text-caption text-grey">Mohon tunggu sebentar</p>
+      </v-card>
+    </v-overlay>
+
+    <!-- Success Dialog -->
+    <v-dialog v-model="showSuccessDialog" max-width="500">
+      <v-card>
+        <v-card-title class="bg-success text-white">
+          <v-icon start>mdi-check-circle</v-icon>
+          Survey Berhasil Dikirim!
+        </v-card-title>
+        <v-card-text class="pa-6">
+          <div class="text-center mb-4">
+            <v-icon size="80" color="success">mdi-checkbox-marked-circle</v-icon>
+          </div>
+          <div class="text-body-1">
+            <p class="mb-2"><strong>Total Skor:</strong> {{ submittedScore }}</p>
+            <p class="mb-2"><strong>Status:</strong> Menunggu Verifikasi</p>
+            <p class="text-caption text-grey mt-4">
+              Terima kasih telah mengisi survey. Tim kami akan memverifikasi jawaban Anda.
+            </p>
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showSuccessDialog = false">Tutup</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
+    
     <v-card v-if="loading" class="mb-6">
       <v-card-text class="text-center py-8">
         <v-progress-circular indeterminate color="primary" size="64"></v-progress-circular>
@@ -52,6 +87,9 @@
                     <p class="text-body-1 font-weight-medium mb-3">
                       {{ qIndex + 1 }}. {{ question.text }}
                       <span v-if="question.required" class="text-error">*</span>
+                      <v-chip v-if="question.weight && question.weight !== '1'" size="x-small" color="info" variant="tonal" class="ml-2">
+                        Bobot: {{ question.weight }}
+                      </v-chip>
                     </p>
 
                     <v-radio-group 
@@ -70,16 +108,18 @@
                       </v-radio>
                     </v-radio-group>
 
-                    <v-file-input
+                    <v-text-field
                       v-if="question.requireEvidence && answers[`${aIndex}-${qIndex}`] !== undefined"
                       v-model="evidences[`${aIndex}-${qIndex}`]"
-                      label="Upload Bukti (opsional)"
-                      prepend-icon="mdi-paperclip"
+                      label="Link Bukti (opsional)"
+                      prepend-icon="mdi-link"
                       variant="outlined"
                       density="compact"
                       class="mt-3"
-                      accept="image/*,.pdf,.doc,.docx"
-                    ></v-file-input>
+                      placeholder="https://..."
+                      hint="Masukkan link/URL bukti pendukung"
+                      persistent-hint
+                    ></v-text-field>
 
                     <v-divider v-if="qIndex < aspect.questions.length - 1" class="mt-4"></v-divider>
                   </div>
@@ -122,6 +162,7 @@ definePageMeta({
   layout: 'sidebar'
 })
 
+const { user } = useAuth()
 const loading = ref(true)
 const error = ref(null)
 const activeSurvey = ref(null)
@@ -130,6 +171,8 @@ const evidences = ref({})
 const submitting = ref(false)
 const currentStep = ref(1)
 const aspectForms = ref([])
+const showSuccessDialog = ref(false)
+const submittedScore = ref(0)
 
 const fetchSurveys = async () => {
   loading.value = true
@@ -187,18 +230,65 @@ const submitSurvey = async () => {
   submitting.value = true
 
   try {
-    // TODO: Submit ke API
-    console.log('Survey answers:', answers.value)
-    console.log('Survey evidences:', evidences.value)
+    // Siapkan data jawaban dengan questionId dan optionId yang benar
+    const surveyAnswers = {}
+    const surveyEvidences = {}
     
-    // Simulasi submit
-    await new Promise(resolve => setTimeout(resolve, 1000))
+    console.log('📊 Preparing survey submission...')
     
-    alert('Survey berhasil dikirim!')
-    resetForm()
+    let calculatedTotalScore = 0
+    
+    // Loop through answers dan mapping ke question/option ID
+    for (const [key, optionIndex] of Object.entries(answers.value)) {
+      const [aspectIndex, questionIndex] = key.split('-').map(Number)
+      const aspect = activeSurvey.value.aspects[aspectIndex]
+      const question = aspect.questions[questionIndex]
+      const selectedOption = question.options[optionIndex]
+      
+      const optionScore = selectedOption.score || 0
+      const questionWeight = parseFloat(question.weight || '1')
+      const finalScore = optionScore * questionWeight
+      
+      calculatedTotalScore += finalScore
+      
+      surveyAnswers[key] = {
+        questionId: question.id,
+        optionId: selectedOption.id,
+        optionIndex: optionIndex,
+        score: optionScore,
+        weight: questionWeight,
+        finalScore: finalScore
+      }
+      
+      // Tambahkan evidence link jika ada
+      if (evidences.value[key]) {
+        surveyEvidences[key] = evidences.value[key]
+      }
+    }
+    
+    console.log('📤 Submitting survey with', Object.keys(surveyAnswers).length, 'answers')
+    console.log('💯 Calculated Total Score:', calculatedTotalScore)
+    
+    // Submit ke API
+    const response = await $fetch('/api/instrument-responses/submit', {
+      method: 'POST',
+      body: {
+        instrumentId: activeSurvey.value.id,
+        instansi: user.value?.nm_instansi || 'Tidak Diketahui',
+        answers: surveyAnswers,
+        evidences: surveyEvidences
+      }
+    })
+    
+    if (response.success) {
+      console.log('✅ Survey submitted successfully!', response.data)
+      submittedScore.value = response.data.totalScore || 0
+      showSuccessDialog.value = true
+      resetForm()
+    }
   } catch (e) {
-    console.error('Error submitting survey:', e)
-    alert('Gagal mengirim survey')
+    console.error('❌ Error submitting survey:', e)
+    alert('Gagal mengirim survey: ' + (e.message || 'Terjadi kesalahan'))
   } finally {
     submitting.value = false
   }
@@ -220,5 +310,9 @@ onMounted(() => {
 
 .bg-primary {
   background-color: #1976D2 !important;
+}
+
+.bg-success {
+  background-color: #4CAF50 !important;
 }
 </style>

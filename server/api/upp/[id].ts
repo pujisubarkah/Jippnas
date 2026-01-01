@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import postgres from 'postgres';
 import { upp } from '../../../drizzle/schema/upp';
 
@@ -18,11 +18,13 @@ export default defineEventHandler(async (event) => {
     try {
       const uppData = await db.select({
         id: upp.id,
+        id_instansi: upp.id_instansi,
         nama: upp.nama,
         keterangan: upp.keterangan,
+        is_del: upp.is_del,
         created_at: upp.created_at,
         updated_at: upp.updated_at
-      }).from(upp).where(eq(upp.id, parseInt(id))).limit(1);
+      }).from(upp).where(and(eq(upp.id, parseInt(id)), eq(upp.is_del, false))).limit(1);
 
       if (!uppData || uppData.length === 0) {
         return { error: 'UPP not found' };
@@ -36,11 +38,13 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'PUT') {
     try {
       const body = await readBody(event);
-      const { nama, keterangan } = body;
+      const { id_instansi, nama, keterangan, is_del } = body;
 
       const updateData: any = {};
-      if (nama) updateData.nama = nama;
-      if (keterangan) updateData.keterangan = keterangan;
+      if (id_instansi !== undefined) updateData.id_instansi = id_instansi;
+      if (nama !== undefined) updateData.nama = nama;
+      if (keterangan !== undefined) updateData.keterangan = keterangan;
+      if (is_del !== undefined) updateData.is_del = is_del;
       updateData.updated_at = new Date();
 
       const updatedUpp = await db.update(upp)
@@ -48,8 +52,10 @@ export default defineEventHandler(async (event) => {
         .where(eq(upp.id, parseInt(id)))
         .returning({
           id: upp.id,
+          id_instansi: upp.id_instansi,
           nama: upp.nama,
           keterangan: upp.keterangan,
+          is_del: upp.is_del,
           created_at: upp.created_at,
           updated_at: upp.updated_at
         });
@@ -65,7 +71,8 @@ export default defineEventHandler(async (event) => {
     }
   } else if (method === 'DELETE') {
     try {
-      const deletedUpp = await db.delete(upp)
+      const deletedUpp = await db.update(upp)
+        .set({ is_del: true, updated_at: new Date() })
         .where(eq(upp.id, parseInt(id)))
         .returning({ id: upp.id });
 
@@ -73,10 +80,10 @@ export default defineEventHandler(async (event) => {
         return { error: 'UPP not found' };
       }
 
-      return { success: true, message: 'UPP deleted successfully' };
+      return { success: true, message: 'UPP soft deleted successfully' };
     } catch (error) {
-      console.error('Error deleting upp:', error);
-      return { error: 'Failed to delete upp' };
+      console.error('Error soft deleting upp:', error);
+      return { error: 'Failed to soft delete upp' };
     }
   } else {
     return { error: 'Method not allowed' };

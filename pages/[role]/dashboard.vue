@@ -1,9 +1,14 @@
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-6 text-primary">Dashboard</h1>
-    <v-card class="mb-6">
-      <v-card-text>
-        <v-container fluid>
+    <h1 class="text-2xl font-bold mb-6 text-primary">
+      Dashboard {{ isAdmin ? 'Admin' : userInstansi }}
+    </h1>
+    
+    <!-- Admin Dashboard -->
+    <div v-if="isAdmin">
+      <v-card class="mb-6">
+        <v-card-text>
+          <v-container fluid>
           <v-row justify="center" class="py-4">
             <v-col lg="3" cols="8" class="ma-2">
               <v-card color="primary" variant="outlined" class="text-center">
@@ -186,21 +191,143 @@
         </v-container>
       </v-card-text>
     </v-card>
+    </div>
+
+    <!-- User Dashboard -->
+    <div v-else>
+      <v-card class="mb-6">
+        <v-card-text>
+          <v-alert type="info" variant="tonal" class="mb-6">
+            <strong>Selamat datang!</strong> Ini adalah dashboard untuk {{ userInstansi }}
+          </v-alert>
+          
+          <v-container fluid>
+            <v-row justify="center" class="py-4">
+              <v-col lg="4" cols="12" class="ma-2">
+                <v-card color="primary" variant="outlined" class="text-center">
+                  <v-card-text>
+                    <p class="text-primary font-weight-bold">Inovasi Saya</p>
+                    <h2 class="text-primary font-weight-bold">{{ userStats.totalInnovations }}</h2>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col lg="4" cols="12" class="ma-2">
+                <v-card color="success" variant="outlined" class="text-center">
+                  <v-card-text>
+                    <p class="text-success font-weight-bold">Survey Terisi</p>
+                    <h2 class="text-success font-weight-bold">{{ userStats.surveysCompleted }}</h2>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+              <v-col lg="4" cols="12" class="ma-2">
+                <v-card color="warning" variant="outlined" class="text-center">
+                  <v-card-text>
+                    <p class="text-warning font-weight-bold">Dalam Proses</p>
+                    <h2 class="text-warning font-weight-bold">{{ userStats.inProgress }}</h2>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center" class="py-4">
+              <v-col cols="12">
+                <v-card color="primary" variant="outlined">
+                  <v-card-title class="text-primary">Quick Actions</v-card-title>
+                  <v-card-text>
+                    <v-row>
+                      <v-col cols="12" md="4">
+                        <v-btn block color="primary" size="large" :to="`/${role}/inovasi`">
+                          <v-icon start>mdi-lightbulb</v-icon>
+                          Kelola Inovasi
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-btn block color="primary" size="large" :to="`/${role}/survey-hub-inovasi`">
+                          <v-icon start>mdi-clipboard-text</v-icon>
+                          Isi Survey
+                        </v-btn>
+                      </v-col>
+                      <v-col cols="12" md="4">
+                        <v-btn block color="primary" size="large" :to="`/${role}/inovasi/forms`">
+                          <v-icon start>mdi-plus</v-icon>
+                          Tambah Inovasi
+                        </v-btn>
+                      </v-col>
+                    </v-row>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+
+            <v-row justify="center" class="py-4">
+              <v-col cols="12">
+                <v-card color="primary" variant="outlined">
+                  <v-card-title class="text-primary">Aktivitas Terbaru</v-card-title>
+                  <v-card-text>
+                    <v-list>
+                      <v-list-item v-for="(activity, index) in recentActivities" :key="index">
+                        <template v-slot:prepend>
+                          <v-icon :color="activity.color">{{ activity.icon }}</v-icon>
+                        </template>
+                        <v-list-item-title>{{ activity.title }}</v-list-item-title>
+                        <v-list-item-subtitle>{{ activity.date }}</v-list-item-subtitle>
+                      </v-list-item>
+                    </v-list>
+                  </v-card-text>
+                </v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+      </v-card>
+    </div>
   </div>
 </template>
 
 <script setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref, computed } from 'vue'
 import { useRoute } from 'vue-router'
+import { useAuth } from '~/composables/useAuth'
 
 definePageMeta({ 
   layout: 'sidebar'
 })
 
 const route = useRoute()
-const role = route.params.role === 'admin' ? 'admin' : 'user'
-console.log('Dashboard route params:', route.params)
-console.log('Dashboard role:', role)
+const { user } = useAuth()
+
+const role = computed(() => route.params.role || 'user')
+const isAdmin = computed(() => user.value?.id_peran === 2)
+const userInstansi = ref('')
+
+// User statistics (untuk user biasa)
+const userStats = ref({
+  totalInnovations: 0,
+  surveysCompleted: 0,
+  inProgress: 0
+})
+
+// Recent activities (untuk user biasa)
+const recentActivities = ref([
+  {
+    title: 'Inovasi baru ditambahkan',
+    date: '2 hari yang lalu',
+    icon: 'mdi-lightbulb',
+    color: 'success'
+  },
+  {
+    title: 'Survey Hub Inovasi terisi',
+    date: '5 hari yang lalu',
+    icon: 'mdi-clipboard-check',
+    color: 'primary'
+  },
+  {
+    title: 'Inovasi diverifikasi',
+    date: '1 minggu yang lalu',
+    icon: 'mdi-check-circle',
+    color: 'success'
+  }
+])
 
 const startDate = ref('2024-12-01')
 const endDate = ref('2025-12-25')
@@ -212,6 +339,31 @@ const submitForm = () => {
 }
 
 onMounted(async () => {
+  // Get user data from localStorage
+  if (process.client) {
+    const userData = localStorage.getItem('user')
+    if (userData) {
+      const parsedUser = JSON.parse(userData)
+      userInstansi.value = parsedUser.nm_instansi || 'Tidak Diketahui'
+    }
+  }
+
+  // Load user stats if not admin
+  if (!isAdmin.value) {
+    // TODO: Fetch user stats from API
+    // const response = await $fetch(`/api/user-stats?instansi=${userInstansi.value}`)
+    // userStats.value = response.data
+    
+    // Sample data
+    userStats.value = {
+      totalInnovations: 5,
+      surveysCompleted: 2,
+      inProgress: 1
+    }
+    return
+  }
+
+  // Admin dashboard - load charts and map
   // Chart
   const ctx = document.getElementById('myChart5')?.getContext('2d')
   if (ctx) {
@@ -261,4 +413,7 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.text-warning {
+  color: #fb8c00 !important;
+}
 </style>

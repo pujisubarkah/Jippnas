@@ -13,11 +13,13 @@ export default defineEventHandler(async (event) => {
     try {
       const allUpp = await db.select({
         id: upp.id,
+        id_instansi: upp.id_instansi,
         nama: upp.nama,
         keterangan: upp.keterangan,
+        is_del: upp.is_del,
         created_at: upp.created_at,
         updated_at: upp.updated_at
-      }).from(upp);
+      }).from(upp).where(eq(upp.is_del, false));
 
       return { success: true, data: allUpp };
     } catch (error) {
@@ -27,19 +29,23 @@ export default defineEventHandler(async (event) => {
   } else if (method === 'POST') {
     try {
       const body = await readBody(event);
-      const { nama, keterangan } = body;
+      const { id_instansi, nama, keterangan } = body;
 
-      if (!nama) {
-        return { error: 'Nama is required.' };
+      if (!id_instansi || !nama) {
+        return { error: 'id_instansi and nama are required.' };
       }
 
       const newUpp = await db.insert(upp).values({
+        id_instansi,
         nama,
-        keterangan
+        keterangan,
+        is_del: false
       }).returning({
         id: upp.id,
+        id_instansi: upp.id_instansi,
         nama: upp.nama,
         keterangan: upp.keterangan,
+        is_del: upp.is_del,
         created_at: upp.created_at,
         updated_at: upp.updated_at
       });

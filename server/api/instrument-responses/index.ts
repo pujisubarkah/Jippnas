@@ -1,5 +1,5 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
-import { eq } from 'drizzle-orm'
+import { eq, desc } from 'drizzle-orm'
 import postgres from 'postgres'
 import { instrumentResponses } from '~/drizzle/schema/survey'
 
@@ -10,9 +10,14 @@ export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    // Get all instrument responses
+    // Get all instrument responses (sorted by newest first)
     try {
-      const responses = await db.select().from(instrumentResponses).orderBy(instrumentResponses.createdAt)
+      const responses = await db
+        .select()
+        .from(instrumentResponses)
+        .orderBy(desc(instrumentResponses.submittedAt))
+      
+      console.log(`📋 Fetched ${responses.length} responses`)
       return { success: true, data: responses }
     } catch (error) {
       console.error('Error fetching instrument responses:', error)

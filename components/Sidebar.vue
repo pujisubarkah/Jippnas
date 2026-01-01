@@ -393,10 +393,17 @@ const menuConfig = [
     roles: ['user']
   },
   {
-    label: 'Tambah Inovasi',
-    slug: 'tambah-inovasi',
-    icon: 'Plus',
-    roles: ['user']
+    label: 'Manajemen Inovasi',
+    slug: 'manajemen-inovasi',
+    icon: 'Lightbulb',
+    roles: ['user'],
+    children: [
+      {
+        label: 'List Inovasi',
+        slug: 'inovasi',
+        roles: ['user']
+      }
+    ]
   },
   {
     label: 'Survey Hub Inovasi',

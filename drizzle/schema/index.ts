@@ -19,3 +19,5 @@ export * from './penghargaan';
 export * from './wilayah';
 export * from './course';
 export * from './chat';
+export * from './notifications';
+export * from './master_oecd';
