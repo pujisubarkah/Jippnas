@@ -47,7 +47,9 @@ export default defineEventHandler(async (event) => {
           }))
           
           return {
+            id: aspect.id,  // ✅ Tambahkan ini juga
             name: aspect.name,
+            weight: aspect.weight,  // ✅ Tambahkan ini
             questions: questionsWithOptions
           }
         }))
@@ -100,6 +102,7 @@ export default defineEventHandler(async (event) => {
           const newAspect = await db.insert(instrumentAspects).values({
             instrumentId,
             name: aspect.name,
+            weight: aspect.weight || '1.00',  // ✅ Tambahkan ini
             sortOrder: aspectIndex,
             createdAt: new Date()
           }).returning()
@@ -117,6 +120,7 @@ export default defineEventHandler(async (event) => {
                 isRequired: question.required ?? true,
                 requireEvidence: question.requireEvidence ?? false,
                 evidenceLabel: question.evidenceLabel,
+                weight: question.weight || '0.00',
                 sortOrder: questionIndex,
                 createdAt: new Date()
               }).returning()

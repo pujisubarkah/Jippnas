@@ -13,6 +13,7 @@ export const instrumentAspects = pgTable('instrument_aspects', {
   id: serial('id').primaryKey(),
   instrumentId: integer('instrument_id').references(() => surveyInstruments.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
+  weight: numeric('weight', { precision: 5, scale: 2 }).default('1.00'),
   sortOrder: integer('sort_order').default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
@@ -24,7 +25,7 @@ export const instrumentQuestions = pgTable('instrument_questions', {
   questionType: varchar('question_type', { length: 20 }).default('single'),
   isRequired: boolean('is_required').default(true),
   requireEvidence: boolean('require_evidence').default(false),
-  evidenceLabel: varchar('evidence_label', { length: 255 }),
+  evidenceLabel: text('evidence_label'),
   weight: numeric('weight', { precision: 5, scale: 2 }).default('1.00'),
   sortOrder: integer('sort_order').default(0),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),

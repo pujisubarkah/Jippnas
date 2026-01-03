@@ -12,7 +12,7 @@
     </v-overlay>
 
     <!-- Success Dialog -->
-    <v-dialog v-model="showSuccessDialog" max-width="500">
+    <v-dialog v-model="showSuccessDialog" max-width="600">
       <v-card>
         <v-card-title class="bg-success text-white">
           <v-icon start>mdi-check-circle</v-icon>
@@ -23,7 +23,31 @@
             <v-icon size="80" color="success">mdi-checkbox-marked-circle</v-icon>
           </div>
           <div class="text-body-1">
-            <p class="mb-2"><strong>Total Skor:</strong> {{ submittedScore }}</p>
+            <p class="mb-4"><strong>Total Skor:</strong> <span class="text-h5 text-primary">{{ submittedScore.toFixed(2) }}</span></p>
+            
+            <!-- Breakdown Skor Per Aspek -->
+            <v-expansion-panels v-if="aspectScoresBreakdown.length > 0" class="mb-4">
+              <v-expansion-panel>
+                <v-expansion-panel-title>
+                  <v-icon start>mdi-chart-box</v-icon>
+                  Lihat Detail Skor Per Aspek
+                </v-expansion-panel-title>
+                <v-expansion-panel-text>
+                  <v-list density="compact">
+                    <v-list-item v-for="(aspect, idx) in aspectScoresBreakdown" :key="idx">
+                      <v-list-item-title class="text-body-2">
+                        {{ aspect.name }}
+                      </v-list-item-title>
+                      <v-list-item-subtitle class="text-caption">
+                        Skor Aspek: {{ aspect.rawScore.toFixed(2) }} × Bobot: {{ aspect.weight }} = 
+                        <strong class="text-primary">{{ aspect.finalScore.toFixed(2) }}</strong>
+                      </v-list-item-subtitle>
+                    </v-list-item>
+                  </v-list>
+                </v-expansion-panel-text>
+              </v-expansion-panel>
+            </v-expansion-panels>
+            
             <p class="mb-2"><strong>Status:</strong> Menunggu Verifikasi</p>
             <p class="text-caption text-grey mt-4">
               Terima kasih telah {{ editMode ? 'memperbarui' : 'mengisi' }} survey. Tim kami akan memverifikasi jawaban Anda.
@@ -81,7 +105,7 @@
                 <v-card variant="outlined">
                   <v-card-text class="text-center">
                     <p class="text-caption text-grey">Total Skor</p>
-                    <p class="text-h4 font-weight-bold text-primary">{{ existingResponse.totalScore }}</p>
+                    <p class="text-h4 font-weight-bold text-primary">{{ existingResponse.totalScore.toFixed(2) }}</p>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -106,6 +130,31 @@
             </v-row>
           </div>
 
+          <!-- Breakdown Skor Per Aspek -->
+          <div class="mb-6">
+            <h3 class="text-h6 font-weight-bold mb-3">Skor Per Aspek</h3>
+            <v-card variant="outlined">
+              <v-list>
+                <v-list-item v-for="aspect in groupedAnswers" :key="aspect.aspectId">
+                  <template v-slot:prepend>
+                    <v-icon color="primary">mdi-chart-box-outline</v-icon>
+                  </template>
+                  <v-list-item-title class="font-weight-medium">
+                    {{ aspect.aspectName }}
+                  </v-list-item-title>
+                  <v-list-item-subtitle>
+                    {{ calculateAspectScore(aspect).toFixed(2) }} poin
+                  </v-list-item-subtitle>
+                  <template v-slot:append>
+                    <v-chip size="small" color="success" variant="tonal">
+                      {{ calculateAspectScore(aspect).toFixed(2) }}
+                    </v-chip>
+                  </template>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </div>
+
           <h3 class="text-h6 font-weight-bold mb-3">Detail Jawaban</h3>
           <div v-for="aspect in groupedAnswers" :key="aspect.aspectId" class="mb-6">
             <v-card variant="outlined">
@@ -116,15 +165,12 @@
                 <div v-for="(answer, idx) in aspect.answers" :key="idx" class="mb-4">
                   <p class="text-body-2 font-weight-medium mb-2">
                     {{ idx + 1 }}. {{ answer.questionText }}
-                    <v-chip v-if="answer.questionWeight && answer.questionWeight !== '1.00'" size="x-small" color="info" variant="tonal" class="ml-2">
-                      Bobot: {{ answer.questionWeight }}
-                    </v-chip>
                   </p>
                   <p class="text-body-2 ml-4">
                     <v-icon size="small" color="primary">mdi-check-circle</v-icon>
                     <strong>Jawaban:</strong> {{ answer.optionText }}
                     <v-chip size="small" color="success" variant="tonal" class="ml-2">
-                      Skor: {{ answer.optionScore }}
+                      Skor: {{ answer.originalScore?.toFixed(2) || answer.optionScore }}
                     </v-chip>
                   </p>
                   <p v-if="answer.evidence" class="text-body-2 ml-4 text-grey">
@@ -195,9 +241,6 @@
                     <p class="text-body-1 font-weight-medium mb-3">
                       {{ qIndex + 1 }}. {{ question.text }}
                       <span v-if="question.required" class="text-error">*</span>
-                      <v-chip v-if="question.weight && question.weight !== '1'" size="x-small" color="info" variant="tonal" class="ml-2">
-                        Bobot: {{ question.weight }}
-                      </v-chip>
                       <v-chip v-if="editMode && answers[`${aIndex}-${qIndex}`] !== undefined" size="x-small" color="success" variant="tonal" class="ml-2">
                         ✓ Terjawab (index: {{ answers[`${aIndex}-${qIndex}`] }})
                       </v-chip>
@@ -293,6 +336,7 @@ const currentStep = ref(1)
 const aspectForms = ref([])
 const showSuccessDialog = ref(false)
 const submittedScore = ref(0)
+const aspectScoresBreakdown = ref([])
 const editMode = ref(false)
 
 const groupedAnswers = computed(() => {
@@ -341,6 +385,17 @@ const getStatusText = (status) => {
     'rejected': 'Ditolak'
   }
   return texts[status] || status
+}
+
+const calculateAspectScore = (aspect) => {
+  if (!aspect || !aspect.answers || aspect.answers.length === 0) return 0
+  
+  // Hitung total skor dari semua jawaban di aspek ini
+  const totalScore = aspect.answers.reduce((sum, answer) => {
+    return sum + (answer.originalScore || 0)
+  }, 0)
+  
+  return totalScore
 }
 
 const enableEditMode = async () => {
@@ -487,13 +542,12 @@ const submitSurvey = async () => {
   submitting.value = true
 
   try {
-    // Siapkan data jawaban dengan questionId dan optionId yang benar
     const surveyAnswers = {}
     const surveyEvidences = {}
     
-    let calculatedTotalScore = 0
+    // Hitung skor per aspek dulu untuk breakdown display
+    const aspectScores = {}
     
-    // Loop through answers dan mapping ke question/option ID
     for (const [key, optionIndex] of Object.entries(answers.value)) {
       const [aspectIndex, questionIndex] = key.split('-').map(Number)
       const aspect = activeSurvey.value.aspects[aspectIndex]
@@ -502,9 +556,21 @@ const submitSurvey = async () => {
       
       const optionScore = selectedOption.score || 0
       const questionWeight = parseFloat(question.weight || '1')
-      const finalScore = optionScore * questionWeight
+      const aspectWeight = parseFloat(aspect.weight || '1')
       
-      calculatedTotalScore += finalScore
+      // finalScore sudah termasuk bobot pertanyaan DAN bobot aspek
+      const questionFinalScore = optionScore * questionWeight * aspectWeight
+      
+      // Akumulasi skor per aspek (untuk display breakdown)
+      if (!aspectScores[aspectIndex]) {
+        aspectScores[aspectIndex] = {
+          totalScore: 0,
+          aspectWeight: aspectWeight,
+          rawScore: 0  // skor sebelum dikali aspect weight
+        }
+      }
+      aspectScores[aspectIndex].totalScore += questionFinalScore
+      aspectScores[aspectIndex].rawScore += (optionScore * questionWeight)
       
       surveyAnswers[key] = {
         questionId: question.id,
@@ -512,13 +578,19 @@ const submitSurvey = async () => {
         optionIndex: optionIndex,
         score: optionScore,
         weight: questionWeight,
-        finalScore: finalScore
+        aspectWeight: aspectWeight,
+        finalScore: questionFinalScore  // Skor yang sudah termasuk semua bobot
       }
       
-      // Tambahkan evidence link jika ada
       if (evidences.value[key]) {
         surveyEvidences[key] = evidences.value[key]
       }
+    }
+    
+    // Hitung total skor (tinggal sum semua finalScore karena sudah termasuk semua bobot)
+    let calculatedTotalScore = 0
+    for (const aspectIndex in aspectScores) {
+      calculatedTotalScore += aspectScores[aspectIndex].totalScore
     }
     
     // Submit ke API
@@ -536,11 +608,25 @@ const submitSurvey = async () => {
     
     if (response.success) {
       submittedScore.value = response.data.totalScore || 0
+      
+      // Build aspect scores breakdown
+      aspectScoresBreakdown.value = []
+      for (const aspectIndex in aspectScores) {
+        const aspect = activeSurvey.value.aspects[aspectIndex]
+        const { totalScore, aspectWeight, rawScore } = aspectScores[aspectIndex]
+        
+        aspectScoresBreakdown.value.push({
+          name: aspect.name,
+          rawScore: rawScore,  // Skor sebelum dikali aspect weight
+          weight: aspectWeight,
+          finalScore: totalScore  // Skor sudah dikali aspect weight
+        })
+      }
+      
       showSuccessDialog.value = true
       editMode.value = false
       resetForm()
       
-      // Refresh untuk menampilkan hasil
       await fetchSurveys()
     }
   } catch (e) {

@@ -70,8 +70,28 @@
 
           <!-- Aspects Section -->
           <div class="mt-6">
+            <!-- Setelah tombol "Tambah Aspek", tambahkan tombol untuk auto-distribute aspek -->
             <div class="d-flex justify-space-between align-center mb-4">
-              <h3 class="text-h6">Aspek Kuesioner</h3>
+              <div class="d-flex align-center">
+                <h3 class="text-h6 mr-4">Aspek Kuesioner</h3>
+                <v-chip 
+                  :color="getTotalAspectsWeight() === 1 ? 'success' : 'warning'" 
+                  size="small"
+                  class="mr-2"
+                >
+                  Total Bobot Aspek: {{ (getTotalAspectsWeight() * 100).toFixed(0) }}%
+                </v-chip>
+                <v-btn 
+                  icon 
+                  size="small" 
+                  color="blue" 
+                  @click="autoDistributeAspectsWeight" 
+                  title="Distribusi bobot aspek otomatis"
+                  v-if="currentSurvey.aspects.length > 0"
+                >
+                  <v-icon size="small">mdi-auto-fix</v-icon>
+                </v-btn>
+              </div>
               <v-btn color="green" @click="addAspect" size="small">
                 <v-icon left>mdi-plus</v-icon>
                 Tambah Aspek
@@ -102,8 +122,20 @@
                   class="grow mr-2"
                   hide-details
                 ></v-text-field>
+                <v-text-field
+                  v-model="aspect.weight"
+                  label="Bobot Aspek"
+                  type="number"
+                  step="0.01"
+                  variant="outlined"
+                  density="compact"
+                  placeholder="1.00"
+                  class="mr-2"
+                  style="max-width: 150px;"
+                  hide-details
+                ></v-text-field>
                 <div class="d-flex align-center mr-2">
-                  <span class="text-caption mr-2">Total Bobot:</span>
+                  <span class="text-caption mr-2">Total Bobot Pertanyaan:</span>
                   <v-chip 
                     :color="getAspectTotalWeight(aIndex) === 1 ? 'success' : 'warning'" 
                     size="small"
@@ -115,7 +147,7 @@
                     size="small" 
                     color="blue" 
                     @click="autoDistributeWeights(aIndex)" 
-                    title="Distribusi bobot otomatis"
+                    title="Distribusi bobot pertanyaan otomatis"
                     class="ml-2"
                   >
                     <v-icon size="small">mdi-auto-fix</v-icon>
@@ -454,6 +486,7 @@ const closeModal = () => {
 const addAspect = () => {
   currentSurvey.aspects.push({
     name: '',
+    weight: '1.00',  // ✅ Tambahkan ini
     questions: []
   })
 }
@@ -517,6 +550,27 @@ const autoDistributeWeights = (aspectIndex) => {
   })
   
   toast.info(`Bobot didistribusikan rata: ${(parseFloat(equalWeight) * 100).toFixed(0)}% per pertanyaan`)
+}
+
+const getTotalAspectsWeight = () => {
+  if (!currentSurvey.aspects) return 0
+
+  let total = 0
+  currentSurvey.aspects.forEach(aspect => {
+    total += parseFloat(aspect.weight || 1)
+  })
+  return Math.round(total * 100) / 100
+}
+
+const autoDistributeAspectsWeight = () => {
+  if (!currentSurvey.aspects || currentSurvey.aspects.length === 0) return
+
+  const equalWeight = (1 / currentSurvey.aspects.length).toFixed(2)
+  currentSurvey.aspects.forEach(aspect => {
+    aspect.weight = equalWeight
+  })
+
+  toast.info(`Bobot aspek didistribusikan rata: ${(parseFloat(equalWeight) * 100).toFixed(0)}% per aspek`)
 }
 
 const saveSurvey = async () => {
@@ -590,15 +644,16 @@ const saveSurvey = async () => {
   }
 
   console.log('All validations passed! Proceeding to save...')
+  
+  const payload = {
+    title: currentSurvey.title,
+    description: currentSurvey.description,
+    isActive: false,
+    aspects: JSON.parse(JSON.stringify(currentSurvey.aspects))
+  }
+  
   loading.value = true
   try {
-    const payload = {
-      title: currentSurvey.title,
-      description: currentSurvey.description,
-      isActive: false,
-      aspects: JSON.parse(JSON.stringify(currentSurvey.aspects))
-    }
-
     if (isEditing.value) {
       // Update existing survey
       console.log('Updating survey with ID:', editingId.value)

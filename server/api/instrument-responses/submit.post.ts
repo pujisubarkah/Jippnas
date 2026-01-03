@@ -26,7 +26,9 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    // Hitung total score dari semua jawaban
+    console.log('📊 Received answers:', Object.keys(answers).length, 'questions')
+    
+    // Hitung total score dari semua jawaban (sudah termasuk bobot aspek dan pertanyaan dari frontend)
     let totalScore = 0
     const answersArray = Object.entries(answers).map(([key, answer]: [string, any]) => {
       // Validasi data
@@ -34,7 +36,10 @@ export default defineEventHandler(async (event) => {
         throw new Error(`Invalid answer data: questionId and optionId are required for answer [${key}]`)
       }
       
-      totalScore += answer.score || 0
+      // Gunakan finalScore yang sudah dikalikan bobot pertanyaan
+      const finalScore = answer.finalScore || (answer.score || 0)
+      console.log(`  Question ${key}: option score=${answer.score}, weight=${answer.weight}, finalScore=${finalScore}`)
+      totalScore += finalScore
       
       // Handle evidence - bisa array atau string atau undefined
       let evidenceText = null
@@ -51,10 +56,12 @@ export default defineEventHandler(async (event) => {
         questionId: parseInt(String(answer.questionId)),
         selectedOptionId: parseInt(String(answer.optionId)),
         evidence: evidenceText,
-        originalScore: answer.score || 0,
-        verifiedScore: answer.score || 0
+        originalScore: finalScore,  // Simpan skor yang sudah dikalikan bobot
+        verifiedScore: finalScore   // Simpan skor yang sudah dikalikan bobot
       }
     })
+
+    console.log('💰 Total Score:', totalScore.toFixed(2))
 
     let newResponse
 

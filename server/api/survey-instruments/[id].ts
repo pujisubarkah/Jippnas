@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { eq } from 'drizzle-orm'
 import postgres from 'postgres'
-import { surveyInstruments, instrumentAspects, instrumentQuestions, questionOptions } from '~/drizzle/schema/survey'
+import { surveyInstruments, instrumentAspects, instrumentQuestions, questionOptions, instrumentResponses } from '~/drizzle/schema/survey'
 
 const client = postgres(process.env.DATABASE_URL!)
 const db = drizzle(client)
@@ -60,7 +60,9 @@ export default defineEventHandler(async (event) => {
         }))
         
         return {
+          id: aspect.id,
           name: aspect.name,
+          weight: aspect.weight,
           questions: questionsWithOptions
         }
       }))
@@ -88,6 +90,15 @@ export default defineEventHandler(async (event) => {
         throw createError({
           statusCode: 400,
           statusMessage: 'Title is required'
+        })
+      }
+
+      // Check if survey has responses before allowing edit
+      const responses = await db.select().from(instrumentResponses).where(eq(instrumentResponses.instrumentId, id))
+      if (responses.length > 0) {
+        throw createError({
+          statusCode: 400,
+          statusMessage: 'Cannot edit survey that has existing responses. Please create a new survey instead.'
         })
       }
 
@@ -129,6 +140,7 @@ export default defineEventHandler(async (event) => {
           const newAspect = await db.insert(instrumentAspects).values({
             instrumentId: id,
             name: aspect.name,
+            weight: aspect.weight || '1.00',
             sortOrder: aspectIndex,
             createdAt: new Date()
           }).returning()
@@ -174,9 +186,14 @@ export default defineEventHandler(async (event) => {
       return { success: true, data: updatedInstrument[0] }
     } catch (error) {
       console.error('Error updating survey instrument:', error)
+      // Log the actual error details
+      if (error instanceof Error) {
+        console.error('Error message:', error.message)
+        console.error('Error stack:', error.stack)
+      }
       throw createError({
         statusCode: 500,
-        statusMessage: 'Failed to update survey instrument'
+        statusMessage: `Failed to update survey instrument: ${error instanceof Error ? error.message : 'Unknown error'}`
       })
     }
   }
