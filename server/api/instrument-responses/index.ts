@@ -10,7 +10,7 @@ export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    // Get all instrument responses (sorted by newest first)
+    // Get all instrument responses (sorted by newest first) with aspect scores
     try {
       const responses = await db
         .select()
@@ -18,7 +18,63 @@ export default defineEventHandler(async (event) => {
         .orderBy(desc(instrumentResponses.submittedAt))
       
       console.log(`📋 Fetched ${responses.length} responses`)
-      return { success: true, data: responses }
+      
+      // Fetch aspect scores for each response
+      const { responseAnswers, instrumentQuestions, instrumentAspects } = await import('~/drizzle/schema/survey')
+      
+      const responsesWithAspects = await Promise.all(responses.map(async (response) => {
+        // Get all answers with aspect info
+        const answers = await db
+          .select({
+            answerId: responseAnswers.id,
+            score: responseAnswers.originalScore,
+            aspectId: instrumentAspects.id,
+            aspectName: instrumentAspects.name,
+            aspectWeight: instrumentAspects.weight
+          })
+          .from(responseAnswers)
+          .innerJoin(instrumentQuestions, eq(responseAnswers.questionId, instrumentQuestions.id))
+          .innerJoin(instrumentAspects, eq(instrumentQuestions.aspectId, instrumentAspects.id))
+          .where(eq(responseAnswers.responseId, response.id))
+        
+        // Group scores by aspect
+        const aspectScoresMap = new Map()
+        
+        answers.forEach(answer => {
+          const aspectId = answer.aspectId
+          if (!aspectScoresMap.has(aspectId)) {
+            aspectScoresMap.set(aspectId, {
+              aspectId: aspectId,
+              aspectName: answer.aspectName,
+              aspectWeight: parseFloat(String(answer.aspectWeight || '1')),
+              totalScore: 0,
+              questionCount: 0
+            })
+          }
+          
+          const aspectData = aspectScoresMap.get(aspectId)
+          aspectData.totalScore += (answer.score || 0)
+          aspectData.questionCount += 1
+        })
+        
+        // Calculate final score (totalScore × aspectWeight) for each aspect
+        const aspectScores = Array.from(aspectScoresMap.values()).map(aspect => ({
+          aspectId: aspect.aspectId,
+          aspectName: aspect.aspectName,
+          finalScore: parseFloat((aspect.totalScore * aspect.aspectWeight).toFixed(2))
+        }))
+        
+        // Calculate total of all aspect final scores
+        const totalFinalScore = aspectScores.reduce((sum, aspect) => sum + aspect.finalScore, 0)
+        
+        return {
+          ...response,
+          aspectScores,
+          totalFinalScore: parseFloat(totalFinalScore.toFixed(2))
+        }
+      }))
+      
+      return { success: true, data: responsesWithAspects }
     } catch (error) {
       console.error('Error fetching instrument responses:', error)
       throw createError({

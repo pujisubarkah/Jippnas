@@ -88,7 +88,7 @@ export default defineEventHandler(async (event) => {
       const [updatedResponse] = await db
         .update(instrumentResponses)
         .set({
-          totalScore,
+          totalScore: totalScore.toString(),
           verificationStatus: 'pending',
           submittedAt: new Date()
         })
@@ -120,7 +120,7 @@ export default defineEventHandler(async (event) => {
         .values({
           instrumentId,
           instansi,
-          totalScore,
+          totalScore: totalScore.toString(),
           verificationStatus: 'pending',
           submittedAt: new Date()
         })

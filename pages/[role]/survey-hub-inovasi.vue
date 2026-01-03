@@ -60,6 +60,36 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Delete Confirmation Dialog -->
+    <v-dialog v-model="showDeleteConfirm" max-width="500">
+      <v-card>
+        <v-card-title class="bg-error text-white">
+          <v-icon start>mdi-alert</v-icon>
+          Konfirmasi Hapus
+        </v-card-title>
+        <v-card-text class="pa-6">
+          <div class="text-center mb-4">
+            <v-icon size="80" color="error">mdi-delete-alert</v-icon>
+          </div>
+          <p class="text-body-1 text-center mb-4">
+            <strong>Apakah Anda yakin ingin menghapus jawaban survey ini?</strong>
+          </p>
+          <p class="text-body-2 text-center text-grey">
+            Semua jawaban dan skor akan dihapus permanen. Anda bisa mengisi survey dari awal setelah dihapus.
+          </p>
+        </v-card-text>
+        <v-card-actions>
+          <v-btn color="grey" variant="text" @click="showDeleteConfirm = false" :disabled="deleting">
+            Batal
+          </v-btn>
+          <v-spacer></v-spacer>
+          <v-btn color="error" variant="flat" @click="deleteResponse" :loading="deleting" prepend-icon="mdi-delete">
+            Ya, Hapus
+          </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     
     <v-card v-if="loading" class="mb-6">
       <v-card-text class="text-center py-8">
@@ -84,14 +114,24 @@
             <v-icon start>mdi-clipboard-check</v-icon>
             Anda Sudah Mengisi Survey Ini
           </div>
-          <v-btn 
-            color="white" 
-            variant="outlined" 
-            @click="enableEditMode"
-            prepend-icon="mdi-pencil"
-          >
-            Edit Jawaban
-          </v-btn>
+          <div class="d-flex gap-2">
+            <v-btn 
+              color="white" 
+              variant="outlined" 
+              @click="enableEditMode"
+              prepend-icon="mdi-pencil"
+            >
+              Edit Jawaban
+            </v-btn>
+            <v-btn 
+              color="error" 
+              variant="flat" 
+              @click="showDeleteConfirm = true"
+              prepend-icon="mdi-delete"
+            >
+              Hapus & Isi Ulang
+            </v-btn>
+          </div>
         </v-card-title>
         <v-card-text class="pa-6">
           <v-alert type="info" variant="tonal" class="mb-6">
@@ -105,7 +145,7 @@
                 <v-card variant="outlined">
                   <v-card-text class="text-center">
                     <p class="text-caption text-grey">Total Skor</p>
-                    <p class="text-h4 font-weight-bold text-primary">{{ existingResponse.totalScore.toFixed(2) }}</p>
+                    <p class="text-h4 font-weight-bold text-primary">{{ parseFloat(existingResponse.totalScore || 0).toFixed(2) }}</p>
                   </v-card-text>
                 </v-card>
               </v-col>
@@ -170,7 +210,7 @@
                     <v-icon size="small" color="primary">mdi-check-circle</v-icon>
                     <strong>Jawaban:</strong> {{ answer.optionText }}
                     <v-chip size="small" color="success" variant="tonal" class="ml-2">
-                      Skor: {{ answer.originalScore?.toFixed(2) || answer.optionScore }}
+                      Skor: {{ parseFloat(answer.originalScore || answer.optionScore || 0).toFixed(2) }}
                     </v-chip>
                   </p>
                   <p v-if="answer.evidence" class="text-body-2 ml-4 text-grey">
@@ -338,6 +378,8 @@ const showSuccessDialog = ref(false)
 const submittedScore = ref(0)
 const aspectScoresBreakdown = ref([])
 const editMode = ref(false)
+const showDeleteConfirm = ref(false)
+const deleting = ref(false)
 
 const groupedAnswers = computed(() => {
   if (!existingAnswers.value || existingAnswers.value.length === 0) return []
@@ -392,7 +434,8 @@ const calculateAspectScore = (aspect) => {
   
   // Hitung total skor dari semua jawaban di aspek ini
   const totalScore = aspect.answers.reduce((sum, answer) => {
-    return sum + (answer.originalScore || 0)
+    const score = parseFloat(answer.originalScore || 0)
+    return sum + score
   }, 0)
   
   return totalScore
@@ -634,6 +677,38 @@ const submitSurvey = async () => {
     alert('Gagal mengirim survey: ' + (e.message || 'Terjadi kesalahan'))
   } finally {
     submitting.value = false
+  }
+}
+
+const deleteResponse = async () => {
+  if (!existingResponse.value?.id) return
+  
+  deleting.value = true
+  
+  try {
+    const response = await $fetch(`/api/instrument-responses/${existingResponse.value.id}`, {
+      method: 'DELETE'
+    })
+    
+    if (response.success) {
+      showDeleteConfirm.value = false
+      
+      // Reset state
+      existingResponse.value = null
+      existingAnswers.value = []
+      resetForm()
+      
+      // Refresh data untuk update view
+      await fetchSurveys()
+      
+      // Tampilkan notifikasi sukses
+      alert('✅ Jawaban survey berhasil dihapus. Silakan isi dari awal.')
+    }
+  } catch (e) {
+    console.error('❌ Error deleting response:', e)
+    alert('Gagal menghapus response: ' + (e.message || 'Terjadi kesalahan'))
+  } finally {
+    deleting.value = false
   }
 }
 

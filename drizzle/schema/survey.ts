@@ -45,7 +45,7 @@ export const instrumentResponses = pgTable('instrument_responses', {
   id: serial('id').primaryKey(),
   instrumentId: integer('instrument_id').references(() => surveyInstruments.id, { onDelete: 'cascade' }),
   instansi: varchar('instansi', { length: 255 }).notNull(),
-  totalScore: integer('total_score').default(0),
+  totalScore: numeric('total_score', { precision: 10, scale: 2 }).default('0.00'),
   verificationStatus: varchar('verification_status', { length: 20 }).default('pending'),
   submittedAt: timestamp('submitted_at', { withTimezone: true }).defaultNow(),
   verifiedAt: timestamp('verified_at', { withTimezone: true }),
@@ -59,8 +59,8 @@ export const responseAnswers = pgTable('response_answers', {
   selectedOptionIds: integer('selected_option_ids').array(),
   selectedOptionId: integer('selected_option_id').references(() => questionOptions.id),
   evidence: text('evidence'),
-  originalScore: integer('original_score').default(0),
-  verifiedScore: integer('verified_score').default(0),
+  originalScore: numeric('original_score', { precision: 10, scale: 2 }).default('0.00'),
+  verifiedScore: numeric('verified_score', { precision: 10, scale: 2 }).default('0.00'),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
