@@ -31,6 +31,7 @@ export default defineEventHandler(async (event) => {
               .orderBy(questionOptions.sortOrder)
             
             return {
+              id: question.id,  // ✅ Include question ID
               text: question.questionText,
               type: question.questionType,
               required: question.isRequired,
@@ -38,6 +39,7 @@ export default defineEventHandler(async (event) => {
               evidenceLabel: question.evidenceLabel,
               weight: question.weight,
               options: options.map(opt => ({
+                id: opt.id,  // ✅ Include option ID
                 text: opt.optionText,
                 score: opt.score
               }))
