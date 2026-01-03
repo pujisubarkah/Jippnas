@@ -17,14 +17,10 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    console.log('🗑️ [DELETE] Deleting response:', id)
-
     // Hapus jawaban terkait (cascade seharusnya otomatis, tapi kita pastikan)
     await db
       .delete(responseAnswers)
       .where(eq(responseAnswers.responseId, id))
-
-    console.log('✅ [DELETE] Deleted answers for response:', id)
 
     // Hapus response
     const deleted = await db
@@ -39,15 +35,11 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    console.log('✅ [DELETE] Deleted response:', id)
-
     return {
       success: true,
       message: 'Response berhasil dihapus'
     }
   } catch (error: any) {
-    console.error('❌ [DELETE] Error:', error)
-    
     if (error.statusCode) {
       throw error
     }

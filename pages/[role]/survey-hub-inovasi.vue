@@ -168,6 +168,14 @@
                 </v-card>
               </v-col>
             </v-row>
+
+            <!-- Tombol Grafik -->
+            <div class="text-center mb-6">
+              <SurveyResultChart 
+                :aspect-scores="groupedAnswers"
+                :total-score="parseFloat(existingResponse.totalScore || 0)"
+              />
+            </div>
           </div>
 
           <!-- Breakdown Skor Per Aspek -->
@@ -390,10 +398,13 @@ const groupedAnswers = computed(() => {
       grouped[answer.aspectId] = {
         aspectId: answer.aspectId,
         aspectName: answer.aspectName,
-        answers: []
+        answers: [],
+        finalScore: 0
       }
     }
     grouped[answer.aspectId].answers.push(answer)
+    // Akumulasi finalScore per aspek
+    grouped[answer.aspectId].finalScore += parseFloat(answer.originalScore || 0)
   })
   
   return Object.values(grouped)

@@ -8,16 +8,12 @@ const db = drizzle(client)
 
 export default defineEventHandler(async (event) => {
   try {
-    console.log('🔄 Starting recalculation of all response scores...')
-    
     const responses = await db.select().from(instrumentResponses)
     let updatedCount = 0
     let errorCount = 0
     
     for (const response of responses) {
       try {
-        console.log(`\n📊 Response ID: ${response.id} (${response.instansi})`)
-        
         const answers = await db
           .select({
             answerId: responseAnswers.id,
@@ -33,15 +29,11 @@ export default defineEventHandler(async (event) => {
           .where(eq(responseAnswers.responseId, response.id))
         
         if (answers.length === 0) {
-          console.log(`  ⚠️ No answers found`)
           continue
         }
-
-        console.log(`  Found ${answers.length} answers`)
         
         const optionIds = answers.map(a => a.selectedOptionId).filter(id => id !== null) as number[]
         if (optionIds.length === 0) {
-          console.log(`  ⚠️ No valid options`)
           continue
         }
         
@@ -51,7 +43,6 @@ export default defineEventHandler(async (event) => {
           .where(inArray(questionOptions.id, optionIds))
         
         const optionsMap = new Map(allOptions.map(opt => [opt.id, opt]))
-        console.log(`  Fetched ${allOptions.length} options`)
         
         let newTotalScore = 0
         
@@ -66,8 +57,6 @@ export default defineEventHandler(async (event) => {
           const aspectWeight = parseFloat(String(answer.aspectWeight || '1'))
           const finalScore = optionScore * questionWeight * aspectWeight
           
-          console.log(`  Q${answer.questionId}: ${optionScore} × ${questionWeight.toFixed(2)} × ${aspectWeight.toFixed(2)} = ${finalScore.toFixed(2)}`)
-          
           newTotalScore += finalScore
           
           await db
@@ -79,23 +68,17 @@ export default defineEventHandler(async (event) => {
             .where(eq(responseAnswers.id, answer.answerId))
         }
         
-        console.log(`  Old: ${response.totalScore}, New: ${newTotalScore.toFixed(2)}`)
-
         await db
           .update(instrumentResponses)
           .set({ totalScore: newTotalScore.toString() })
           .where(eq(instrumentResponses.id, response.id))
 
         updatedCount++
-        console.log(`  ✅ Updated`)
         
       } catch (err) {
-        console.error(`  ❌ Error:`, err)
         errorCount++
       }
     }
-    
-    console.log(`\n✅ Complete! Updated: ${updatedCount}, Errors: ${errorCount}`)
     
     return {
       success: true,
@@ -107,7 +90,6 @@ export default defineEventHandler(async (event) => {
       }
     }
   } catch (error: any) {
-    console.error('❌ Error:', error)
     throw createError({
       statusCode: 500,
       statusMessage: error.message || 'Failed to recalculate scores'

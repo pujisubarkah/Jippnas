@@ -17,8 +17,6 @@ export default defineEventHandler(async (event) => {
         .from(instrumentResponses)
         .orderBy(desc(instrumentResponses.submittedAt))
       
-      console.log(`📋 Fetched ${responses.length} responses`)
-      
       // Fetch aspect scores for each response
       const { responseAnswers, instrumentQuestions, instrumentAspects } = await import('~/drizzle/schema/survey')
       

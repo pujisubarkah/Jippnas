@@ -26,8 +26,6 @@ export default defineEventHandler(async (event) => {
       })
     }
 
-    console.log('📊 Received answers:', Object.keys(answers).length, 'questions')
-    
     // Hitung total score dari semua jawaban (sudah termasuk bobot aspek dan pertanyaan dari frontend)
     let totalScore = 0
     const answersArray = Object.entries(answers).map(([key, answer]: [string, any]) => {
@@ -38,7 +36,6 @@ export default defineEventHandler(async (event) => {
       
       // Gunakan finalScore yang sudah dikalikan bobot pertanyaan
       const finalScore = answer.finalScore || (answer.score || 0)
-      console.log(`  Question ${key}: option score=${answer.score}, weight=${answer.weight}, finalScore=${finalScore}`)
       totalScore += finalScore
       
       // Handle evidence - bisa array atau string atau undefined

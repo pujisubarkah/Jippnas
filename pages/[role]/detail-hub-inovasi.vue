@@ -90,12 +90,44 @@
                 >
                   <v-icon>mdi-eye</v-icon>
                 </v-btn>
+                <v-btn 
+                  icon 
+                  small 
+                  color="success" 
+                  @click="viewChart(item)" 
+                  title="Lihat Grafik"
+                >
+                  <v-icon>mdi-chart-line</v-icon>
+                </v-btn>
               </div>
             </template>
           </v-data-table>
         </v-card-text>
       </v-card>
     </template>
+
+    <!-- Chart Modal -->
+    <v-dialog v-model="showChartModal" max-width="900px">
+      <v-card>
+        <v-card-title class="bg-success text-white d-flex justify-space-between align-center">
+          <div>
+            <h2 class="text-h5">Grafik Skor - {{ selectedChartResponse?.instansi }}</h2>
+            <p class="text-body-2 mt-1">{{ surveyTitle }}</p>
+          </div>
+          <v-btn icon size="small" @click="showChartModal = false" color="white">
+            <v-icon>mdi-close</v-icon>
+          </v-btn>
+        </v-card-title>
+        <v-card-text class="pa-6">
+          <div v-if="selectedChartResponse">
+            <SurveyResultChart 
+              :aspect-scores="getAspectScores(selectedChartResponse)"
+              :total-score="selectedChartResponse.originalTotalScore"
+            />
+          </div>
+        </v-card-text>
+      </v-card>
+    </v-dialog>
 
     <!-- Detail & Verification Modal -->
     <v-dialog v-model="showDetailModal" max-width="1200px" scrollable>
@@ -710,9 +742,12 @@ const search = ref('')
 const showDetailModal = ref(false)
 const showStructureModal = ref(false)
 const showAnswerModal = ref(false)
+const showChartModal = ref(false)
 const selectedResponse = ref(null)
+const selectedChartResponse = ref(null)
 const loading = ref(true)
 const loadingDetail = ref(false)
+const loadingChart = ref(false)
 const saving = ref(false)
 const responses = ref([])
 const currentStep = ref(1)
@@ -1237,6 +1272,32 @@ const saveAnswerVerification = async () => {
   } finally {
     saving.value = false
   }
+}
+
+// View chart function
+const viewChart = async (response) => {
+  loadingChart.value = true
+  showChartModal.value = true
+  
+  try {
+    const chartData = await $fetch(`/api/instrument-responses/${response.id}/chart`)
+    
+    if (chartData.success) {
+      selectedChartResponse.value = chartData.data
+    }
+  } catch (error) {
+    console.error('❌ Error fetching chart data:', error)
+    toast.error('Gagal memuat data grafik')
+    showChartModal.value = false
+  } finally {
+    loadingChart.value = false
+  }
+}
+
+// Helper function untuk convert response data ke format chart
+const getAspectScores = (response) => {
+  if (!response || !response.aspectScores) return []
+  return response.aspectScores
 }
 
 onMounted(() => {
