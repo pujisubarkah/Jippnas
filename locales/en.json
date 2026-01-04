@@ -1,0 +1,53 @@
+{
+  "header": {
+    "title": "Jippnas Admin",
+    "admin": "Admin",
+    "user": "User"
+  },
+  "nav": {
+    "home": "Home",
+    "etalase": "Innovation Showcase",
+    "nearby": "Innovation Near Me",
+    "news": "News",
+    "dashboard": "Dashboard",
+    "berita": "News",
+    "inovasi": "Innovation",
+    "forum": "Forum",
+    "kontak": "Contact",
+    "bantuan": "Helpdesk"
+  },
+  "menu": {
+    "knowledge": {
+      "lms": "LMS",
+      "forum": "Discussion Forum",
+      "event": "Event/Webinar"
+    },
+    "links": {
+      "menpan": "Menpan Web",
+      "lapor": "LAPOR!",
+      "sinovik": "Sinovik"
+    },
+    "help": {
+      "model": "Innovation Model",
+      "book": "Innovation Book",
+      "download": "Downloads",
+      "faq": "FAQ",
+      "contact": "Contact Us"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "welcome": "Welcome"
+  },
+  "search": {
+    "placeholder": "Search Innovation..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel"
+  }
+}

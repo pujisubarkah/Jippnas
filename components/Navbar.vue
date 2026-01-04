@@ -31,8 +31,8 @@
               @keyup.enter="handleSearch"
               class="search-input w-full pl-12 pr-4 py-2.5 rounded-full shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:shadow-md transition-all duration-200"
               type="search"
-              placeholder="Cari Inovasi..."
-              aria-label="Cari Inovasi"
+              :placeholder="$t('search.placeholder')"
+              :aria-label="$t('search.placeholder')"
             />
             <svg
               class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-blue-600"
@@ -47,6 +47,23 @@
 
         <!-- Auth Buttons -->
         <div class="d-flex align-center gap-2 shrink-0">
+          <!-- Language Switcher -->
+          <v-btn
+            icon
+            variant="text"
+            color="primary"
+            class="mx-1"
+            @click="switchLanguage"
+            :aria-label="'Switch Language'"
+          >
+            <v-icon>{{ locale === 'id' ? 'mdi-translate' : 'mdi-translate-off' }}</v-icon>
+          </v-btn>
+
+          <!-- Google Translate Widget -->
+          <ClientOnly>
+            <div id="google_translate_element" class="mr-2"></div>
+          </ClientOnly>
+
           <template v-if="!isLoggedIn">
             <v-btn
               variant="outlined"
@@ -56,7 +73,7 @@
               class="px-4 d-none d-md-flex"
             >
               <v-icon start>mdi-login</v-icon>
-              Masuk
+              {{ $t('auth.login') }}
             </v-btn>
             <v-btn
               variant="flat"
@@ -66,7 +83,7 @@
               class="px-4 d-none d-md-flex"
             >
               <v-icon start>mdi-account-plus</v-icon>
-              Daftar
+              {{ $t('auth.register') }}
             </v-btn>
           </template>
 
@@ -81,13 +98,13 @@
                 class="px-3 d-none d-md-flex"
               >
                 <v-icon start>mdi-account-circle</v-icon>
-                Selamat datang {{ user?.name || user?.username || 'User' }}
+                {{ $t('auth.welcome') }} {{ user?.name || user?.username || $t('header.user') }}
                 <v-icon end size="small">mdi-chevron-down</v-icon>
               </v-btn>
             </template>
             <v-list>
               <v-list-item>
-                <v-list-item-title class="font-weight-bold">Selamat datang {{ user?.name || user?.username || 'User' }}</v-list-item-title>
+                <v-list-item-title class="font-weight-bold">{{ $t('auth.welcome') }} {{ user?.name || user?.username || $t('header.user') }}</v-list-item-title>
                 <v-list-item-subtitle>{{ user.email }}</v-list-item-subtitle>
               </v-list-item>
               <v-divider />
@@ -95,7 +112,7 @@
                 <template #prepend>
                   <v-icon>mdi-logout</v-icon>
                 </template>
-                <v-list-item-title>Keluar</v-list-item-title>
+                <v-list-item-title>{{ $t('auth.logout') }}</v-list-item-title>
               </v-list-item>
             </v-list>
           </v-menu>
@@ -383,6 +400,7 @@ import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '~/composables/useAuth'
 import { useLogin } from '~/composables/useLogin'
+import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 
 // 🔑 Props & Emits (unchanged)
@@ -394,6 +412,7 @@ const navbarRef = ref(null)
 
 // Auth state
 const { isLoggedIn, user, login, logout } = useAuth()
+const { locale, t } = useI18n()
 
 // Modals & Forms
 const drawer = ref(false)
@@ -510,6 +529,13 @@ const handleRegister = () => {
   appToast.success('Registrasi berhasil!')
 }
 
+// 🔑 Switch Language
+const switchLanguage = () => {
+  locale.value = locale.value === 'id' ? 'en' : 'id'
+  console.log('Language switched to:', locale.value)
+  appToast.success(`Language changed to ${locale.value === 'id' ? 'Bahasa Indonesia' : 'English'}`)
+}
+
 // 🔑 Logout
 const handleLogout = () => {
   logout()
@@ -524,32 +550,32 @@ const handleSearch = () => {
 }
 
 // 🔑 Nav data (moved to script for clarity)
-const navItems = [
-  { icon: 'mdi-home', label: 'Beranda', href: '/' },
-  { icon: 'mdi-folder', label: 'Etalase Inovasi', href: '/etalase' },
-  { icon: 'mdi-map-marker', label: 'Inovasi Dekat Saya', href: '/dekatsaya' },
-  { icon: 'mdi-newspaper', label: 'Berita', href: '/berita' }
-]
+const navItems = computed(() => [
+  { icon: 'mdi-home', label: t('nav.home'), href: '/' },
+  { icon: 'mdi-folder', label: t('nav.etalase'), href: '/etalase' },
+  { icon: 'mdi-map-marker', label: t('nav.nearby'), href: '/dekatsaya' },
+  { icon: 'mdi-newspaper', label: t('nav.berita'), href: '/berita' }
+])
 
-const menuKnowledge = [
-  { label: 'LMS', href: '/course' },
-  { label: 'Forum Diskusi', href: '/forum' },
-  { label: 'Event/Webinar', href: '/event' }
-]
+const menuKnowledge = computed(() => [
+  { label: t('menu.knowledge.lms'), href: '/course' },
+  { label: t('menu.knowledge.forum'), href: '/forum' },
+  { label: t('menu.knowledge.event'), href: '/event' }
+])
 
-const linksTerkait = [
-  { label: 'Web Menpan', href: 'https://menpan.go.id' },
-  { label: 'LAPOR!', href: 'https://lapor.go.id' },
-  { label: 'Sinovik', href: 'https://sinovik.menpan.go.id' }
-]
+const linksTerkait = computed(() => [
+  { label: t('menu.links.menpan'), href: 'https://menpan.go.id' },
+  { label: t('menu.links.lapor'), href: 'https://lapor.go.id' },
+  { label: t('menu.links.sinovik'), href: 'https://sinovik.menpan.go.id' }
+])
 
-const menuBantuan = [
-  { label: 'Model Inovasi', href: '/model' },
-  { label: 'Buku Inovasi', href: '/buku' },
-  { label: 'Unduhan', href: '/unduhan' },
-  { label: 'FAQ', href: '/faq' },
-  { label: 'Hubungi Kami', href: '/kontak' }
-]
+const menuBantuan = computed(() => [
+  { label: t('menu.help.model'), href: '/model' },
+  { label: t('menu.help.book'), href: '/buku' },
+  { label: t('menu.help.download'), href: '/unduhan' },
+  { label: t('menu.help.faq'), href: '/faq' },
+  { label: t('menu.help.contact'), href: '/kontak' }
+])
 
 // 🔑 Active link helper
 const route = useRoute()

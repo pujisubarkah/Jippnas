@@ -22,7 +22,7 @@
       <!-- Logo/Title -->
       <v-toolbar-title class="d-flex align-center">
         <span class="text-h6 font-weight-bold text-primary mr-3">
-          Jippnas Admin
+          {{ $t('header.title') }}
         </span>
         <ClientOnly>
           <v-chip
@@ -32,7 +32,7 @@
             size="small"
             class="font-weight-medium"
           >
-            Admin
+            {{ $t('header.admin') }}
           </v-chip>
           <v-chip
             v-else
@@ -41,7 +41,7 @@
             size="small"
             class="font-weight-medium"
           >
-            {{ user?.name || user?.username || 'User' }}
+            {{ user?.name || user?.username || $t('header.user') }}
           </v-chip>
         </ClientOnly>
       </v-toolbar-title>
@@ -50,6 +50,11 @@
 
       <!-- Notification Icons -->
       <div class="d-flex align-center ga-2">
+        <!-- Google Translate Widget -->
+        <ClientOnly>
+          <div id="google_translate_element" class="mr-2"></div>
+        </ClientOnly>
+
         <!-- Notifications Dropdown -->
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
@@ -161,6 +166,18 @@
             </v-card-text>
           </v-card>
         </v-menu>
+
+        <!-- Language Switcher -->
+        <v-btn
+          icon
+          variant="text"
+          color="primary"
+          class="mx-1"
+          @click="switchLanguage"
+          :aria-label="'Switch Language'"
+        >
+          <v-icon>{{ locale === 'id' ? 'mdi-translate' : 'mdi-translate-off' }}</v-icon>
+        </v-btn>
 
         <!-- User Menu -->
         <ClientOnly>
@@ -300,6 +317,7 @@
 import { ref, computed } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   role: {
@@ -310,6 +328,7 @@ const props = defineProps({
 
 const { logout, user } = useAuth()
 const router = useRouter()
+const { locale } = useI18n()
 
 // Reactive states
 const showDropdown = ref(false)
@@ -391,6 +410,10 @@ const unreadNotifications = computed(() => notifications.value.filter(n => !n.re
 const unreadMessages = computed(() => messages.value.filter(m => !m.read))
 
 // Methods
+const switchLanguage = () => {
+  locale.value = locale.value === 'id' ? 'en' : 'id'
+}
+
 const handleLogout = () => {
   showDropdown.value = false
   loggingOut.value = true

@@ -5,6 +5,7 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
+  modules: [],  // Removed '@nuxtjs/i18n'
   build: {
     transpile: ['vue-simple-calendar', 'vuetify']
   },
@@ -53,6 +54,22 @@ export default defineNuxtConfig({
           src: 'https://accounts.google.com/gsi/client',
           async: true,
           defer: true
+        },
+        {
+          innerHTML: `
+            function googleTranslateElementInit() {
+              new google.translate.TranslateElement({
+                pageLanguage: 'id',
+                includedLanguages: 'en,id',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+              }, 'google_translate_element');
+            }
+          `,
+          type: 'text/javascript'
+        },
+        {
+          src: '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit',
+          async: true
         }
       ]
     }

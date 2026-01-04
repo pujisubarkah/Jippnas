@@ -382,6 +382,11 @@ const menuConfig = [
         label: 'Wilayah',
         slug: 'wilayah',
         roles: ['admin']
+      },
+      {
+        label: 'Kolaborasi Data',
+        slug: 'kolaborasi-data',
+        roles: ['admin']
       }
     ]
   },
