@@ -94,5 +94,16 @@
       "active": "Active",
       "inactive": "Inactive"
     }
+  },
+  "components": {
+    "inovasiTerkini": {
+      "title": "Latest Innovations",
+      "subtitle": "Real breakthroughs from government agencies and state-owned enterprises for faster, smarter, and more humane public services.",
+      "readMore": "Read More",
+      "slideAriaLabel": "Go to slide",
+      "videoTitle": "Stories from the Field",
+      "videoSubtitle": "See how these innovations are transforming public services",
+      "exploreAll": "Explore All Innovations"
+    }
   }
 }

@@ -95,5 +95,16 @@
       "active": "Aktif",
       "inactive": "Tidak Aktif"
     }
+  },
+  "components": {
+    "inovasiTerkini": {
+      "title": "Inovasi Terkini",
+      "subtitle": "Terobosan nyata dari instansi pemerintah dan BUMN untuk pelayanan publik yang lebih cepat, cerdas, dan manusiawi.",
+      "readMore": "Selengkapnya",
+      "slideAriaLabel": "Pindah ke slide",
+      "videoTitle": "Cerita dari Lapangan",
+      "videoSubtitle": "Simak bagaimana inovasi ini mengubah pelayanan publik",
+      "exploreAll": "Jelajahi Semua Inovasi"
+    }
   }
 }

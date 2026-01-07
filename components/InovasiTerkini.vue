@@ -10,7 +10,7 @@
           <div class="d-flex justify-center mb-4">
             <v-icon icon="mdi-innovation" color="amber" size="x-large" class="mr-2" />
             <h2 class="text-h3 text-md-h2 font-weight-black text-white">
-              Inovasi Terkini
+              {{ $t('components.inovasiTerkini.title') }}
             </h2>
           </div>
           <v-divider
@@ -21,7 +21,7 @@
             rounded
           />
           <p class="text-body-2 text-blue-100 max-w-lg mx-auto mt-4">
-            Terobosan nyata dari instansi pemerintah dan BUMN untuk pelayanan publik yang lebih cepat, cerdas, dan manusiawi.
+            {{ $t('components.inovasiTerkini.subtitle') }}
           </p>
         </div>
 
@@ -100,7 +100,7 @@
                           prepend-icon="mdi-arrow-right"
                           class="text-none"
                         >
-                          Selengkapnya
+                          {{ $t('components.inovasiTerkini.readMore') }}
                         </v-btn>
                       </v-card-actions>
                     </v-card>
@@ -125,7 +125,7 @@
                       width="6"
                       height="6"
                       @click="currentSlide = idx"
-                      :aria-label="`Pindah ke slide ${idx + 1}`"
+                      :aria-label="`${$t('components.inovasiTerkini.slideAriaLabel')} ${idx + 1}`"
                     />
                   </div>
                 </v-carousel-item>
@@ -175,10 +175,10 @@
                   class="absolute bottom-0 left-0 right-0 pa-4 bg-linear-to-t from-blue-900/90 to-transparent text-white z-10"
                 >
                   <v-card-title class="text-h6 font-weight-bold pb-1">
-                    Cerita dari Lapangan
+                    {{ $t('components.inovasiTerkini.videoTitle') }}
                   </v-card-title>
                   <v-card-subtitle class="text-body-2 opacity-80">
-                    Simak bagaimana inovasi ini mengubah pelayanan publik
+                    {{ $t('components.inovasiTerkini.videoSubtitle') }}
                   </v-card-subtitle>
                 </v-card>
               </div>
@@ -197,7 +197,7 @@
             class="px-8 font-weight-bold text-blue-900"
             prepend-icon="mdi-lightbulb-outline"
           >
-            Jelajahi Semua Inovasi
+            {{ $t('components.inovasiTerkini.exploreAll') }}
           </v-btn>
         </div>
       </v-container>
