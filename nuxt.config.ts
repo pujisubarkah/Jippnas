@@ -5,7 +5,19 @@ import vuetify, { transformAssetUrls } from 'vite-plugin-vuetify';
 export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
-  modules: [],  // Removed '@nuxtjs/i18n'
+  modules: [
+    ['@nuxtjs/i18n', {
+      lazy: true,
+      langDir: 'locales',
+      defaultLocale: 'id',
+      strategy: 'no_prefix', // penting biar konsisten
+
+      locales: [
+        { code: 'id', file: 'id.json', name: 'Indonesia' },
+        { code: 'en', file: 'en.json', name: 'English' },
+      ],
+    }],
+  ],
   build: {
     transpile: ['vue-simple-calendar', 'vuetify']
   },
@@ -66,10 +78,6 @@ export default defineNuxtConfig({
             }
           `,
           type: 'text/javascript'
-        },
-        {
-          src: '//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit',
-          async: true
         }
       ]
     }
