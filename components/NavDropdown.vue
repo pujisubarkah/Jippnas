@@ -6,21 +6,21 @@
     >
       <svg class="h-4 w-4 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path
-          v-if="label === 'Tautan Terkait'"
+          v-if="iconType === 'links'"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
         />
         <path
-          v-else-if="label === 'Bantuan'"
+          v-else-if="iconType === 'help'"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
           d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192L5.636 18.364M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
         />
         <path
-          v-else-if="label === 'Knowledge Center'"
+          v-else-if="iconType === 'knowledge'"
           stroke-linecap="round"
           stroke-linejoin="round"
           stroke-width="2"
@@ -32,7 +32,7 @@
     <ul
       v-show="showMenu"
       class="absolute top-full left-0 z-50 menu menu-sm shadow-xl bg-white rounded-box w-56 border border-blue-200 p-3"
-      :class="label === 'Tautan Terkait' ? 'bg-blue-50' : ''"
+      :class="iconType === 'links' ? 'bg-blue-50' : ''"
     >
       <li v-for="item in items" :key="item.label">
         <a
@@ -110,7 +110,8 @@ import { ref } from 'vue';
 
 defineProps({
   label: String,
-  items: Array
+  items: Array,
+  iconType: String
 });
 
 const showMenu = ref(false);

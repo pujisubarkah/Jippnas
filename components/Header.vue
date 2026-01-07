@@ -317,7 +317,6 @@
 import { ref, computed } from 'vue'
 import { useAuth } from '~/composables/useAuth'
 import { useRouter } from 'vue-router'
-import { useI18n } from 'vue-i18n'
 
 const props = defineProps({
   role: {
@@ -328,7 +327,7 @@ const props = defineProps({
 
 const { logout, user } = useAuth()
 const router = useRouter()
-const { locale } = useI18n()
+const { locale, setLocale } = useI18n()
 
 // Reactive states
 const showDropdown = ref(false)
@@ -411,7 +410,8 @@ const unreadMessages = computed(() => messages.value.filter(m => !m.read))
 
 // Methods
 const switchLanguage = () => {
-  locale.value = locale.value === 'id' ? 'en' : 'id'
+  const newLocale = locale.value === 'id' ? 'en' : 'id'
+  setLocale(newLocale)
 }
 
 const handleLogout = () => {

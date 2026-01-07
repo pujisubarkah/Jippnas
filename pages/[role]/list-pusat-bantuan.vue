@@ -2,10 +2,10 @@
   <div class="list-pusat-bantuan-page">
     <v-card class="pa-6">
       <div class="d-flex justify-space-between align-center mb-4">
-        <h2 class="text-h4">Manajemen Pusat Bantuan</h2>
+        <h2 class="text-h4">{{ $t('helpCenter.title') }}</h2>
         <v-btn color="primary" @click="showAddDialog = true">
           <v-icon start>mdi-plus</v-icon>
-          Tambah Bantuan
+          {{ $t('helpCenter.add') }}
         </v-btn>
       </div>
 
@@ -14,7 +14,7 @@
           <v-col cols="12" md="6">
             <v-text-field
               v-model="search"
-              label="Cari bantuan..."
+              :label="$t('helpCenter.search')"
               prepend-icon="mdi-magnify"
               clearable
             />
@@ -83,40 +83,40 @@
     <v-dialog v-model="showAddDialog" max-width="800">
       <v-card>
         <v-card-title>
-          {{ isEditing ? 'Edit Bantuan' : 'Tambah Bantuan Baru' }}
+          {{ isEditing ? $t('helpCenter.edit') : $t('helpCenter.addNew') }}
         </v-card-title>
         <v-card-text>
           <v-form @submit.prevent="saveBantuan">
             <v-text-field
               v-model="bantuanForm.pertanyaan"
-              label="Pertanyaan"
+              :label="$t('helpCenter.question')"
               required
             />
             <v-textarea
               v-model="bantuanForm.jawaban"
-              label="Jawaban"
+              :label="$t('helpCenter.answer')"
               required
             />
             <v-select
               v-model="bantuanForm.kategori"
               :items="kategoriOptions"
-              label="Kategori"
+              :label="$t('helpCenter.category')"
               required
             />
             <v-text-field
               v-model="bantuanForm.tags"
-              label="Tags (pisahkan dengan koma)"
+              :label="$t('helpCenter.tags')"
             />
             <v-select
               v-model="bantuanForm.status"
               :items="statusOptions"
-              label="Status"
+              :label="$t('helpCenter.status')"
             />
           </v-form>
         </v-card-text>
         <v-card-actions>
           <v-spacer />
-          <v-btn @click="showAddDialog = false">Batal</v-btn>
+          <v-btn @click="showAddDialog = false">{{ $t('helpCenter.cancel') }}</v-btn>
           <v-btn
             color="primary"
             :loading="saving"

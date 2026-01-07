@@ -21,16 +21,16 @@ const form = ref({
 
 const breadcrumbItems = [
   {
-    title: 'Daftar Tautan Terkait',
+    title: $t('pages.relatedLinks.list'),
     disabled: true,
   },
 ]
 
 const headers = [
   { title: 'No', key: 'no', width: '50px' },
-  { title: 'Nama', key: 'nama' },
-  { title: 'Tautan', key: 'tautan' },
-  { title: 'Action', key: 'actions', sortable: false, width: '150px' }
+  { title: $t('pages.relatedLinks.name'), key: 'nama' },
+  { title: $t('pages.relatedLinks.link'), key: 'tautan' },
+  { title: $t('pages.relatedLinks.actions'), key: 'actions', sortable: false }
 ]
 
 const tautanData = computed(() => {
@@ -48,11 +48,11 @@ const fetchTautan = async () => {
       rawTautanData.value = response.data
     } else {
       console.error('Failed to fetch tautan:', response.error)
-      toast.error('Gagal memuat data tautan')
+      toast.error($t('pages.relatedLinks.loadError'))
     }
   } catch (error) {
     console.error('Error fetching tautan:', error)
-    toast.error('Gagal memuat data tautan')
+    toast.error($t('pages.relatedLinks.loadError'))
   } finally {
     loading.value = false
   }
@@ -94,7 +94,7 @@ const editItem = (item) => {
 const saveTautan = async () => {
   try {
     if (!form.value.nama.trim() || !form.value.tautan.trim()) {
-      toast.warning('Nama dan tautan harus diisi')
+      toast.warning($t('pages.relatedLinks.validationError'))
       return
     }
 
@@ -150,7 +150,7 @@ const deleteItem = async (item) => {
 
 <template>
   <div>
-    <h1 class="text-2xl font-bold mb-6">Manajemen Tautan Terkait</h1>
+    <h1 class="text-2xl font-bold mb-6">{{ $t('pages.relatedLinks.title') }}</h1>
     <v-card>
       <v-card-header>
         <v-breadcrumbs :items="breadcrumbItems" class="pa-0">
@@ -160,13 +160,13 @@ const deleteItem = async (item) => {
         </v-breadcrumbs>
         <v-spacer></v-spacer>
         <v-btn color="primary" @click="openAddModal">
-          Tambah Tautan
+          {{ $t('pages.relatedLinks.addNew') }}
         </v-btn>
       </v-card-header>
       <v-card-text>
         <v-text-field
           v-model="search"
-          label="Cari Tautan"
+          :label="$t('search.placeholder')"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           class="mb-4"
@@ -198,34 +198,34 @@ const deleteItem = async (item) => {
     <v-dialog v-model="showModal" max-width="800px" persistent>
       <v-card class="pa-6">
         <v-card-title class="text-h5 pa-0 mb-4">
-          {{ isEditing ? 'Edit Tautan' : 'Tambah Tautan Baru' }}
+          {{ isEditing ? $t('pages.relatedLinks.editLink') : $t('pages.relatedLinks.addNew') }}
         </v-card-title>
         <v-card-text class="pa-0">
           <v-form @submit.prevent="saveTautan" class="space-y-4">
             <v-text-field
               v-model="form.nama"
-              label="Nama Tautan *"
+              :label="`${$t('pages.relatedLinks.name')} *`"
               required
               maxlength="255"
               variant="outlined"
-              placeholder="Masukkan nama tautan"
+              :placeholder="$t('pages.relatedLinks.name')"
             ></v-text-field>
 
             <v-text-field
               v-model="form.tautan"
-              label="URL Tautan *"
+              :label="`${$t('pages.relatedLinks.link')} *`"
               required
               type="url"
               variant="outlined"
-              placeholder="Masukkan URL tautan (https://...)"
+              :placeholder="$t('pages.relatedLinks.link')"
             ></v-text-field>
           </v-form>
         </v-card-text>
         <v-card-actions class="pa-0 mt-6">
           <v-spacer></v-spacer>
-          <v-btn variant="text" @click="closeModal">Batal</v-btn>
+          <v-btn variant="text" @click="closeModal">{{ $t('pages.relatedLinks.cancel') }}</v-btn>
           <v-btn color="primary" @click="saveTautan">
-            {{ isEditing ? 'Update' : 'Simpan' }}
+            {{ isEditing ? $t('common.save') : $t('pages.relatedLinks.save') }}
           </v-btn>
         </v-card-actions>
       </v-card>

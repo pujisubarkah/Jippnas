@@ -11,8 +11,8 @@
               </svg>
             </div>
           </div>
-          <h1 class="text-4xl md:text-5xl font-bold mb-4">Pusat Bantuan</h1>
-          <p class="text-xl text-blue-100 max-w-2xl mx-auto">Hubungi kami untuk mendapatkan bantuan dan informasi lebih lanjut tentang inovasi pelayanan publik</p>
+          <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ $t('pages.contact.title') }}</h1>
+          <p class="text-xl text-blue-100 max-w-2xl mx-auto">{{ $t('pages.contact.subtitle') }}</p>
         </div>
       </div>
     </div>

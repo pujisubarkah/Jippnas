@@ -6,18 +6,31 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-07-15',
   devtools: { enabled: true },
   modules: [
-    ['@nuxtjs/i18n', {
-      lazy: true,
-      langDir: 'locales',
-      defaultLocale: 'id',
-      strategy: 'no_prefix', // penting biar konsisten
-
-      locales: [
-        { code: 'id', file: 'id.json', name: 'Indonesia' },
-        { code: 'en', file: 'en.json', name: 'English' },
-      ],
-    }],
+    '@nuxtjs/i18n'
   ],
+  i18n: {
+    locales: [
+      { 
+        code: 'id', 
+        name: 'Indonesia', 
+        iso: 'id-ID',
+        file: 'locales/id.json'
+      },
+      { 
+        code: 'en', 
+        name: 'English', 
+        iso: 'en-US',
+        file: 'locales/en.json'
+      }
+    ],
+    defaultLocale: 'id',
+    strategy: 'no_prefix',
+    langDir: '',
+    compilation: {
+      strictMessage: false,
+      escapeHtml: false
+    }
+  },
   build: {
     transpile: ['vue-simple-calendar', 'vuetify']
   },

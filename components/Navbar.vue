@@ -184,7 +184,7 @@
         <v-menu offset-y>
           <template #activator="{ props }">
             <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
-              Tautan Terkait
+              {{ $t('menu.links.related') }}
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
           </template>
@@ -203,7 +203,7 @@
         <v-menu offset-y>
           <template #activator="{ props }">
             <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
-              Bantuan
+              {{ $t('nav.bantuan') }}
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
           </template>
@@ -268,13 +268,13 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-group value="Tautan Terkait">
+        <v-list-group :value="$t('menu.links.related')">
           <template #activator="{ props }">
             <v-list-item v-bind="props">
               <template #prepend>
                 <v-icon>mdi-link</v-icon>
               </template>
-              <v-list-item-title>Tautan Terkait</v-list-item-title>
+              <v-list-item-title>{{ $t('menu.links.related') }}</v-list-item-title>
             </v-list-item>
           </template>
           <v-list-item
@@ -288,13 +288,13 @@
           </v-list-item>
         </v-list-group>
 
-        <v-list-group value="Bantuan">
+        <v-list-group :value="$t('nav.bantuan')">
           <template #activator="{ props }">
             <v-list-item v-bind="props">
               <template #prepend>
                 <v-icon>mdi-help-circle</v-icon>
               </template>
-              <v-list-item-title>Bantuan</v-list-item-title>
+              <v-list-item-title>{{ $t('nav.bantuan') }}</v-list-item-title>
             </v-list-item>
           </template>
           <v-list-item
@@ -400,7 +400,6 @@ import { ref, onMounted, onBeforeUnmount, watch, computed } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { useAuth } from '~/composables/useAuth'
 import { useLogin } from '~/composables/useLogin'
-import { useI18n } from 'vue-i18n'
 import { toast } from 'vue-sonner'
 
 // 🔑 Props & Emits (unchanged)
@@ -412,7 +411,7 @@ const navbarRef = ref(null)
 
 // Auth state
 const { isLoggedIn, user, login, logout } = useAuth()
-const { locale, t } = useI18n()
+const { locale, t, setLocale } = useI18n()
 
 // Modals & Forms
 const drawer = ref(false)
@@ -531,9 +530,10 @@ const handleRegister = () => {
 
 // 🔑 Switch Language
 const switchLanguage = () => {
-  locale.value = locale.value === 'id' ? 'en' : 'id'
-  console.log('Language switched to:', locale.value)
-  appToast.success(`Language changed to ${locale.value === 'id' ? 'Bahasa Indonesia' : 'English'}`)
+  const newLocale = locale.value === 'id' ? 'en' : 'id'
+  setLocale(newLocale)
+  console.log('Language switched to:', newLocale)
+  appToast.success(`Language changed to ${newLocale === 'id' ? 'Bahasa Indonesia' : 'English'}`)
 }
 
 // 🔑 Logout

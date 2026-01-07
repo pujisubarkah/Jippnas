@@ -1,0 +1,98 @@
+{
+  "header": {
+    "title": "Jippnas Admin",
+    "admin": "Admin",
+    "user": "User"
+  },
+  "nav": {
+    "home": "Home",
+    "etalase": "Innovation Showcase",
+    "nearby": "Innovation Near Me",
+    "news": "News",
+    "dashboard": "Dashboard",
+    "berita": "News",
+    "inovasi": "Innovation",
+    "forum": "Forum",
+    "kontak": "Contact",
+    "bantuan": "Helpdesk"
+  },
+  "menu": {
+    "knowledge": {
+      "lms": "LMS",
+      "forum": "Discussion Forum",
+      "event": "Event/Webinar"
+    },
+    "links": {
+      "menpan": "Menpan Web",
+      "lapor": "LAPOR!",
+      "sinovik": "Sinovik",
+      "related": "Related Links"
+    },
+    "help": {
+      "model": "Innovation Model",
+      "book": "Innovation Book",
+      "download": "Downloads",
+      "faq": "FAQ",
+      "contact": "Contact Us"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout",
+    "welcome": "Welcome"
+  },
+  "search": {
+    "placeholder": "Search Innovation..."
+  },
+  "common": {
+    "loading": "Loading...",
+    "error": "Error",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
+  "pages": {
+    "relatedLinks": {
+      "title": "Related Links Management",
+      "list": "Related Links List",
+      "add": "Add Related Link",
+      "edit": "Edit Related Link",
+      "name": "Name",
+      "link": "Link",
+      "actions": "Actions",
+      "addNew": "Add New Link",
+      "save": "Save",
+      "cancel": "Cancel",
+      "editLink": "Edit Link",
+      "delete": "Delete",
+      "confirmDelete": "Are you sure you want to delete this link?",
+      "loadError": "Failed to load link data",
+      "saveSuccess": "Link saved successfully",
+      "deleteSuccess": "Link deleted successfully",
+      "validationError": "Name and link are required"
+    },
+    "contact": {
+      "title": "Help Center",
+      "subtitle": "Contact us for help and more information about public service innovation"
+    },
+    "helpCenter": {
+      "title": "Help Center Management",
+      "add": "Add Help",
+      "search": "Search help...",
+      "question": "Question",
+      "answer": "Answer",
+      "category": "Category",
+      "tags": "Tags",
+      "status": "Status",
+      "actions": "Actions",
+      "edit": "Edit Help",
+      "delete": "Delete",
+      "view": "View",
+      "addNew": "Add New Help",
+      "save": "Save",
+      "cancel": "Cancel",
+      "active": "Active",
+      "inactive": "Inactive"
+    }
+  }
+}

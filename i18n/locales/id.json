@@ -1,0 +1,99 @@
+{
+  "header": {
+    "title": "Jippnas Admin",
+    "admin": "Admin",
+    "user": "Pengguna"
+  },
+  "nav": {
+    "home": "Beranda",
+    "etalase": "Etalase Inovasi",
+    "nearby": "Inovasi Dekat Saya",
+    "news": "Berita",
+    "dashboard": "Dasbor",
+    "berita": "Berita",
+    "inovasi": "Inovasi",
+    "forum": "Forum",
+    "kontak": "Kontak",
+    "bantuan": "Bantuan"
+
+  },
+  "menu": {
+    "knowledge": {
+      "lms": "LMS",
+      "forum": "Forum Diskusi",
+      "event": "Event/Webinar"
+    },
+    "links": {
+      "menpan": "Web Menpan",
+      "lapor": "LAPOR!",
+      "sinovik": "Sinovik",
+      "related": "Tautan Terkait"
+    },
+    "help": {
+      "model": "Model Inovasi",
+      "book": "Buku Inovasi",
+      "download": "Unduhan",
+      "faq": "FAQ",
+      "contact": "Hubungi Kami"
+    }
+  },
+  "auth": {
+    "login": "Masuk",
+    "register": "Daftar",
+    "logout": "Keluar",
+    "welcome": "Selamat datang"
+  },
+  "search": {
+    "placeholder": "Cari Inovasi..."
+  },
+  "common": {
+    "loading": "Memuat...",
+    "error": "Kesalahan",
+    "save": "Simpan",
+    "cancel": "Batal"
+  },
+  "pages": {
+    "relatedLinks": {
+      "title": "Manajemen Tautan Terkait",
+      "list": "Daftar Tautan Terkait",
+      "add": "Tambah Tautan Terkait",
+      "edit": "Edit Tautan Terkait",
+      "name": "Nama",
+      "link": "Tautan",
+      "actions": "Aksi",
+      "addNew": "Tambah Tautan Baru",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "editLink": "Edit Tautan",
+      "delete": "Hapus",
+      "confirmDelete": "Apakah Anda yakin ingin menghapus tautan ini?",
+      "loadError": "Gagal memuat data tautan",
+      "saveSuccess": "Tautan berhasil disimpan",
+      "deleteSuccess": "Tautan berhasil dihapus",
+      "validationError": "Nama dan tautan harus diisi"
+    },
+    "contact": {
+      "title": "Pusat Bantuan",
+      "subtitle": "Hubungi kami untuk mendapatkan bantuan dan informasi lebih lanjut tentang inovasi pelayanan publik"
+    },
+    "helpCenter": {
+      "title": "Manajemen Pusat Bantuan",
+      "add": "Tambah Bantuan",
+      "search": "Cari bantuan...",
+      "question": "Pertanyaan",
+      "answer": "Jawaban",
+      "category": "Kategori",
+      "tags": "Tag",
+      "status": "Status",
+      "actions": "Aksi",
+      "edit": "Edit Bantuan",
+      "delete": "Hapus",
+      "view": "Lihat",
+      "addNew": "Tambah Bantuan Baru",
+      "save": "Simpan",
+      "cancel": "Batal",
+      "active": "Aktif",
+      "inactive": "Tidak Aktif"
+    }
+  }
+}
