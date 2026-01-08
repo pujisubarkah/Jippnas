@@ -8,6 +8,12 @@
         <p class="text-lg text-gray-600 mb-4">
           Selamat datang di Etalase Inovasi JIPPNAS. Di sini Anda dapat menjelajahi berbagai inovasi yang telah dikembangkan oleh para inovator di Indonesia.
         </p>
+        
+        <!-- Tambahkan Daftar Instansi -->
+        <div class="mb-8">
+          <DaftarInstansi />
+        </div>
+        
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           <!-- Placeholder cards for innovations -->
           <div class="bg-gray-50 rounded-lg p-6 border border-gray-200">
@@ -31,4 +37,5 @@
 <script setup>
 import InovasiUnggulan from '~/components/InovasiUnggulan.vue';
 import Sdgs from '~/components/Sdgs.client';
+import DaftarInstansi from '~/components/daftar_instansi.vue';
 </script>

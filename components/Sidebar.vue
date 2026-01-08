@@ -81,7 +81,9 @@
 <script setup>
 import { computed, ref, watch, onMounted } from 'vue'
 import { useAuth } from '~/composables/useAuth'
+import { useI18n } from 'vue-i18n'
 
+const { t } = useI18n()
 const props = defineProps({
   role: {
     type: String,
@@ -153,238 +155,238 @@ watch(user, (newUser) => {
   // console.log('User updated in Sidebar:', newUser)
 }, { immediate: true })
 
-// Universal menu config with slug
+// Universal menu config with slug and i18n keys
 const menuConfig = [
   // Admin menu
   {
-    label: 'Dashboard',
+    labelKey: 'sidebar.dashboard',
     slug: 'dashboard',
     icon: 'Home',
     roles: ['admin'],
     children: [
       {
-        label: 'Overview',
+        labelKey: 'sidebar.dashboard',
         slug: 'dashboard',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Konten Inovasi',
+    labelKey: 'sidebar.contentManagement',
     slug: 'konten-inovasi',
     icon: 'FileText',
     roles: ['admin'],
     children: [
       {
-        label: 'Manajemen List Ide Inovasi',
+        labelKey: 'sidebar.listIdeaInnovation',
         slug: 'list-ide-inovasi',
         roles: ['admin']
       },
       {
-        label: 'Manajemen List Inovasi',
+        labelKey: 'sidebar.listInnovation',
         slug: 'list-inovasi',
         roles: ['admin']
       },
       {
-        label: 'Manajemen List Hub Inovasi',
+        labelKey: 'sidebar.listHubInnovation',
         slug: 'list-hub-inovasi',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Replikasi',
+    labelKey: 'sidebar.replicationManagement',
     slug: 'replikasi',
     icon: 'Copy',
     roles: ['admin'],
     children: [
       {
-        label: 'Manajemen Replikasi',
+        labelKey: 'sidebar.replication',
         slug: 'manajemen-replikasi',
         roles: ['admin']
       },
       {
-        label: 'Rekap Minat',
+        labelKey: 'sidebar.interestSummary',
         slug: 'rekap-minat',
         roles: ['admin']
       },
       {
-        label: 'Rekap Kesepakatan',
+        labelKey: 'sidebar.agreementSummary',
         slug: 'rekap-kesepakatan',
         roles: ['admin']
       },
       {
-        label: 'Rekap Implementasi',
+        labelKey: 'sidebar.implementationSummary',
         slug: 'rekap-implementasi',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Pembaca',
+    labelKey: 'sidebar.readerManagement',
     slug: 'pembaca',
     icon: 'Eye',
     roles: ['admin'],
     children: [
       {
-        label: 'Daftar Bacaan',
+        labelKey: 'sidebar.readingList',
         slug: 'daftar-bacaan',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Pengguna',
+    labelKey: 'sidebar.userManagement',
     slug: 'manajemen-pengguna',
     icon: 'Users',
     roles: ['admin'],
     children: [
       {
-        label: 'Daftar Pengguna',
+        labelKey: 'sidebar.userList',
         slug: 'daftar-pengguna',
         roles: ['admin']
       },
       {
-        label: 'Role Pengguna',
+        labelKey: 'sidebar.userRoles',
         slug: 'role-pengguna',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Berita',
+    labelKey: 'sidebar.newsManagement',
     slug: 'manajemen-berita',
     icon: 'Newspaper',
     roles: ['admin'],
     children: [
       {
-        label: 'List Berita',
+        labelKey: 'sidebar.newsList',
         slug: 'list-berita',
         roles: ['admin']
       },
       {
-        label: 'Pengaturan Top Berita',
+        labelKey: 'sidebar.topNewsSettings',
         slug: 'pengaturan-top-berita',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Manajemen Bantuan',
+    labelKey: 'sidebar.helpManagement',
     slug: 'manajemen-bantuan',
     icon: 'HelpCircle',
     roles: ['admin'],
     children: [
       {
-        label: 'List Pusat Bantuan',
+        labelKey: 'sidebar.helpCenterList',
         slug: 'list-pusat-bantuan',
         roles: ['admin']
       }
     ]
   },
   {
-    label: 'Pengaturan',
+    labelKey: 'sidebar.settings',
     slug: 'pengaturan',
     icon: 'Settings',
     roles: ['admin'],
     children: [
       {
-        label: 'Tentang Kami',
+        labelKey: 'sidebar.aboutUs',
         slug: 'tentang-kami',
         roles: ['admin']
       },
       {
-        label: 'Model Inovasi',
+        labelKey: 'sidebar.innovationModel',
         slug: 'model-inovasi',
         roles: ['admin']
       },
       {
-        label: 'Acara/Events',
+        labelKey: 'sidebar.events',
         slug: 'acara-events',
         roles: ['admin']
       },
       {
-        label: 'Buku Inovasi',
+        labelKey: 'sidebar.innovationBook',
         slug: 'buku-inovasi',
         roles: ['admin']
       },
       {
-        label: 'Unduhan',
+        labelKey: 'sidebar.downloads',
         slug: 'unduhan',
         roles: ['admin']
       },
       {
-        label: 'FAQ',
+        labelKey: 'sidebar.faq',
         slug: 'faq',
         roles: ['admin']
       },
       {
-        label: 'Halaman Terkait',
+        labelKey: 'sidebar.relatedPages',
         slug: 'halaman-terkait',
         roles: ['admin']
       },
       {
-        label: 'Kategori SDGs',
+        labelKey: 'sidebar.sdgsCategories',
         slug: 'kategori-sdgs',
         roles: ['admin']
       },
       {
-        label: 'Kategori Umum',
+        labelKey: 'sidebar.generalCategories',
         slug: 'kategori-umum',
         roles: ['admin']
       },
       {
-        label: 'Kategori Kompetisi',
+        labelKey: 'sidebar.competitionCategories',
         slug: 'kategori-kompetisi',
         roles: ['admin']
       },
       {
-        label: 'Kategori RB Tematik',
+        labelKey: 'sidebar.thematicRbCategories',
         slug: 'kategori-rb-tematik',
         roles: ['admin']
       },
       {
-        label: 'Kategori OECD',
+        labelKey: 'sidebar.oecdCategories',
         slug: 'kategori-oecd',
         roles: ['admin']
       },
       {
-        label: 'Jenis Kategori',
+        labelKey: 'sidebar.categoryTypes',
         slug: 'jenis-kategori',
         roles: ['admin']
       },
       {
-        label: 'Instansi',
+        labelKey: 'sidebar.institutions',
         slug: 'instansi',
         roles: ['admin']
       },
       {
-        label: 'Hub Inovasi',
+        labelKey: 'sidebar.innovationHub',
         slug: 'hub-inovasi',
         roles: ['admin']
       },
       {
-        label: 'Detail Hub Inovasi',
+        labelKey: 'sidebar.innovationHubDetail',
         slug: 'detail-hub-inovasi',
         roles: ['admin']
       },
       {
-        label: 'UPP',
+        labelKey: 'sidebar.upp',
         slug: 'upp',
         roles: ['admin']
       },
       {
-        label: 'Penghargaan',
+        labelKey: 'sidebar.awards',
         slug: 'penghargaan',
         roles: ['admin']
       },
       {
-        label: 'Wilayah',
+        labelKey: 'sidebar.regions',
         slug: 'wilayah',
         roles: ['admin']
       },
       {
-        label: 'Kolaborasi Data',
+        labelKey: 'sidebar.dataCollaboration',
         slug: 'kolaborasi-data',
         roles: ['admin']
       }
@@ -392,26 +394,26 @@ const menuConfig = [
   },
   // User menu
   {
-    label: 'Dashboard',
+    labelKey: 'sidebar.dashboard',
     slug: 'dashboard',
     icon: 'Home',
     roles: ['user']
   },
   {
-    label: 'Manajemen Inovasi',
+    labelKey: 'sidebar.innovationManagement',
     slug: 'manajemen-inovasi',
     icon: 'Lightbulb',
     roles: ['user'],
     children: [
       {
-        label: 'List Inovasi',
+        labelKey: 'sidebar.innovationList',
         slug: 'inovasi',
         roles: ['user']
       }
     ]
   },
   {
-    label: 'Survey Hub Inovasi',
+    labelKey: 'sidebar.innovationHubSurvey',
     slug: 'survey-hub-inovasi',
     icon: 'ClipboardList',
     roles: ['user']
@@ -420,126 +422,30 @@ const menuConfig = [
 
 const menu = computed(() => {
   if (!role.value) return []
-  
+
   const userIdPeran = user.value?.id_peran
   const isAdmin = userIdPeran === 2
   const targetRole = isAdmin ? 'admin' : 'user'
-  
+
   return menuConfig
     .filter(item => item.roles.includes(targetRole))
     .map(item => {
       const menuItem = {
         ...item,
+        label: t(item.labelKey),
         to: `/${role.value}/${item.slug}`,
         iconSvg: iconSvgs[item.icon]
       }
 
       if (item.children) {
-        menuItem.children = item.children
-          .filter(child => child.roles.includes(targetRole))
-          .map(child => ({
-            ...child,
-            to: `/${role.value}/${child.slug}`
-          }))
+        menuItem.children = item.children.map(child => ({
+          ...child,
+          label: t(child.labelKey),
+          to: `/${role.value}/${child.slug}`
+        }))
       }
 
       return menuItem
     })
 })
 </script>
-
-<style scoped>
-/* Logo styling */
-.logo-sidebar {
-  max-width: 220px;
-  max-height: 80px;
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-}
-
-/* Smooth transitions for all elements */
-.v-navigation-drawer {
-  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-.v-list-item {
-  min-height: 48px !important;
-  height: auto !important;
-  padding-top: 8px !important;
-  padding-bottom: 8px !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Hover effects for list items */
-.v-list-item:hover {
-  background-color: rgba(25, 118, 210, 0.15) !important;
-  color: #1976D2 !important;
-  transform: translateX(4px);
-}
-
-/* Active item styling - only text color blue, no background */
-.sidebar-active {
-  background-color: transparent !important;
-  color: #1976D2 !important;
-  font-weight: 500 !important;
-}
-
-.sidebar-active .v-list-item-title {
-  color: #1976D2 !important;
-}
-
-/* Ensure text wraps and displays fully when expanded */
-.v-list-item-title {
-  white-space: normal !important;
-  word-wrap: break-word !important;
-  overflow-wrap: break-word !important;
-  line-height: 1.4 !important;
-  transition: opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Smooth icon transition */
-.v-list-item__prepend {
-  transition: margin 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
-}
-
-/* Rail mode - hide submenu items with transition */
-.v-navigation-drawer--rail .v-list-group__items {
-  display: none !important;
-}
-
-/* Smooth fade for header */
-.pa-4 {
-  animation: fadeIn 0.3s ease-in-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Border and shadow styling */
-.v-navigation-drawer {
-  border-right: 2px solid rgba(25, 118, 210, 0.2) !important;
-  box-shadow: 2px 0 8px rgba(0, 0, 0, 0.1) !important;
-}
-
-/* Mobile responsive adjustments */
-@media (max-width: 1023px) {
-  .v-navigation-drawer {
-    border-radius: 0 !important;
-    border-right: none !important;
-  }
-  
-  .logo-sidebar {
-    max-width: 180px;
-    max-height: 60px;
-  }
-}
-</style>
