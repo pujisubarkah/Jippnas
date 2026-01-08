@@ -109,16 +109,24 @@
           :search="searchQuery"
           class="elevation-1"
         >
+          <template v-slot:item.no="{ index }">
+            {{ index + 1 }}
+          </template>
           <template v-slot:item.actions="{ item }">
-            <v-btn icon small color="primary" @click="viewInnovation(item)" title="Lihat Detail">
-              <v-icon>mdi-eye</v-icon>
-            </v-btn>
-            <v-btn icon small color="warning" @click="editInnovation(item)" title="Edit">
-              <v-icon>mdi-pencil</v-icon>
-            </v-btn>
-            <v-btn icon small color="error" @click="deleteInnovation(item)" title="Hapus">
-              <v-icon>mdi-delete</v-icon>
-            </v-btn>
+            <div class="d-flex">
+              <v-btn icon small color="info" @click="viewLog(item)" title="Log">
+                <v-icon>mdi-history</v-icon>
+              </v-btn>
+              <v-btn icon small color="primary" @click="viewInnovation(item)" title="Detail">
+                <v-icon>mdi-eye</v-icon>
+              </v-btn>
+              <v-btn icon small color="warning" @click="editInnovation(item)" title="Edit">
+                <v-icon>mdi-pencil</v-icon>
+              </v-btn>
+              <v-btn icon small color="error" @click="deleteInnovation(item)" title="Trash">
+                <v-icon>mdi-delete</v-icon>
+              </v-btn>
+            </div>
           </template>
         </v-data-table>
       </v-card-text>
@@ -175,22 +183,51 @@ const institutionOptions = [
 
 // Table headers
 const headers = [
-  { title: 'No Registrasi', key: 'noRegistrasi', align: 'start' },
+  { title: 'No', key: 'no', align: 'start', sortable: false },
+  { title: 'Tahun', key: 'tahun' },
+  { title: 'No Registrasi', key: 'noRegistrasi' },
   { title: 'Judul Inovasi', key: 'judul' },
   { title: 'Jenis Inovasi', key: 'jenis' },
-  { title: 'UPP (Unit Kerja)', key: 'upp' },
+  { title: 'Institusi', key: 'institusi' },
+  { title: 'UPP', key: 'upp' },
+  { title: 'Wilayah', key: 'wilayah' },
+  { title: 'SDGs', key: 'sdgs' },
+  { title: 'Penghargaan', key: 'penghargaan' },
+  { title: 'Tahun Implementasi', key: 'tahunImplementasi' },
+  { title: 'Nama Inovator', key: 'namaInnovator' },
+  { title: 'Nama Pemangku', key: 'namaPemangku' },
+  { title: 'Video', key: 'video' },
+  { title: 'Jumlah Replikasi', key: 'jumlahReplikasi' },
+  { title: 'Alasan Keberlanjutan', key: 'alasanKeberlanjutan' },
+  { title: 'Keberlanjutan', key: 'keberlanjutan' },
   { title: 'Status', key: 'status' },
-  { title: 'Actions', key: 'actions', sortable: false }
+  { title: 'Last Update', key: 'lastUpdate' },
+  { title: 'Aksi', key: 'actions', sortable: false }
 ]
 
 // Sample innovations data (replace with actual data fetching)
 const innovations = ref([
   {
+    id: 1,
+    no: 1,
+    tahun: '2023',
     noRegistrasi: '609805',
     judul: 'Tes ITSA LAGI',
     jenis: 'Digital',
+    institusi: 'PT PLN (Persero)',
     upp: 'Unit TI',
-    status: 'Belum Lengkap'
+    wilayah: 'Jakarta',
+    sdgs: 'SDG 9',
+    penghargaan: 'Tidak Ada',
+    tahunImplementasi: '2023',
+    namaInnovator: 'John Doe',
+    namaPemangku: 'Jane Smith',
+    video: 'https://example.com/video',
+    jumlahReplikasi: 5,
+    alasanKeberlanjutan: 'Efisien',
+    keberlanjutan: 'Ya',
+    status: 'Belum Lengkap',
+    lastUpdate: '2023-12-01'
   },
   // Add more sample data
 ])
@@ -206,9 +243,14 @@ const searchInnovations = () => {
   })
 }
 
+const viewLog = (item) => {
+  // Navigate to log view
+  console.log('Viewing log for innovation:', item)
+}
+
 const viewInnovation = (item) => {
   // Navigate to detail view
-  console.log('Viewing innovation:', item)
+  navigateTo(`/${role.value}/list-inovasi/${item.id}`)
 }
 
 const editInnovation = (item) => {
