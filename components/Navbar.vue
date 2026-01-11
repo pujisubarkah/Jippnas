@@ -13,14 +13,14 @@
       <div class="d-flex align-center justify-space-between px-6 py-3 top-section">
         <!-- Logo -->
         <NuxtLink to="/" class="logo-container shrink-0">
-          <v-img
-            src="https://jippnas.menpan.go.id/storage/images/about/logo_ds/1/W8NHqNH4si2HA7dfVmFU2PaVLBtqwUz2t850znX2.png"
-            :width="200"
-            :height="60"
-            contain
-            class="logo-img"
-            alt="JIPPNAS Logo"
-          />
+          <div class="d-flex flex-column">
+            <h1 class="logo-text">
+              <span class="text-red-600">JIPP</span><span class="text-black">NAS</span>
+            </h1>
+            <p class="logo-subtitle">
+              Jaringan Inovasi Pelayanan Publik Nasional
+            </p>
+          </div>
         </NuxtLink>
 
         <!-- Search Bar (Desktop only) -->
@@ -631,14 +631,25 @@ onMounted(() => {
   text-decoration: none;
 }
 
-.logo-img {
-  transition: transform 0.3s ease, opacity 0.3s ease;
-  display: block;
+.logo-text {
+  font-size: 2rem;
+  font-weight: 800;
+  line-height: 1;
+  margin: 0;
+  letter-spacing: -0.5px;
 }
 
-.logo-img:hover {
-  transform: scale(1.03);
-  opacity: 0.9;
+.logo-subtitle {
+  font-size: 0.75rem;
+  color: #424242;
+  margin: 4px 0 0 0;
+  line-height: 1.2;
+  max-width: 200px;
+}
+
+.logo-container:hover .logo-text {
+  opacity: 0.85;
+  transition: opacity 0.3s ease;
 }
 
 .top-section {
@@ -656,12 +667,24 @@ onMounted(() => {
 
 .search-input {
   border: 2px solid #e3f2fd;
-  background: white;
+  background: #f8fafc;
   color: #1565c0;
   font-size: 0.9rem;
   font-family: 'Poppins', sans-serif;
   font-weight: 500;
   caret-color: #1976D2;
+  border-radius: 50px;
+}
+
+.search-input:hover {
+  background: white;
+  border-color: #bbdefb;
+}
+
+.search-input:focus {
+  background: white;
+  border-color: #2196F3;
+  box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
 }
 
 .search-input::placeholder {
@@ -714,10 +737,12 @@ onMounted(() => {
   .search-container { max-width: 400px; }
 }
 @media (max-width: 960px) {
-  .logo-img { width: 160px !important; height: 48px !important; }
+  .logo-text { font-size: 1.5rem; }
+  .logo-subtitle { font-size: 0.65rem; max-width: 160px; }
 }
 @media (max-width: 600px) {
-  .logo-img { width: 140px !important; height: 42px !important; }
+  .logo-text { font-size: 1.25rem; }
+  .logo-subtitle { font-size: 0.6rem; max-width: 140px; }
 }
 .gap-2 { gap: 8px; }
 </style>
