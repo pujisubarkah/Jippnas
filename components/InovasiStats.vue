@@ -1,20 +1,38 @@
 <template>
-  <div class="stats-section">
+  <div class="stats-section bg-primary">
     <v-container fluid class="pa-0">
-      <v-row justify="center" class="py-16">
+      <v-row justify="center" class="py-10">
         <v-col cols="12" class="text-center">
+          <!-- Ornament SVG -->
+          <div class="ornament-divider mb-6">
+            <svg width="100%" height="60" viewBox="0 0 1200 60" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+              <!-- Wave pattern -->
+              <path d="M0,30 Q150,10 300,30 T600,30 T900,30 T1200,30" stroke="#FCD34D" stroke-width="3" fill="none" opacity="0.8"/>
+              <path d="M0,35 Q150,15 300,35 T600,35 T900,35 T1200,35" stroke="#FCD34D" stroke-width="2" fill="none" opacity="0.5"/>
+              <!-- Decorative circles -->
+              <circle cx="300" cy="30" r="5" fill="#FCD34D" opacity="0.9"/>
+              <circle cx="600" cy="30" r="6" fill="#FCD34D" opacity="1"/>
+              <circle cx="900" cy="30" r="5" fill="#FCD34D" opacity="0.9"/>
+              <!-- Small accent circles -->
+              <circle cx="150" cy="20" r="3" fill="#FBBF24" opacity="0.7"/>
+              <circle cx="450" cy="20" r="3" fill="#FBBF24" opacity="0.7"/>
+              <circle cx="750" cy="20" r="3" fill="#FBBF24" opacity="0.7"/>
+              <circle cx="1050" cy="20" r="3" fill="#FBBF24" opacity="0.7"/>
+            </svg>
+          </div>
+          
           <v-fade-transition appear>
-            <h1 class="text-h3 text-md-h2 font-weight-black mb-2 bg-clip-text text-transparent bg-linear-to-r from-blue-700 to-blue-500">
+            <h1 class="text-h3 text-md-h2 font-weight-black mb-1 text-white">
               Inovasi Pelayanan Publik
             </h1>
           </v-fade-transition>
           <v-slide-y-transition appear>
-            <p class="text-body-1 text-blue-600 italic mb-8">
+            <p class="text-body-1 text-amber-300 italic mb-6">
               *sampai saat ini
             </p>
           </v-slide-y-transition>
 
-          <v-row justify="center" class="mb-12">
+          <v-row justify="center" class="mb-8">
             <v-col cols="12" md="10" lg="8">
               <v-row class="justify-center" dense>
                 <!-- Instansi -->
@@ -55,7 +73,7 @@
 
           <v-row justify="center">
             <v-col cols="12" md="8" lg="6">
-              <v-divider class="my-6 border-amber-300"></v-divider>
+              <v-divider class="my-4 border-amber-300"></v-divider>
               <v-btn
                 to="/etalase"
                 size="x-large"
@@ -80,6 +98,9 @@
       <div class="ornament-2"></div>
       <div class="ornament-3"></div>
     </div>
+    
+    <!-- Wave Shape Bottom -->
+    <div class="wave-bottom"></div>
   </div>
 </template>
 
@@ -122,13 +143,71 @@ const formatNumber = (num) => {
 <style scoped>
 .stats-section {
   position: relative;
-  overflow: hidden;
-  background-image: url('/vektor2.jpg');
-  background-size: cover;
-  background-position: center;
-  min-height: 80vh;
+  overflow: visible;
+  min-height: 75vh;
   display: flex;
   align-items: center;
+  padding-bottom: 60px;
+}
+
+.stats-section::before {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to bottom, transparent 0%, rgba(0, 0, 0, 0.1) 100%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.v-container {
+  position: relative;
+  z-index: 1;
+}
+
+.ornament-divider {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  animation: fadeInDown 1s ease-out;
+}
+
+.ornament-divider svg {
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.1));
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.wave-bottom {
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background: white;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  z-index: 2;
+}
+
+@media (max-width: 960px) {
+  .wave-bottom {
+    height: 50px;
+  }
+  .stats-section {
+    padding-bottom: 50px;
+    min-height: 70vh;
+  }
 }
 
 /* Circular stat cards */
@@ -141,7 +220,7 @@ const formatNumber = (num) => {
   justify-content: center;
   position: relative;
   transition: transform 0.4s ease, box-shadow 0.4s ease;
-  margin: 1.5rem auto;
+  margin: 1rem auto;
   cursor: default;
   overflow: hidden;
 }

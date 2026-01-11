@@ -1,11 +1,11 @@
 <template>
   <ClientOnly>
-    <div class="innovations-section py-12">
-      <v-container fluid class="px-4">
+    <div class="innovations-section py-16">
+      <v-container fluid class="px-6">
         <!-- Section Header -->
-        <div class="text-center mb-8">
+        <div class="text-center mb-12">
           <v-fade-transition appear>
-            <h2 class="text-h4 text-md-h3 font-weight-bold text-blue-800 mb-2">
+            <h2 class="text-h4 text-md-h3 font-weight-bold text-primary mb-3">
               Inovasi Unggulan
             </h2>
           </v-fade-transition>
@@ -23,11 +23,12 @@
           v-model="currentSlide"
           height="auto"
           hide-delimiter-background
+          hide-delimiters
           show-arrows="hover"
           :show-arrows-on-hover="true"
           :cycle="true"
-          :interval="4000"
-          class="rounded-xl elevation-4"
+          :interval="7000"
+          class="rounded-xl elevation-4 carousel-gold"
           aria-label="Carousel inovasi unggulan"
         >
           <v-carousel-item
@@ -43,7 +44,7 @@
                   cols="12"
                   sm="6"
                   lg="4"
-                  class="pa-2"
+                  class="pa-3"
                 >
                   <v-card
                     class="innovation-card elevation-6"
@@ -75,12 +76,12 @@
                       </template>
                     </v-img>
 
-                    <v-card-title class="text-h6 font-weight-bold text-blue-800 pa-4 pb-2 line-clamp-2">
+                    <v-card-title class="text-h6 font-weight-bold text-primary pa-5 pb-3 line-clamp-2">
                       {{ innovation.title }}
                     </v-card-title>
 
-                    <v-card-text class="pa-4 pt-0">
-                      <p class="text-body-2 text-gray-700 line-clamp-3 mb-4">
+                    <v-card-text class="pa-5 pt-2">
+                      <p class="text-body-2 text-gray-600 line-clamp-3 mb-5">
                         {{ innovation.description }}
                       </p>
                       <v-btn
@@ -105,7 +106,7 @@
         </v-carousel>
 
         <!-- Navigation Dots Indicator -->
-        <div class="text-center mt-4">
+        <div class="text-center mt-6">
           <v-item-group
             v-model="currentSlide"
             mandatory
@@ -254,9 +255,22 @@ if (typeof window !== 'undefined') {
    ============================================= */
 
 .innovations-section {
-  background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+  background: #ffffff;
   position: relative;
   overflow: hidden;
+}
+
+/* =============================================
+   CAROUSEL STYLES
+   ============================================= */
+
+.carousel-gold {
+  background: rgb(var(--v-theme-primary));
+  padding: 1.5rem;
+}
+
+.carousel-gold :deep(.v-carousel__controls) {
+  display: none !important;
 }
 
 /* =============================================
@@ -264,12 +278,12 @@ if (typeof window !== 'undefined') {
    ============================================= */
 
 .innovation-card {
-  background: rgba(255, 255, 255, 0.95);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(59, 130, 246, 0.1);
+  background: #ffffff;
+  border: 1px solid rgba(59, 130, 246, 0.15);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
   overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
 }
 
 .innovation-card::before {
@@ -288,8 +302,18 @@ if (typeof window !== 'undefined') {
 }
 
 .innovation-card:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  border-color: rgba(59, 130, 246, 0.3);
+}
+
+.innovation-card:hover .v-card-title {
+  color: #F59E0B;
+  transition: color 0.3s ease;
+}
+
+.v-card-title {
+  transition: color 0.3s ease;
 }
 
 /* =============================================
@@ -342,30 +366,6 @@ if (typeof window !== 'undefined') {
 /* =============================================
    ANIMATIONS
    ============================================= */
-
-.innovations-section::before {
-  content: '';
-  position: absolute;
-  top: -50px;
-  right: -50px;
-  width: 200px;
-  height: 200px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(59, 130, 246, 0.1), transparent);
-  animation: float-bg 8s ease-in-out infinite;
-}
-
-.innovations-section::after {
-  content: '';
-  position: absolute;
-  bottom: -30px;
-  left: -30px;
-  width: 150px;
-  height: 150px;
-  border-radius: 50%;
-  background: radial-gradient(circle, rgba(147, 197, 253, 0.1), transparent);
-  animation: float-bg 6s ease-in-out infinite reverse;
-}
 
 @keyframes float-bg {
   0%, 100% {

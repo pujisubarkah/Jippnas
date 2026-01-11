@@ -4,9 +4,9 @@
       <!-- Background with primary blue color -->
       <div class="absolute inset-0 bg-primary z-0"></div>
 
-      <v-container class="relative z-10 pt-12 pb-8">
+      <v-container class="relative z-10 pt-12 pb-2">
         <!-- Hero Title -->
-        <div class="text-center mb-10">
+        <div class="text-center mb-6">
           <div class="d-flex justify-center mb-4">
             <v-icon icon="mdi-innovation" color="amber" size="x-large" class="mr-2" />
             <h2 class="text-h3 text-md-h2 font-weight-black text-white">
