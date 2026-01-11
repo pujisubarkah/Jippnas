@@ -1,31 +1,32 @@
 <template>
   <div class="min-h-screen bg-gray-50 font-poppins">
     <!-- Page Header with Gradient -->
-    <div class="bg-linear-to-r from-blue-600 to-blue-700 text-white shadow-lg">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div>
-            <h1 class="text-3xl font-bold text-white flex items-center gap-3">
-              <div class="p-2 bg-white/20 rounded-xl backdrop-blur-sm">
+    <div class="bg-primary text-white shadow-lg" style="background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%);">
+      <div class="max-w-7xl mx-auto px-6 py-10">
+        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
+          <div style="margin-bottom: 1rem;">
+            <h1 class="text-4xl font-bold text-white flex items-center gap-3">
+              <div class="p-3 bg-white/20 rounded-xl backdrop-blur-sm">
                 <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                 </svg>
               </div>
               Forum Inovasi
             </h1>
-            <p class="text-blue-100 mt-2 text-sm">Diskusikan ide inovasi dan berbagi pengetahuan bersama komunitas</p>
+            <p class="text-blue-50 mt-3 text-base" style="line-height: 1.6;">Diskusikan ide inovasi dan berbagi pengetahuan bersama komunitas</p>
           </div>
 
-          <div class="flex flex-col sm:flex-row gap-3">
+          <div class="flex flex-col sm:flex-row gap-4">
             <!-- Search -->
             <div class="relative">
               <input
                 v-model="searchQuery"
                 type="text"
-                placeholder="Cari diskusi..."
-                class="w-full sm:w-64 pl-10 pr-4 py-2.5 bg-white border-2 border-gray-300 text-gray-900 placeholder-gray-500 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-xl transition-all"
+                placeholder="🔍 Cari diskusi..."
+                class="w-full sm:w-72 pl-12 pr-5 py-3 bg-white border-2 border-gray-200 text-gray-900 placeholder-gray-500 rounded-full focus:outline-none focus:ring-2 focus:ring-white focus:border-white shadow-lg transition-all"
+                style="font-size: 0.95rem;"
               />
-              <svg class="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <svg class="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
               </svg>
             </div>
@@ -33,7 +34,8 @@
             <!-- Create Thread Button -->
             <button
               @click="showNewThread = true"
-              class="px-6 py-2.5 bg-blue-600 text-white rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all font-semibold shadow-md hover:shadow-lg hover:scale-105 transform"
+              class="px-8 py-3 bg-white text-primary rounded-full hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 transition-all font-bold shadow-lg hover:shadow-xl hover:scale-105 transform"
+              style="font-size: 0.95rem;"
             >
               <svg class="inline-block w-5 h-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
@@ -46,52 +48,53 @@
     </div>
 
     <!-- Content -->
-    <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <main class="max-w-7xl mx-auto px-6 py-10">
       <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
         <!-- Sidebar Kategori -->
         <aside class="lg:col-span-1">
-          <div class="bg-white rounded-2xl shadow-md border border-gray-200 p-6 sticky top-24 hover:shadow-lg transition-all duration-300">
-            <h2 class="text-lg font-bold bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent mb-5 flex items-center">
-              <div class="p-2 bg-linear-to-br from-blue-100 to-purple-100 rounded-xl mr-3">
-                <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <div class="bg-white rounded-2xl shadow-lg border border-gray-200 sticky top-24 hover:shadow-xl transition-all duration-300" style="padding: 2rem;">
+            <h2 class="text-xl font-bold text-primary mb-6 flex items-center">
+              <div class="p-2 bg-blue-50 rounded-xl mr-3">
+                <svg class="w-5 h-5 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
                 </svg>
               </div>
-              <span class="text-gray-900">Kategori</span>
+              <span>Kategori</span>
             </h2>
-            <ul class="space-y-2">
+            <ul class="space-y-3">
               <li
                 v-for="category in categories"
                 :key="category.id"
                 @click="selectedCategory = category.id"
                 :class="[
-                  'p-3 rounded-xl cursor-pointer transition-all duration-300 flex justify-between items-center group hover:scale-105 transform',
+                  'rounded-xl cursor-pointer transition-all duration-300 flex justify-between items-center group hover:scale-105 transform',
                   selectedCategory === category.id
-                    ? 'bg-blue-600 text-white shadow-md'
+                    ? 'bg-primary text-white shadow-md'
                     : 'hover:bg-blue-50 text-gray-700 hover:shadow-sm'
                 ]"
+                style="padding: 1rem 1.25rem;"
               >
-                <span :class="selectedCategory === category.id ? 'font-bold' : 'font-medium'">{{ category.name }}</span>
+                <span :class="selectedCategory === category.id ? 'font-bold' : 'font-semibold'">{{ category.name }}</span>
                 <span :class="[
-                  'text-xs px-2.5 py-1 rounded-full font-semibold',
+                  'text-xs px-3 py-1.5 rounded-full font-bold',
                   selectedCategory === category.id
                     ? 'bg-white/20 text-white'
-                    : 'bg-linear-to-r from-blue-100 to-purple-100 text-blue-700'
+                    : 'bg-blue-100 text-primary'
                 ]">{{ category.threads }}</span>
               </li>
             </ul>
 
             <!-- Stats -->
-            <div class="mt-6 pt-5 border-t border-gray-200">
+            <div class="mt-8 pt-6 border-t border-gray-200">
               <div class="grid grid-cols-2 gap-4">
-                <div class="bg-blue-50 p-4 rounded-xl text-center hover:scale-105 transition-transform cursor-pointer">
-                  <div class="text-3xl font-bold text-blue-600">{{ totalThreads }}</div>
-                  <div class="text-xs text-gray-600 font-medium mt-1">Total Diskusi</div>
+                <div class="bg-blue-50 rounded-xl text-center hover:scale-105 transition-transform cursor-pointer" style="padding: 1.25rem;">
+                  <div class="text-3xl font-bold text-primary">{{ totalThreads }}</div>
+                  <div class="text-xs text-gray-600 font-semibold mt-2">Total Diskusi</div>
                 </div>
-                <div class="bg-green-50 p-4 rounded-xl text-center hover:scale-105 transition-transform cursor-pointer">
+                <div class="bg-green-50 rounded-xl text-center hover:scale-105 transition-transform cursor-pointer" style="padding: 1.25rem;">
                   <div class="text-3xl font-bold text-green-600">{{ totalReplies }}</div>
-                  <div class="text-xs text-gray-600 font-medium mt-1">Total Balasan</div>
+                  <div class="text-xs text-gray-600 font-semibold mt-2">Total Balasan</div>
                 </div>
               </div>
             </div>
@@ -105,24 +108,24 @@
           <div
             v-for="thread in filteredThreads"
             :key="thread.id"
-            class="bg-white rounded-2xl shadow-md border border-gray-200 p-6 hover:shadow-xl hover:scale-[1.01] transition-all duration-300 hover:border-blue-300 group"
+            class="bg-white rounded-2xl shadow-lg border border-gray-200 hover:shadow-2xl hover:scale-[1.02] transition-all duration-300 hover:border-primary group overflow-hidden"
           >
-            <div class="flex items-start space-x-4">
+            <div class="flex items-start space-x-5" style="padding: 2rem;">
 
               <!-- Votes -->
-              <div class="flex flex-col items-center space-y-1 bg-gray-50 rounded-xl p-3 min-w-[70px]">
+              <div class="flex flex-col items-center space-y-2 bg-gray-50 rounded-xl min-w-[80px]" style="padding: 1rem;">
                 <button
                   @click="voteThread(thread.id, 'up')"
                   :class="[
-                    'hover:text-blue-600 transition-all duration-200 transform hover:scale-125',
-                    userVotes[thread.id] === 'up' ? 'text-blue-600' : 'text-gray-400'
+                    'hover:text-primary transition-all duration-200 transform hover:scale-125',
+                    userVotes[thread.id] === 'up' ? 'text-primary' : 'text-gray-400'
                   ]"
                 >
-                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M7 14l5-5 5 5z"/>
                   </svg>
                 </button>
-                <span class="text-base font-bold text-gray-700">{{ thread.votes }}</span>
+                <span class="text-lg font-bold text-gray-800">{{ thread.votes }}</span>
                 <button
                   @click="voteThread(thread.id, 'down')"
                   :class="[
@@ -130,7 +133,7 @@
                     userVotes[thread.id] === 'down' ? 'text-red-500' : 'text-gray-400'
                   ]"
                 >
-                  <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
+                  <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24">
                     <path d="M7 10l5 5 5-5z"/>
                   </svg>
                 </button>
@@ -138,31 +141,31 @@
 
               <!-- Thread Content -->
               <div class="flex-1 min-w-0">
-                <div class="flex items-start justify-between">
-                  <h3 class="text-lg font-bold text-gray-900 hover:bg-linear-to-r hover:from-blue-600 hover:to-purple-600 hover:bg-clip-text hover:text-transparent cursor-pointer line-clamp-2 transition-all duration-300 group-hover:scale-[1.01]">
+                <div class="flex items-start justify-between" style="margin-bottom: 1rem;">
+                  <h3 class="text-xl font-bold text-gray-900 hover:text-primary cursor-pointer line-clamp-2 transition-all duration-300" style="line-height: 1.4;">
                     {{ thread.title }}
                   </h3>
                   <div class="flex gap-2 ml-4 shrink-0">
-                    <span v-if="thread.isSticky" class="px-3 py-1 text-xs font-bold bg-linear-to-r from-yellow-400 to-orange-500 text-white rounded-full shadow-md animate-pulse">📌 Sticky</span>
-                    <span v-if="thread.isLocked" class="px-3 py-1 text-xs font-bold bg-linear-to-r from-red-500 to-pink-600 text-white rounded-full shadow-md">🔒 Locked</span>
+                    <span v-if="thread.isSticky" class="px-3 py-1.5 text-xs font-bold bg-yellow-500 text-white rounded-full shadow-md">📌 Sticky</span>
+                    <span v-if="thread.isLocked" class="px-3 py-1.5 text-xs font-bold bg-red-500 text-white rounded-full shadow-md">🔒 Locked</span>
                   </div>
                 </div>
 
-                <div class="flex items-center text-sm text-gray-500 mt-2 space-x-4">
-                  <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <div class="flex items-center text-sm text-gray-500 space-x-6" style="margin-bottom: 1.25rem;">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
                     </svg>
                     {{ thread.author }}
                   </span>
-                  <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
                     </svg>
                     {{ thread.replies.length }} balasan
                   </span>
-                  <span class="flex items-center">
-                    <svg class="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <span class="flex items-center gap-1.5">
+                    <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
                       <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
                     </svg>
@@ -171,50 +174,50 @@
                 </div>
 
                 <!-- Latest Reply Preview -->
-                <div v-if="thread.replies.length > 0" class="mt-4 p-4 bg-blue-50 rounded-xl border-l-4 border-blue-500">
-                  <div class="text-sm flex items-center gap-2">
-                    <div class="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xs">
+                <div v-if="thread.replies.length > 0" class="rounded-xl border-l-4 border-primary" style="margin-top: 1.5rem; padding: 1.5rem; background-color: #eff6ff;">
+                  <div class="text-sm flex items-center gap-3" style="margin-bottom: 1rem;">
+                    <div class="w-10 h-10 bg-primary rounded-full flex items-center justify-center text-white font-bold text-sm shadow-md">
                       {{ thread.replies[thread.replies.length - 1].name.charAt(0).toUpperCase() }}
                     </div>
                     <div>
-                      <span class="font-bold text-gray-900">{{ thread.replies[thread.replies.length - 1].name }}</span>
-                      <span class="text-gray-500 ml-2 text-xs">{{ formatTimeAgo(thread.replies[thread.replies.length - 1].timestamp) }}</span>
+                      <span class="font-bold text-gray-900 text-base">{{ thread.replies[thread.replies.length - 1].name }}</span>
+                      <span class="text-gray-500 ml-3 text-xs">{{ formatTimeAgo(thread.replies[thread.replies.length - 1].timestamp) }}</span>
                     </div>
                   </div>
-                  <p class="text-gray-700 mt-2 line-clamp-2">{{ thread.replies[thread.replies.length - 1].content }}</p>
+                  <p class="text-gray-700 line-clamp-2 text-base" style="line-height: 1.6; padding-left: 3.25rem;">{{ thread.replies[thread.replies.length - 1].content }}</p>
                 </div>
 
                 <!-- Actions -->
-                <div class="flex items-center justify-between mt-4 pt-4 border-t border-gray-100">
-                  <div class="flex items-center space-x-4">
+                <div class="flex items-center justify-between pt-5 border-t border-gray-100" style="margin-top: 1.5rem;">
+                  <div class="flex items-center space-x-5">
                     <button
                       @click="toggleReply(thread.id)"
-                      class="text-sm text-blue-600 hover:text-blue-800 font-semibold flex items-center gap-1 hover:gap-2 transition-all group"
+                      class="text-sm text-primary hover:text-blue-800 font-bold flex items-center gap-2 hover:gap-3 transition-all group"
                     >
-                      <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/>
                       </svg>
                       Balas
                     </button>
-                    <button class="text-sm text-gray-500 hover:text-gray-700 font-medium flex items-center gap-1 hover:gap-2 transition-all group">
-                      <svg class="w-4 h-4 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <button class="text-sm text-gray-500 hover:text-gray-800 font-semibold flex items-center gap-2 hover:gap-3 transition-all group">
+                      <svg class="w-5 h-5 group-hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.367 2.684 3 3 0 00-5.367-2.684z"/>
                       </svg>
                       Bagikan
                     </button>
                   </div>
 
-                  <div class="flex items-center space-x-2">
+                  <div class="flex items-center space-x-3">
                     <button
                       @click="likeThread(thread.id)"
                       :class="[
-                        'flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                        'flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 shadow-sm hover:shadow-md',
                         userVotes[thread.id] === 'like'
                           ? 'bg-green-100 text-green-800'
                           : 'text-gray-500 hover:bg-green-50 hover:text-green-700'
                       ]"
                     >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M14 10h4.764a2 2 0 011.789 2.894l-3.5 7A2 2 0 0115.263 21h-4.017c-.163 0-.326-.02-.485-.06L7 20m7-10V5a2 2 0 00-2-2h-.095c-.5 0-.905.405-.905.905 0 .714-.211 1.412-.608 2.006L7 11v9m7-10h-2M7 20H5a2 2 0 01-2-2v-6a2 2 0 012-2h2.5"/>
                       </svg>
                       <span>{{ thread.likes || 0 }}</span>
@@ -222,13 +225,13 @@
                     <button
                       @click="dislikeThread(thread.id)"
                       :class="[
-                        'flex items-center space-x-1 px-3 py-1 rounded-full text-sm font-medium transition-colors',
+                        'flex items-center space-x-2 px-4 py-2 rounded-full text-sm font-bold transition-all duration-200 shadow-sm hover:shadow-md',
                         userVotes[thread.id] === 'dislike'
                           ? 'bg-red-100 text-red-800'
                           : 'text-gray-500 hover:bg-red-50 hover:text-red-700'
                       ]"
                     >
-                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                      <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
                         <path d="M10 14H5.236a2 2 0 01-1.789-2.894l3.5-7A2 2 0 018.737 3h4.017c.163 0 .326.02.485.06L17 4m-7 10v5a2 2 0 002 2h.095c.5 0 .905-.405.905-.905 0-.714.211-1.412.608-2.006L17 13V4m-7 10h2m6-10h-2"/>
                       </svg>
                       <span>{{ thread.dislikes || 0 }}</span>
@@ -237,25 +240,27 @@
                 </div>
 
                 <!-- Reply Form -->
-                <div v-if="replyingTo === thread.id" class="mt-4 p-5 bg-gray-50 rounded-xl border-2 border-blue-200">
+                <div v-if="replyingTo === thread.id" class="rounded-xl shadow-inner border-2 border-primary" style="margin-top: 2rem; padding: 1.5rem; background: linear-gradient(to bottom, #f8fafc 0%, #e0f2fe 100%);">
+                  <h4 class="text-lg font-bold text-gray-900" style="margin-bottom: 1rem;">✍️ Tulis Balasan</h4>
                   <textarea
                     v-model="replyForm.content"
-                    placeholder="Tulis balasan Anda..."
-                    class="w-full p-4 border-2 border-gray-300 bg-white rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 resize-none shadow-sm"
-                    rows="3"
+                    placeholder="Tulis balasan Anda di sini..."
+                    class="w-full px-5 py-4 border border-gray-300 bg-white rounded-2xl focus:outline-none focus:ring-3 focus:ring-primary focus:border-transparent resize-none shadow-sm text-gray-900"
+                    rows="5"
+                    style="line-height: 1.6;"
                   ></textarea>
-                  <div class="flex justify-end space-x-3 mt-4">
+                  <div class="flex justify-end space-x-4" style="margin-top: 1rem;">
                     <button
                       @click="cancelReply"
-                      class="px-5 py-2 text-gray-600 hover:text-gray-800 font-semibold hover:bg-gray-100 rounded-lg transition-all"
+                      class="px-6 py-3 text-gray-700 hover:text-gray-900 font-bold rounded-full hover:bg-gray-200 transition-all duration-200"
                     >
                       Batal
                     </button>
                     <button
                       @click="addReply(thread.id)"
-                      class="px-5 py-2 bg-green-600 text-gray-900 rounded-lg hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 font-semibold shadow-md hover:shadow-lg transform hover:scale-105 transition-all"
+                      class="px-8 py-3 bg-primary text-white font-bold rounded-full hover:bg-blue-700 shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
                     >
-                      Kirim Balasan
+                      🚀 Kirim Balasan
                     </button>
                   </div>
                 </div>
