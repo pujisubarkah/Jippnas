@@ -1,6 +1,10 @@
 <template>
   <div class="instansi-carousel">
-    <h2 class="text-h4 text-center mb-6">Daftar Instansi</h2>
+    <!-- Title and Description -->
+    <div class="mb-6 text-center">
+      <h2 class="text-2xl font-bold text-primary mb-2">Instansi Terhubung JIPPNAS</h2>
+      <p class="text-gray-600">Temukan inovasi berdasarkan instansi pemerintah</p>
+    </div>
     
     <!-- Loading state -->
     <div v-if="loading" class="text-center py-8">
@@ -37,21 +41,24 @@
             class="logo-item"
             @click="openInstansiDetail(logo)"
           >
-            <v-img
-              :src="logo.url"
-              :alt="logo.nama"
-              width="80"
-              height="80"
-              contain
-              class="logo-image"
-              @error="handleImageError(slideIndex, logoIndex)"
-            >
-              <template v-slot:placeholder>
-                <div class="d-flex align-center justify-center fill-height">
-                  <v-progress-circular indeterminate color="grey lighten-2" size="20"></v-progress-circular>
-                </div>
-              </template>
-            </v-img>
+            <div class="logo-content">
+              <v-img
+                :src="logo.url"
+                :alt="logo.nama"
+                width="80"
+                height="80"
+                contain
+                class="logo-image"
+                @error="handleImageError(slideIndex, logoIndex)"
+              >
+                <template v-slot:placeholder>
+                  <div class="d-flex align-center justify-center fill-height">
+                    <v-progress-circular indeterminate color="grey lighten-2" size="20"></v-progress-circular>
+                  </div>
+                </template>
+              </v-img>
+              <p class="logo-text">{{ logo.singkatan }}</p>
+            </div>
           </div>
         </div>
       </v-carousel-item>
@@ -166,6 +173,7 @@ const router = useRouter()
 
 .logo-item {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   cursor: pointer;
@@ -176,7 +184,27 @@ const router = useRouter()
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: 1px solid #e0e0e0;
   width: 120px;
-  height: 120px;
+  height: 140px;
+}
+
+.logo-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.logo-text {
+  font-size: 12px;
+  font-weight: 600;
+  color: #1976d2;
+  text-align: center;
+  margin: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .logo-item:hover {
@@ -198,13 +226,17 @@ const router = useRouter()
   
   .logo-item {
     width: 100px;
-    height: 100px;
+    height: 120px;
     padding: 8px;
   }
   
   .logo-image {
     width: 60px;
     height: 60px;
+  }
+
+  .logo-text {
+    font-size: 10px;
   }
 }
 
@@ -221,13 +253,17 @@ const router = useRouter()
   
   .logo-item {
     width: 80px;
-    height: 80px;
+    height: 100px;
     padding: 6px;
   }
   
   .logo-image {
     width: 50px;
     height: 50px;
+  }
+
+  .logo-text {
+    font-size: 9px;
   }
 }
 </style>

@@ -1,5 +1,11 @@
 <template>
   <div class="p-6">
+    <!-- Title and Description -->
+    <div class="mb-6">
+      <h2 class="text-2xl font-bold text-primary mb-2">SDGs</h2>
+      <p class="text-gray-600">Temukan inovasi berdasarkan SDGs</p>
+    </div>
+
     <div v-if="loading" class="text-center py-8">
       <p class="text-blue-600">Memuat data...</p>
     </div>
@@ -13,10 +19,11 @@
         <div
           v-for="sdg in sdgsData"
           :key="sdg.id"
-          class="bg-white p-4 rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105 flex flex-col items-center text-center"
+          class="bg-white rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105 flex flex-col items-center text-center"
+          style="padding: 1.5rem;"
           @click="navigateToSdg(sdg.id)"
         >
-          <div class="flex flex-col items-center gap-2">
+          <div class="flex flex-col items-center gap-3">
             <div class="relative">
               <!-- Menampilkan SVG dari base64 -->
               <div 
@@ -35,8 +42,8 @@
                 {{ sdg.id }}
               </div>
             </div>
-            <div class="flex-1 text-center">
-              <h4 class="font-semibold text-blue-800 text-sm mb-1">{{ sdg.nama_id }}</h4>
+            <div class="flex-1 text-center" style="margin-bottom: 0.75rem;">
+              <h4 class="font-semibold text-blue-800 text-sm">{{ sdg.nama_id }}</h4>
             </div>
             <div class="w-full">
               <div class="w-full bg-blue-200 rounded-full h-2">
@@ -106,8 +113,10 @@ const fetchSdgsData = async () => {
     const result = await response.json()
     
     if (result.success && result.data) {
-      // Filter hanya yang status true
-      sdgsData.value = result.data.filter(item => item.status)
+      // Filter hanya yang status true dan sort berdasarkan id
+      sdgsData.value = result.data
+        .filter(item => item.status)
+        .sort((a, b) => a.id - b.id)
       
       // Calculate max count untuk progress bar
       if (sdgsData.value.length > 0) {
