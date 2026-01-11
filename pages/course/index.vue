@@ -1,39 +1,94 @@
 <template>
-  <section class="container mx-auto py-4 sm:py-8 px-4">
-    <h1 class="text-2xl sm:text-3xl font-bold text-blue-700 mb-4 sm:mb-6">Course Pembelajaran</h1>
-    <div class="flex flex-col sm:flex-row sm:items-center mb-4 sm:mb-6 gap-3 sm:gap-4">
-      <input type="search" class="input input-bordered w-full sm:w-1/2 lg:w-1/3 text-sm sm:text-base" placeholder="Cari course..." v-model="search" />
-      <select class="select select-bordered w-full sm:w-1/3 lg:w-1/4 text-sm sm:text-base" v-model="filter">
+  <section class="container mx-auto py-8 px-6">
+    <!-- Header Section -->
+    <div class="mb-8">
+      <h1 class="text-4xl font-bold text-primary mb-3">Course Pembelajaran</h1>
+      <p class="text-gray-600 text-lg">Jelajahi berbagai course inovasi pelayanan publik untuk meningkatkan kompetensi Anda</p>
+    </div>
+
+    <!-- Search and Filter Section -->
+    <div class="flex flex-col sm:flex-row sm:items-center mb-8 gap-4">
+      <input 
+        type="search" 
+        class="w-full sm:w-1/2 lg:w-1/3 text-base bg-white rounded-full shadow-md border-2 border-gray-300 focus:border-primary transition-all" 
+        style="padding: 0.875rem 1.5rem; outline: none;"
+        placeholder="🔍 Cari course..." 
+        v-model="search" 
+      />
+      <select 
+        class="w-full sm:w-1/3 lg:w-1/4 text-base bg-white rounded-full shadow-md border-2 border-gray-300 focus:border-primary transition-all" 
+        style="padding: 0.875rem 1.5rem; outline: none;"
+        v-model="filter"
+      >
         <option value="">Semua Kategori</option>
         <option v-for="cat in categories" :key="cat" :value="cat">{{ cat }}</option>
       </select>
     </div>
-    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-      <div v-for="materi in pagedMateri" :key="materi.id" @click="goToCourse(materi.id)" class="card bg-white shadow-md border border-blue-100 rounded-lg sm:rounded-xl p-4 sm:p-5 flex flex-col hover:bg-blue-50 transition-all cursor-pointer">
-        <img :src="materi.img" alt="Gambar Course" class="w-full h-32 sm:h-40 object-cover rounded-lg mb-3 bg-blue-50" />
-        <h2 class="text-lg sm:text-xl font-semibold text-blue-800 mb-2 line-clamp-2">{{ materi.title }}</h2>
-        <p class="text-blue-600 mb-2 text-sm sm:text-base">{{ materi.category }}</p>
-        <p class="text-gray-700 mb-3 sm:mb-4 text-sm sm:text-base line-clamp-3">{{ materi.description }}</p>
-        <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto">
-          <button class="btn btn-primary rounded-full px-3 sm:px-4 text-xs sm:text-sm text-center">
-            Pelajari Course
-          </button>
-          <span class="text-xs text-gray-400 text-center sm:text-right">Mentor: {{ materi.mentor }}</span>
+
+    <!-- Course Grid -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div 
+        v-for="materi in pagedMateri" 
+        :key="materi.id" 
+        @click="goToCourse(materi.id)" 
+        class="card bg-white shadow-lg border border-gray-200 rounded-xl flex flex-col hover:shadow-2xl hover:scale-105 transition-all duration-300 cursor-pointer overflow-hidden"
+      >
+        <img 
+          :src="materi.img" 
+          alt="Gambar Course" 
+          class="w-full h-48 object-cover" 
+        />
+        <div style="padding: 2rem;">
+          <h2 class="text-xl font-bold text-primary line-clamp-2" style="margin-bottom: 0.75rem; line-height: 1.4;">
+            {{ materi.title }}
+          </h2>
+          <p class="text-sm font-semibold text-amber-600" style="margin-bottom: 1rem;">
+            {{ materi.category }}
+          </p>
+          <p class="text-gray-700 text-sm line-clamp-3" style="margin-bottom: 1.5rem; line-height: 1.6;">
+            {{ materi.description }}
+          </p>
+          <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-auto" style="padding-top: 1rem; border-top: 1px solid #e5e7eb;">
+            <button class="btn rounded-full px-6 py-2 text-sm font-semibold transition-all duration-300" style="background-color: #1976d2; color: white; border: none;">
+              Pelajari Course
+            </button>
+            <span class="text-xs text-gray-500">
+              <i class="fas fa-user-circle" style="margin-right: 0.25rem;"></i>
+              {{ materi.mentor }}
+            </span>
+          </div>
         </div>
       </div>
     </div>
-    <div v-if="totalPages > 1" class="flex flex-wrap justify-center mt-6 sm:mt-8 gap-1 sm:gap-2">
-      <button class="btn btn-sm text-xs sm:text-sm" :disabled="currentPage === 1" @click="goToPage(currentPage - 1)">Sebelumnya</button>
+
+    <!-- Pagination -->
+    <div v-if="totalPages > 1" class="flex flex-wrap justify-center mt-10 gap-2">
+      <button 
+        class="btn btn-sm border-2" 
+        style="padding: 0.5rem 1rem; border-color: #1976d2; color: #1976d2; background: white;"
+        :disabled="currentPage === 1" 
+        @click="goToPage(currentPage - 1)"
+      >
+        Sebelumnya
+      </button>
       <button
         v-for="page in totalPages"
         :key="page"
-        class="btn btn-sm text-xs sm:text-sm"
-        :class="currentPage === page ? 'btn-info text-white' : 'btn-outline'"
+        class="btn btn-sm"
+        :style="currentPage === page ? 'background-color: #1976d2; color: white; border: none;' : 'border: 2px solid #1976d2; color: #1976d2; background: white;'"
+        style="padding: 0.5rem 1rem;"
         @click="goToPage(page)"
       >
         {{ page }}
       </button>
-      <button class="btn btn-sm text-xs sm:text-sm" :disabled="currentPage === totalPages" @click="goToPage(currentPage + 1)">Berikutnya</button>
+      <button 
+        class="btn btn-sm border-2" 
+        style="padding: 0.5rem 1rem; border-color: #1976d2; color: #1976d2; background: white;"
+        :disabled="currentPage === totalPages" 
+        @click="goToPage(currentPage + 1)"
+      >
+        Berikutnya
+      </button>
     </div>
   </section>
 </template>
@@ -128,10 +183,11 @@ function goToCourse(id) {
 
 <style scoped>
 .card {
-  transition: box-shadow 0.2s;
+  transition: all 0.3s ease;
 }
+
 .card:hover {
-  box-shadow: 0 8px 24px -8px rgba(30,64,175,0.15);
+  box-shadow: 0 20px 40px -12px rgba(25, 118, 210, 0.25);
 }
 
 .line-clamp-2 {
@@ -148,5 +204,21 @@ function goToCourse(id) {
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 3;
   line-clamp: 3;
+}
+
+.btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(25, 118, 210, 0.3);
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.input:focus, .select:focus {
+  outline: none;
+  border-color: #1976d2;
+  box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.1);
 }
 </style>
