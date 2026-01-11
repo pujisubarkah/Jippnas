@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { eq } from 'drizzle-orm'
 import postgres from 'postgres'
-import { responseAnswers } from '~/drizzle/schema/survey'
+import { responseAnswers, questionOptions } from '~/drizzle/schema/survey'
 
 const client = postgres(process.env.DATABASE_URL!)
 const db = drizzle(client)
@@ -18,9 +18,28 @@ export default defineEventHandler(async (event) => {
   }
 
   if (method === 'GET') {
-    // Get response answer by ID
+    // Get response answer by ID with option details
     try {
-      const answer = await db.select().from(responseAnswers).where(eq(responseAnswers.id, id)).limit(1)
+      const answer = await db
+        .select({
+          id: responseAnswers.id,
+          responseId: responseAnswers.responseId,
+          questionId: responseAnswers.questionId,
+          selectedOptionIds: responseAnswers.selectedOptionIds,
+          selectedOptionId: responseAnswers.selectedOptionId,
+          evidence: responseAnswers.evidence,
+          originalScore: responseAnswers.originalScore,
+          verifiedScore: responseAnswers.verifiedScore,
+          createdAt: responseAnswers.createdAt,
+          // Option details for single selection
+          optionValue: questionOptions.optionValue,
+          optionScore: questionOptions.score
+        })
+        .from(responseAnswers)
+        .leftJoin(questionOptions, eq(responseAnswers.selectedOptionId, questionOptions.id))
+        .where(eq(responseAnswers.id, id))
+        .limit(1)
+      
       if (answer.length === 0) {
         throw createError({
           statusCode: 404,

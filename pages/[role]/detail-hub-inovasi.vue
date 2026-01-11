@@ -30,7 +30,7 @@
     </v-card>
 
     <v-card>
-      <v-card-header>
+      <v-card-title>
         <div class="d-flex justify-space-between align-center w-100">
           <h2 class="text-h6">Daftar Responden</h2>
           <v-text-field
@@ -43,7 +43,7 @@
             style="max-width: 300px;"
           ></v-text-field>
         </div>
-      </v-card-header>
+      </v-card-title>
       <v-card-text>
         <v-data-table
           :headers="headers"
@@ -469,9 +469,100 @@ const formatDate = (dateString) => {
   })
 }
 
-const viewDetail = (response) => {
-  selectedResponse.value = JSON.parse(JSON.stringify(response))
-  showDetailModal.value = true
+const viewDetail = async (response) => {
+  try {
+    const detailResponse = await $fetch(`/api/instrument-responses/detail/${response.id}`)
+    const answersResponse = await $fetch('/api/response-answers')
+    
+    if (detailResponse.success && answersResponse.success) {
+      selectedResponse.value = detailResponse.data
+      const responseAnswers = answersResponse.data.filter(ans => ans.responseId === response.id)
+      
+      console.log('📊 Detail Response:', detailResponse.data)
+      console.log('📝 Response Answers:', responseAnswers)
+      
+      selectedResponse.value.aspectScores.forEach(aspect => {
+        aspect.questions.forEach(question => {
+          // Initialize
+          if (question.questionType === 'single') {
+            question.verifiedAnswer = null
+          } else {
+            question.verifiedAnswers = []
+          }
+          question.selectedAnswers = []
+          
+          const answer = responseAnswers.find(ans => ans.questionId === question.questionId)
+          
+          console.log('❓ Question:', question.questionText)
+          console.log('💾 Answer:', answer)
+          console.log('📋 Available Options:', question.availableOptions)
+          
+          if (answer) {
+            if (answer.selectedOptionId) {
+              // Single selection
+              console.log('🔍 Mencari option dengan ID:', answer.selectedOptionId)
+              
+              const selectedOption = question.availableOptions.find(opt => opt.id === answer.selectedOptionId)
+              
+              console.log('✨ Option ditemukan:', selectedOption)
+              
+              if (selectedOption) {
+                question.selectedAnswers = [{
+                  id: selectedOption.id,
+                  value: selectedOption.value,
+                  text: selectedOption.text,
+                  score: selectedOption.score
+                }]
+                
+                // Pre-select radio button
+                question.verifiedAnswer = selectedOption.value
+                
+                console.log('🎯 Pre-selected value:', selectedOption.value)
+                console.log('✅ question.verifiedAnswer sekarang:', question.verifiedAnswer)
+              } else {
+                console.error('❌ Option TIDAK DITEMUKAN!')
+              }
+              
+            } else if (answer.selectedOptionIds && answer.selectedOptionIds.length > 0) {
+              // Multiple selection
+              console.log('🔍 Mencari options dengan IDs:', answer.selectedOptionIds)
+              
+              question.selectedAnswers = answer.selectedOptionIds
+                .map(optId => {
+                  const opt = question.availableOptions.find(o => o.id === optId)
+                  console.log(`  - ID ${optId}:`, opt)
+                  return opt ? {
+                    id: opt.id,
+                    value: opt.value,
+                    text: opt.text,
+                    score: opt.score
+                  } : null
+                })
+                .filter(opt => opt !== null)
+              
+              question.verifiedAnswers = question.selectedAnswers.map(a => a.value)
+              
+              console.log('🎯 Pre-selected values:', question.verifiedAnswers)
+              console.log('✅ question.verifiedAnswers sekarang:', question.verifiedAnswers)
+            }
+          } else {
+            console.warn('⚠️ Tidak ada answer data untuk question ini')
+          }
+          
+          console.log('---')
+        })
+      })
+      
+      // Buka modal setelah semua data di-set
+      setTimeout(() => {
+        showDetailModal.value = true
+        console.log('🚀 Modal dibuka, cek apakah radio button tercentang')
+      }, 100)
+    }
+  } catch (error) {
+    console.error('Error fetching response detail:', error)
+    toast.error('Gagal memuat detail respons')
+  }
 }
 
 const saveVerification = () => {
@@ -507,25 +598,25 @@ const saveVerification = () => {
 
 // Helper functions for verification
 const isOriginalAnswer = (question, option) => {
-  if (question.questionType === 'single') {
-    return question.selectedAnswers.some(a => a.value === option.value)
-  } else {
-    return question.selectedAnswers.some(a => a.value === option.value)
-  }
+  if (!question.selectedAnswers) return false
+  return question.selectedAnswers.some(a => a.value === option.value)
 }
 
 const getOriginalScore = (question) => {
-  return question.selectedAnswers.reduce((sum, ans) => sum + ans.score, 0)
+  if (!question.selectedAnswers || question.selectedAnswers.length === 0) return 0
+  return question.selectedAnswers.reduce((sum, ans) => sum + (ans.score || 0), 0)
 }
 
 const getVerifiedScore = (question) => {
   if (question.questionType === 'single') {
+    if (!question.verifiedAnswer) return 0
     const option = question.availableOptions.find(o => o.value === question.verifiedAnswer)
-    return option ? option.score : 0
+    return option ? (option.score || 0) : 0
   } else {
+    if (!question.verifiedAnswers || question.verifiedAnswers.length === 0) return 0
     return question.verifiedAnswers.reduce((sum, val) => {
       const option = question.availableOptions.find(o => o.value === val)
-      return sum + (option ? option.score : 0)
+      return sum + (option ? (option.score || 0) : 0)
     }, 0)
   }
 }
@@ -539,10 +630,12 @@ const getScoreDiff = (question) => {
 }
 
 const calculateAspectScore = (aspect) => {
+  if (!aspect.questions) return 0
   return aspect.questions.reduce((sum, q) => sum + getVerifiedScore(q), 0)
 }
 
 const hasAspectScoreChanged = (aspect) => {
+  if (!aspect.questions) return false
   const originalScore = aspect.questions.reduce((sum, q) => sum + getOriginalScore(q), 0)
   const verifiedScore = calculateAspectScore(aspect)
   return originalScore !== verifiedScore

@@ -21,11 +21,22 @@ export default defineEventHandler(async (event) => {
       const { responseAnswers, instrumentQuestions, instrumentAspects } = await import('~/drizzle/schema/survey')
       
       const responsesWithAspects = await Promise.all(responses.map(async (response) => {
+        // First, get all aspects for this instrument
+        const allAspects = await db
+          .select({
+            aspectId: instrumentAspects.id,
+            aspectName: instrumentAspects.name,
+            aspectWeight: instrumentAspects.weight
+          })
+          .from(instrumentAspects)
+          .where(eq(instrumentAspects.instrumentId, response.instrumentId!))
+        
         // Get all answers with aspect info
         const answers = await db
           .select({
             answerId: responseAnswers.id,
-            score: responseAnswers.originalScore,
+            originalScore: responseAnswers.originalScore,
+            verifiedScore: responseAnswers.verifiedScore,
             aspectId: instrumentAspects.id,
             aspectName: instrumentAspects.name,
             aspectWeight: instrumentAspects.weight
@@ -35,32 +46,43 @@ export default defineEventHandler(async (event) => {
           .innerJoin(instrumentAspects, eq(instrumentQuestions.aspectId, instrumentAspects.id))
           .where(eq(responseAnswers.responseId, response.id))
         
-        // Group scores by aspect
+        // Initialize aspect scores map with all aspects
         const aspectScoresMap = new Map()
         
+        allAspects.forEach(aspect => {
+          aspectScoresMap.set(aspect.aspectId, {
+            aspectId: aspect.aspectId,
+            aspectName: aspect.aspectName,
+            aspectWeight: parseFloat(String(aspect.aspectWeight || '1.00')),
+            totalScore: 0,
+            questionCount: 0
+          })
+        })
+        
+        // Populate with actual scores
         answers.forEach(answer => {
           const aspectId = answer.aspectId
-          if (!aspectScoresMap.has(aspectId)) {
-            aspectScoresMap.set(aspectId, {
-              aspectId: aspectId,
-              aspectName: answer.aspectName,
-              aspectWeight: parseFloat(String(answer.aspectWeight || '1')),
-              totalScore: 0,
-              questionCount: 0
-            })
+          if (aspectScoresMap.has(aspectId)) {
+            const aspectData = aspectScoresMap.get(aspectId)
+            // Use verified score if available, otherwise original score
+            const score = answer.verifiedScore !== null && answer.verifiedScore !== undefined 
+              ? answer.verifiedScore 
+              : answer.originalScore
+            aspectData.totalScore += (score || 0)
+            aspectData.questionCount += 1
           }
-          
-          const aspectData = aspectScoresMap.get(aspectId)
-          aspectData.totalScore += (answer.score || 0)
-          aspectData.questionCount += 1
         })
         
         // Calculate final score (totalScore × aspectWeight) for each aspect
-        const aspectScores = Array.from(aspectScoresMap.values()).map(aspect => ({
-          aspectId: aspect.aspectId,
-          aspectName: aspect.aspectName,
-          finalScore: parseFloat((aspect.totalScore * aspect.aspectWeight).toFixed(2))
-        }))
+        const aspectScores = Array.from(aspectScoresMap.values()).map(aspect => {
+          const weight = isNaN(aspect.aspectWeight) ? 1.0 : aspect.aspectWeight
+          const finalScore = aspect.totalScore * weight
+          return {
+            aspectId: aspect.aspectId,
+            aspectName: aspect.aspectName,
+            finalScore: isNaN(finalScore) ? 0 : parseFloat(finalScore.toFixed(2))
+          }
+        })
         
         // Calculate total of all aspect final scores
         const totalFinalScore = aspectScores.reduce((sum, aspect) => sum + aspect.finalScore, 0)

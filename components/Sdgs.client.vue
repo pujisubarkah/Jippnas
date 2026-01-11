@@ -1,26 +1,46 @@
 <template>
   <div class="p-6">
-    <div>
+    <div v-if="loading" class="text-center py-8">
+      <p class="text-blue-600">Memuat data...</p>
+    </div>
+    
+    <div v-else-if="error" class="text-center py-8">
+      <p class="text-red-600">{{ error }}</p>
+    </div>
+    
+    <div v-else>
       <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
         <div
           v-for="sdg in sdgsData"
           :key="sdg.id"
           class="bg-white p-4 rounded-xl border border-blue-200 hover:shadow-lg transition-all duration-300 cursor-pointer transform hover:scale-105 flex flex-col items-center text-center"
+          @click="navigateToSdg(sdg.id)"
         >
           <div class="flex flex-col items-center gap-2">
             <div class="relative">
-              <img :src="`/sdgs/${sdg.id}.png`" :alt="`SDG ${sdg.id}`" class="w-16 h-16 rounded-lg shadow-md border-2 border-white" />
+              <!-- Menampilkan SVG dari base64 -->
+              <div 
+                v-if="sdg.icon_base64" 
+                v-html="convertBase64ToSvg(sdg.icon_base64)" 
+                class="w-16 h-16 rounded-lg shadow-md border-2 border-white overflow-hidden"
+              />
+              <!-- Fallback jika tidak ada icon -->
+              <div 
+                v-else 
+                class="w-16 h-16 rounded-lg shadow-md border-2 border-white bg-gray-200 flex items-center justify-center"
+              >
+                <span class="text-2xl font-bold text-gray-400">{{ sdg.id }}</span>
+              </div>
               <div class="absolute -top-2 -right-2 bg-blue-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg">
                 {{ sdg.id }}
               </div>
             </div>
             <div class="flex-1 text-center">
-              <h4 class="font-semibold text-blue-800 text-sm mb-1">{{ sdg.title }}</h4>
-              <p class="text-blue-600 font-bold text-xs">{{ sdg.count }} produk</p>
+              <h4 class="font-semibold text-blue-800 text-sm mb-1">{{ sdg.nama_id }}</h4>
             </div>
             <div class="w-full">
               <div class="w-full bg-blue-200 rounded-full h-2">
-                <div class="bg-blue-600 h-2 rounded-full transition-all duration-500" :style="{ width: sdg.width }"></div>
+                <div class="bg-blue-600 h-2 rounded-full transition-all duration-500" :style="{ width: calculateWidth(sdg.count) }"></div>
               </div>
             </div>
           </div>
@@ -31,29 +51,80 @@
 </template>
 
 <script setup>
+import { ref, onMounted } from 'vue'
 
+const sdgsData = ref([])
+const loading = ref(true)
+const error = ref(null)
+const maxCount = ref(0)
 
-const sdgsData = [
-  { id: 16, title: 'Perdamaian, Keadilan, dan Kelembagaan yang Tangguh...', count: 125, width: '100%' },
-  { id: 9, title: 'Industri, Inovasi, dan Infrastruktur...', count: 50, width: '40%' },
-  { id: 8, title: 'Pekerjaan Layak dan Pertumbuhan Ekonomi...', count: 49, width: '39.2%' },
-  { id: 4, title: 'Pendidikan Berkualitas...', count: 45, width: '36%' },
-  { id: 2, title: 'Tanpa Kelaparan...', count: 37, width: '29.6%' },
-  { id: 3, title: 'Kehidupan Sehat dan Sejahtera...', count: 34, width: '27.2%' },
-  { id: 17, title: 'Kemitraan untuk Mencapai Tujuan...', count: 27, width: '21.6%' },
-  { id: 1, title: 'Tanpa Kemiskinan...', count: 16, width: '12.8%' },
-  { id: 11, title: 'Kota dan Pemukiman yang Berkelanjutan...', count: 14, width: '11.2%' },
-  { id: 12, title: 'Konsumsi dan Produksi yang Bertanggung Jawab...', count: 6, width: '4.8%' },
-  { id: 13, title: 'Penanganan Perubahan Iklim...', count: 6, width: '4.8%' },
-  { id: 5, title: 'Kesetaraan Gender...', count: 5, width: '4%' },
-  { id: 6, title: 'Air Bersih dan Sanitasi Layak...', count: 5, width: '4%' },
-  { id: 10, title: 'Berkurangnya Kesenjangan...', count: 4, width: '3.2%' },
-  { id: 14, title: 'Ekosistem Lautan...', count: 4, width: '3.2%' },
-  { id: 7, title: 'Energi Bersih dan Terjangkau...', count: 3, width: '2.4%' },
-  { id: 15, title: 'Ekosistem Daratan...', count: 3, width: '2.4%' }
-]
+// Function untuk navigasi ke halaman SDG detail
+const navigateToSdg = (sdgId) => {
+  navigateTo(`/sdgs/${sdgId}`)
+}
+
+// Function untuk convert base64 ke SVG
+const convertBase64ToSvg = (base64String) => {
+  if (!base64String) return ''
+  
+  try {
+    // Decode base64 to string
+    const decoded = atob(base64String)
+    
+    // Jika sudah SVG, return langsung
+    if (decoded.includes('<svg')) {
+      return decoded
+    }
+    
+    // Jika masih base64 image, wrap dalam img tag
+    return `<img src="data:image/png;base64,${base64String}" alt="SDG Icon" class="w-full h-full object-contain" />`
+  } catch (e) {
+    console.error('Error converting base64:', e)
+    return ''
+  }
+}
+
+// Function untuk calculate width bar
+const calculateWidth = (count) => {
+  if (!maxCount.value || !count) return '0%'
+  const percentage = (count / maxCount.value) * 100
+  return `${percentage}%`
+}
+
+// Fetch data dari API
+const fetchSdgsData = async () => {
+  try {
+    loading.value = true
+    error.value = null
+    
+    const response = await fetch('/api/sdgs')
+    
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`)
+    }
+    
+    const result = await response.json()
+    
+    if (result.success && result.data) {
+      // Filter hanya yang status true
+      sdgsData.value = result.data.filter(item => item.status)
+      
+      // Calculate max count untuk progress bar
+      if (sdgsData.value.length > 0) {
+        maxCount.value = Math.max(...sdgsData.value.map(item => item.count || 0))
+      }
+    } else {
+      throw new Error('Data tidak valid')
+    }
+  } catch (e) {
+    console.error('Error fetching SDGs data:', e)
+    error.value = 'Gagal memuat data SDGs. Silakan coba lagi.'
+  } finally {
+    loading.value = false
+  }
+}
+
+onMounted(() => {
+  fetchSdgsData()
+})
 </script>
-
-<style scoped>
-/* Additional styles if needed */
-</style>

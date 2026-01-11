@@ -166,6 +166,24 @@
         <v-menu offset-y>
           <template #activator="{ props }">
             <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
+              {{ $t('nav.nearby') }}
+              <v-icon end size="small">mdi-chevron-down</v-icon>
+            </v-btn>
+          </template>
+          <v-list>
+            <v-list-item
+              v-for="item in menuNearby"
+              :key="item.href"
+              :to="item.href"
+            >
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list>
+        </v-menu>
+
+        <v-menu offset-y>
+          <template #activator="{ props }">
+            <v-btn variant="text" v-bind="props" class="nav-link mx-1" color="primary">
               Knowledge Center
               <v-icon end size="small">mdi-chevron-down</v-icon>
             </v-btn>
@@ -246,6 +264,25 @@
           </template>
           <v-list-item-title>{{ item.label }}</v-list-item-title>
         </v-list-item>
+
+        <v-list-group :value="$t('nav.nearby')">
+          <template #activator="{ props }">
+            <v-list-item v-bind="props">
+              <template #prepend>
+                <v-icon>mdi-map-marker</v-icon>
+              </template>
+              <v-list-item-title>{{ $t('nav.nearby') }}</v-list-item-title>
+            </v-list-item>
+          </template>
+          <v-list-item
+            v-for="item in menuNearby"
+            :key="item.href"
+            :to="item.href"
+            @click="drawer = false"
+          >
+            <v-list-item-title>{{ item.label }}</v-list-item-title>
+          </v-list-item>
+        </v-list-group>
 
         <v-divider />
 
@@ -553,8 +590,12 @@ const handleSearch = () => {
 const navItems = computed(() => [
   { icon: 'mdi-home', label: t('nav.home'), href: '/' },
   { icon: 'mdi-folder', label: t('nav.etalase'), href: '/etalase' },
-  { icon: 'mdi-map-marker', label: t('nav.nearby'), href: '/dekatsaya' },
   { icon: 'mdi-newspaper', label: t('nav.berita'), href: '/berita' }
+])
+
+const menuNearby = computed(() => [
+  { label: t('nav.searchInnovation'), href: '/dekatsaya/cari' },
+  { label: t('nav.hubReadiness'), href: '/dekatsaya/hub' }
 ])
 
 const menuKnowledge = computed(() => [

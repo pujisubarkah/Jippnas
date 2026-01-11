@@ -1,7 +1,7 @@
 import { drizzle } from 'drizzle-orm/postgres-js'
 import { eq } from 'drizzle-orm'
 import postgres from 'postgres'
-import { responseAnswers } from '~/drizzle/schema/survey'
+import { responseAnswers, questionOptions } from '~/drizzle/schema/survey'
 
 const client = postgres(process.env.DATABASE_URL!)
 const db = drizzle(client)
@@ -10,9 +10,27 @@ export default defineEventHandler(async (event) => {
   const method = event.node.req.method
 
   if (method === 'GET') {
-    // Get all response answers
+    // Get all response answers with option details
     try {
-      const answers = await db.select().from(responseAnswers).orderBy(responseAnswers.createdAt)
+      const answers = await db
+        .select({
+          id: responseAnswers.id,
+          responseId: responseAnswers.responseId,
+          questionId: responseAnswers.questionId,
+          selectedOptionIds: responseAnswers.selectedOptionIds,
+          selectedOptionId: responseAnswers.selectedOptionId,
+          evidence: responseAnswers.evidence,
+          originalScore: responseAnswers.originalScore,
+          verifiedScore: responseAnswers.verifiedScore,
+          createdAt: responseAnswers.createdAt,
+          // Option details for single selection
+          optionValue: questionOptions.optionValue,
+          optionScore: questionOptions.score
+        })
+        .from(responseAnswers)
+        .leftJoin(questionOptions, eq(responseAnswers.selectedOptionId, questionOptions.id))
+        .orderBy(responseAnswers.id)
+      
       return { success: true, data: answers }
     } catch (error) {
       console.error('Error fetching response answers:', error)
