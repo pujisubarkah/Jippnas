@@ -38,4 +38,14 @@
 import InovasiUnggulan from '~/components/InovasiUnggulan.vue';
 import Sdgs from '~/components/Sdgs.client';
 import DaftarInstansi from '~/components/daftar_instansi.vue';
+
+useHead({
+  title: 'Etalase Inovasi | JIPPNAS - Jaringan Inovasi Pelayanan Publik Nasional',
+  meta: [
+    {
+      name: 'description',
+      content: 'Jelajahi berbagai inovasi pelayanan publik yang telah dikembangkan oleh instansi pemerintah di seluruh Indonesia melalui JIPPNAS.'
+    }
+  ]
+})
 </script>

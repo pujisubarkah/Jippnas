@@ -144,5 +144,13 @@ Pemerintah Provinsi Jawa Tengah: Kepercayaan masyarakat meningkat</p>
 </template>
 
 <script setup>
-// No need to import Navbar anymore
+useHead({
+  title: 'Berita | JIPPNAS - Jaringan Inovasi Pelayanan Publik Nasional',
+  meta: [
+    {
+      name: 'description',
+      content: 'Berita dan informasi terkini seputar inovasi pelayanan publik di Indonesia dari JIPPNAS - Kementerian PANRB.'
+    }
+  ]
+})
 </script>
