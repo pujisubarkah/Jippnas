@@ -2,7 +2,7 @@
   <div class="bg-linear-to-br from-blue-50 to-blue-100 min-h-screen">
     <!-- Header Section with SDG Icon -->
     <section class="bg-linear-to-r from-blue-600 to-blue-700 shadow-lg">
-      <div class="container mx-auto px-4 py-12">
+      <div class="container mx-auto px-6 py-16">
         <div class="flex flex-col items-center">
           <!-- SDG Icon -->
           <div
@@ -29,13 +29,13 @@
     </section>
 
     <!-- Statistics Section -->
-    <div v-if="sdgData" class="container mx-auto px-4 py-8">
+    <div v-if="sdgData" class="container mx-auto px-6 py-10">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Inovasi Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-blue-400 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-lightbulb text-3xl text-white"></i>
@@ -43,11 +43,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">{{ sdgData.count || 0 }}</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Inovasi</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Inovasi</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-blue-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-blue-600 text-sm font-medium">
                 <i class="fas fa-arrow-up mr-1"></i>
                 <span>Terkait SDG</span>
               </div>
@@ -58,8 +58,8 @@
         <!-- Progress Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-cyan-400 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-chart-line text-3xl text-white"></i>
@@ -67,11 +67,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-cyan-600 to-cyan-800 bg-clip-text text-transparent">{{ calculateProgress() }}%</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Progress</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Progress</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-cyan-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-cyan-600 text-sm font-medium">
                 <i class="fas fa-chart-bar mr-1"></i>
                 <span>Dari Total Inovasi</span>
               </div>
@@ -82,8 +82,8 @@
         <!-- Ranking Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-indigo-400 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-trophy text-3xl text-white"></i>
@@ -91,11 +91,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">{{ getRanking() }}</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Ranking</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Ranking</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-indigo-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-indigo-600 text-sm font-medium">
                 <i class="fas fa-medal mr-1"></i>
                 <span>Dari 17 SDG</span>
               </div>
@@ -106,8 +106,8 @@
         <!-- Status Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-green-400 to-green-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-green-400 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-check-circle text-3xl text-white"></i>
@@ -115,11 +115,11 @@
               </div>
               <div class="text-right">
                 <p class="text-green-600 font-bold text-lg">Aktif</p>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Status SDG</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Status SDG</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-green-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-green-600 text-sm font-medium">
                 <i class="fas fa-check mr-1"></i>
                 <span>Terverifikasi</span>
               </div>
@@ -130,34 +130,34 @@
     </div>
 
     <!-- Main Content with Sidebar Layout -->
-    <div v-if="sdgData" class="container mx-auto px-4 py-8">
+    <div v-if="sdgData" class="container mx-auto px-6 py-10">
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Sidebar: SDG Information -->
         <aside class="lg:w-80 shrink-0">
-          <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-4">
-            <div class="flex items-center mb-6">
+          <div class="bg-white rounded-2xl shadow-xl px-12 py-12 sticky top-4">
+            <div class="flex items-center mb-12">
               <div class="w-1 h-8 bg-linear-to-b from-blue-500 to-blue-700 rounded mr-4"></div>
               <h3 class="text-xl font-bold text-gray-800">Informasi SDG</h3>
             </div>
 
             <!-- SDG Details -->
-            <div class="space-y-6">
+            <div class="space-y-10">
               <!-- Nama Indonesia -->
               <div>
-                <label class="block text-sm font-semibold text-blue-800 mb-2">Nama (Indonesia)</label>
-                <p class="text-gray-700 text-sm leading-relaxed bg-blue-50 p-3 rounded-lg">{{ sdgData.nama_id }}</p>
+                <label class="block text-sm font-semibold text-blue-800 mb-5">Nama (Indonesia)</label>
+                <p class="text-gray-700 text-sm leading-relaxed bg-blue-50 px-8 py-6 rounded-lg">{{ sdgData.nama_id }}</p>
               </div>
 
               <!-- Nama English -->
               <div>
-                <label class="block text-sm font-semibold text-blue-800 mb-2">Name (English)</label>
-                <p class="text-gray-700 text-sm leading-relaxed bg-blue-50 p-3 rounded-lg">{{ sdgData.nama_en }}</p>
+                <label class="block text-sm font-semibold text-blue-800 mb-5">Name (English)</label>
+                <p class="text-gray-700 text-sm leading-relaxed bg-blue-50 px-8 py-6 rounded-lg">{{ sdgData.nama_en }}</p>
               </div>
 
               <!-- SDG Number -->
               <div>
-                <label class="block text-sm font-semibold text-blue-800 mb-2">Nomor SDG</label>
-                <div class="flex items-center bg-blue-50 p-3 rounded-lg">
+                <label class="block text-sm font-semibold text-blue-800 mb-5">Nomor SDG</label>
+                <div class="flex items-center bg-blue-50 px-8 py-6 rounded-lg">
                   <div class="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center font-bold text-sm mr-3">
                     {{ sdgData.id }}
                   </div>
@@ -167,8 +167,8 @@
 
               <!-- Icon Preview -->
               <div>
-                <label class="block text-sm font-semibold text-blue-800 mb-2">Icon SDG</label>
-                <div class="bg-blue-50 p-4 rounded-lg flex justify-center">
+                <label class="block text-sm font-semibold text-blue-800 mb-5">Icon SDG</label>
+                <div class="bg-blue-50 px-8 py-12 rounded-lg flex justify-center">
                   <div
                     v-if="sdgData.icon_base64"
                     v-html="convertBase64ToSvg(sdgData.icon_base64)"
@@ -182,8 +182,8 @@
 
         <!-- Main Content: Inovasi List -->
         <main class="flex-1">
-          <div class="bg-white rounded-2xl shadow-xl p-6">
-            <div class="flex items-center justify-between mb-6">
+          <div class="bg-white rounded-2xl shadow-xl px-12 py-12">
+            <div class="flex items-center justify-between mb-12">
               <div class="flex items-center">
                 <div class="w-1 h-8 bg-linear-to-b from-blue-500 to-blue-700 rounded mr-4"></div>
                 <h3 class="text-xl font-bold text-gray-800">Inovasi Terkait SDG {{ sdgData.id }}</h3>
@@ -201,19 +201,19 @@
             </div>
 
             <!-- Inovasi Cards -->
-            <div v-else class="space-y-4">
+            <div v-else class="space-y-6">
               <div
                 v-for="inovasi in inovasiList"
                 :key="inovasi.id"
-                class="border border-gray-200 rounded-xl p-4 hover:shadow-md transition-all duration-200 cursor-pointer"
+                class="border border-gray-200 rounded-xl px-10 py-8 hover:shadow-md transition-all duration-200 cursor-pointer"
               >
-                <div class="flex items-start gap-4">
+                <div class="flex items-start gap-8">
                   <div class="w-16 h-16 bg-blue-100 rounded-lg flex items-center justify-center shrink-0">
                     <i class="fas fa-lightbulb text-2xl text-blue-600"></i>
                   </div>
                   <div class="flex-1">
-                    <h4 class="font-semibold text-gray-800 mb-1">{{ inovasi.nama }}</h4>
-                    <p class="text-gray-600 text-sm mb-2">{{ inovasi.deskripsi }}</p>
+                    <h4 class="font-semibold text-gray-800 mb-3">{{ inovasi.nama }}</h4>
+                    <p class="text-gray-600 text-sm mb-4">{{ inovasi.deskripsi }}</p>
                     <div class="flex items-center gap-4 text-xs text-gray-500">
                       <span><i class="fas fa-building mr-1"></i>{{ inovasi.instansi }}</span>
                       <span><i class="fas fa-user mr-1"></i>{{ inovasi.inovator }}</span>
@@ -225,13 +225,13 @@
             </div>
 
             <!-- Pagination -->
-            <div v-if="inovasiList && inovasiList.length > 0" class="mt-8 flex justify-center">
-              <div class="flex items-center gap-2">
-                <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" :disabled="currentPage === 1">
+            <div v-if="inovasiList && inovasiList.length > 0" class="mt-12 flex justify-center">
+              <div class="flex items-center gap-4">
+                <button class="px-5 py-4 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" :disabled="currentPage === 1">
                   <i class="fas fa-chevron-left"></i>
                 </button>
-                <span class="px-4 py-2 bg-blue-600 text-white rounded-lg">{{ currentPage }}</span>
-                <button class="px-3 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" :disabled="currentPage === totalPages">
+                <span class="px-6 py-4 bg-blue-600 text-white rounded-lg font-medium">{{ currentPage }}</span>
+                <button class="px-5 py-4 border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50" :disabled="currentPage === totalPages">
                   <i class="fas fa-chevron-right"></i>
                 </button>
               </div>
