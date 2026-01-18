@@ -1,16 +1,16 @@
 <template>
   <div class="bg-gray-50 min-h-screen">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8" id="myList">
-      <div class="mb-8">
-        <h2 class="text-3xl font-bold text-gray-800 mb-2">Daftar Unduhan</h2>
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-10" id="myList">
+      <div class="mb-12">
+        <h2 class="text-3xl font-bold text-gray-800 mb-3">Daftar Unduhan</h2>
         <p class="text-gray-600 text-lg">Unduh berbagai dokumen, laporan, dan peraturan terkait inovasi pelayanan publik</p>
 
-        <form class="mt-6" @submit.prevent>
+        <form class="mt-8" @submit.prevent>
           <div class="max-w-md">
             <input
               type="text"
               v-model="searchQuery"
-              class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
+              class="w-full px-6 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm"
               placeholder="Masukkan Judul Unduhan"
               @input="filterDownloads"
             />
@@ -18,7 +18,7 @@
         </form>
       </div>
 
-      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="contentUnduhan">
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8" id="contentUnduhan">
         <div v-if="loading" class="col-span-full text-center py-12">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p class="mt-4 text-gray-600">Memuat unduhan...</p>
@@ -36,8 +36,8 @@
           :key="download.id"
           class="bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 overflow-hidden group border border-gray-100"
         >
-          <div class="p-6">
-            <div class="flex justify-center mb-4">
+          <div class="px-8 py-8">
+            <div class="flex justify-center mb-6">
               <div class="relative">
                 <img
                   :src="download.image"
@@ -55,12 +55,12 @@
               </div>
             </div>
 
-            <div class="mb-4">
-              <h4 class="text-blue-600 font-bold text-lg leading-tight mb-2 line-clamp-3">{{ download.title }}</h4>
+            <div class="mb-6">
+              <h4 class="text-blue-600 font-bold text-lg leading-tight mb-3 line-clamp-3">{{ download.title }}</h4>
               <p class="text-gray-600 text-sm">{{ download.description }}</p>
             </div>
 
-            <div v-if="download.status" class="flex items-center justify-center mb-4">
+            <div v-if="download.status" class="flex items-center justify-center mb-6">
               <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium" :class="download.status === 'Aktif' ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800'">
                 {{ download.status }}
               </span>
@@ -68,7 +68,7 @@
 
             <a
               :href="download.downloadUrl"
-              class="inline-flex items-center justify-center gap-2 bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105 w-full group"
+              class="inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-6 py-3 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 w-full group"
               target="_blank"
             >
               <svg class="w-5 h-5 group-hover:animate-bounce" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,12 +81,12 @@
       </div>
 
       <!-- Pagination -->
-      <div v-if="!loading && !error && totalPages > 1" class="flex justify-center mt-12">
-        <nav class="flex items-center space-x-1">
+      <div v-if="!loading && !error && totalPages > 1" class="flex justify-center mt-16">
+        <nav class="flex items-center space-x-2">
           <button
             @click="changePage(currentPage - 1)"
             :disabled="currentPage === 1"
-            class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-l-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-5 py-3 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-l-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Previous
           </button>
@@ -95,10 +95,10 @@
             <button
               @click="changePage(page)"
               :class="[
-                'px-3 py-2 text-sm font-medium border',
+                'px-5 py-3 text-sm font-medium border transition-colors duration-200',
                 page === currentPage
-                  ? 'text-blue-600 bg-blue-50 border-blue-500'
-                  : 'text-gray-500 bg-white border-gray-300 hover:bg-gray-50'
+                  ? 'text-white bg-blue-600 border-blue-600'
+                  : 'text-blue-600 bg-blue-50 border-blue-200 hover:bg-blue-100'
               ]"
             >
               {{ page }}
@@ -108,7 +108,7 @@
           <button
             @click="changePage(currentPage + 1)"
             :disabled="currentPage === totalPages"
-            class="px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-r-md hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            class="px-5 py-3 text-sm font-medium text-white bg-blue-600 border border-blue-600 rounded-r-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-200"
           >
             Next
           </button>
