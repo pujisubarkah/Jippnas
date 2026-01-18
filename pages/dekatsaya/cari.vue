@@ -1,14 +1,14 @@
 <template>
-  <section class="w-full px-2 sm:px-4 md:px-6 py-6 md:py-8">
+  <section class="w-full px-4 sm:px-6 md:px-8 py-8 md:py-12">
     <!-- Background decorative elements -->
     <div class="absolute top-0 left-0 w-32 h-32 bg-linear-to-br from-blue-400/10 to-cyan-400/10 rounded-full blur-3xl -z-10"></div>
     <div class="absolute bottom-0 right-0 w-40 h-40 bg-linear-to-tl from-indigo-400/10 to-blue-400/10 rounded-full blur-3xl -z-10"></div>
 
-    <div class="bg-linear-to-br from-white/95 via-blue-50/30 to-cyan-50/40 backdrop-blur-xl rounded-3xl shadow-xl border border-blue-200/50 p-4 md:p-8">
+    <div class="bg-linear-to-br from-white/95 via-blue-50/30 to-cyan-50/40 backdrop-blur-xl rounded-3xl shadow-xl border border-blue-200/50 px-6 md:px-12 py-6 md:py-12">
       <!-- Header -->
-      <div class="text-center mb-6 md:mb-8">
-        <div class="flex items-center justify-center mb-4">
-          <div class="bg-linear-to-r from-blue-500 to-cyan-500 p-3 md:p-4 rounded-2xl shadow-lg mr-3 md:mr-4">
+      <div class="text-center mb-8 md:mb-12">
+        <div class="flex items-center justify-center mb-6">
+          <div class="bg-linear-to-r from-blue-500 to-cyan-500 p-4 md:p-5 rounded-2xl shadow-lg mr-4 md:mr-5">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2">
               <path d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
             </svg>
@@ -17,15 +17,15 @@
             <h1 class="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold bg-linear-to-r from-blue-600 via-cyan-600 to-indigo-600 bg-clip-text text-transparent">
               PETA INOVASI
             </h1>
-            <div class="h-0.5 w-16 md:w-20 bg-linear-to-r from-blue-400 via-cyan-400 to-indigo-400 rounded-full mx-auto mt-2"></div>
+            <div class="h-0.5 w-16 md:w-20 bg-linear-to-r from-blue-400 via-cyan-400 to-indigo-400 rounded-full mx-auto mt-3"></div>
           </div>
         </div>
 
-        <div class="max-w-3xl mx-auto mt-4">
-          <p class="text-gray-700 text-sm sm:text-base px-1">
+        <div class="max-w-3xl mx-auto mt-6">
+          <p class="text-gray-700 text-sm sm:text-base px-2 mb-2">
             💡 <span class="font-semibold">Temukan inovasi-inovasi terdepan</span> dari seluruh Indonesia!
           </p>
-          <div class="mt-2 bg-blue-50/60 rounded-lg p-3 border border-blue-200/50">
+          <div class="mt-3 bg-blue-50/60 rounded-lg px-5 py-4 border border-blue-200/50">
             <p class="text-gray-800 text-xs sm:text-sm">
               🔍 <span class="text-blue-600 font-medium">Eksplorasi:</span> Klik pada wilayah untuk melihat detail inovasi.
               <br className="hidden sm:inline" /> Gunakan <strong>scroll</strong> untuk zoom dan <strong>drag</strong> untuk navigasi peta.
@@ -35,25 +35,25 @@
       </div>
 
       <!-- Peta - Full Width -->
-      <div class="relative overflow-hidden rounded-2xl shadow-lg border border-blue-200/50 bg-linear-to-b from-blue-50/40 to-cyan-50/30 mb-8">
+      <div class="relative overflow-hidden rounded-2xl shadow-lg border border-blue-200/50 bg-linear-to-b from-blue-50/40 to-cyan-50/30 mb-10">
         <!-- Zoom Controls -->
-        <div class="absolute z-20 top-4 left-4 flex flex-col gap-2 bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-2 border border-blue-200/40">
+        <div class="absolute z-20 top-4 left-4 flex flex-col gap-3 bg-white/90 backdrop-blur-sm rounded-xl shadow-md p-3 border border-blue-200/40">
           <button
-            class="w-9 h-9 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm font-bold shadow transition hover:scale-105"
+            class="w-10 h-10 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-base font-bold shadow transition hover:scale-105"
             @click="zoomIn"
             aria-label="Perbesar"
           >
             +
           </button>
           <button
-            class="w-9 h-9 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-sm font-bold shadow transition hover:scale-105"
+            class="w-10 h-10 rounded-lg bg-linear-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white text-base font-bold shadow transition hover:scale-105"
             @click="zoomOut"
             aria-label="Perkecil"
           >
             −
           </button>
           <button
-            class="w-9 h-9 rounded-lg bg-gray-500 hover:bg-gray-600 text-white text-xs font-bold shadow transition hover:scale-105"
+            class="w-10 h-10 rounded-lg bg-gray-500 hover:bg-gray-600 text-white text-sm font-bold shadow transition hover:scale-105"
             @click="resetView"
             aria-label="Reset peta"
           >
@@ -105,22 +105,22 @@
             v-if="showTooltip && hovered"
             :x="tooltipPos.x + 10"
             :y="tooltipPos.y - 60"
-            width="240"
-            height="100"
+            width="260"
+            height="110"
             class="pointer-events-none"
           >
-            <div class="bg-white border border-gray-800 rounded-lg p-3 shadow-lg text-sm font-medium">
-              <div class="flex items-center mb-1">
+            <div class="bg-white border border-gray-800 rounded-lg px-5 py-4 shadow-lg text-sm font-medium">
+              <div class="flex items-center mb-2">
                 <div
                   class="w-3.5 h-3.5 rounded-full mr-2 border border-gray-700"
                   :style="{ backgroundColor: getColor(hovered.jumlahInovasi || 0) }"
                 />
                 <span class="font-bold text-gray-900">{{ hovered.nama }}</span>
               </div>
-              <div class="text-gray-800">
+              <div class="text-gray-800 mb-2">
                 💡 <span class="font-bold text-blue-800">{{ (hovered.jumlahInovasi || 0).toLocaleString('id-ID') }} Inovasi</span>
               </div>
-              <div :class="`mt-1 px-2 py-0.5 rounded text-xs font-semibold ${
+              <div :class="`mt-2 px-3 py-1 rounded text-xs font-semibold ${
                 (hovered.jumlahInovasi || 0) === 0 ? 'bg-gray-100 text-gray-600' :
                 (hovered.jumlahInovasi || 0) <= 10 ? 'bg-green-100 text-green-800' :
                 (hovered.jumlahInovasi || 0) <= 50 ? 'bg-yellow-100 text-yellow-800' :
@@ -138,29 +138,29 @@
       </div>
 
       <!-- Legenda - Full Width di Bawah Peta -->
-      <div class="w-full bg-linear-to-br from-white/90 via-blue-50/40 to-cyan-50/30 backdrop-blur-sm rounded-2xl shadow-md border border-blue-200/50 p-4 md:p-5">
-        <div class="text-center mb-3">
+      <div class="w-full bg-linear-to-br from-white/90 via-blue-50/40 to-cyan-50/30 backdrop-blur-sm rounded-2xl shadow-md border border-blue-200/50 px-6 md:px-8 py-6 md:py-8">
+        <div class="text-center mb-5">
           <h2 class="font-bold bg-linear-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent text-lg md:text-xl">
             LEGENDA
           </h2>
-          <div class="h-0.5 w-12 bg-linear-to-r from-blue-400 to-cyan-400 rounded mx-auto mt-1"></div>
+          <div class="h-0.5 w-12 bg-linear-to-r from-blue-400 to-cyan-400 rounded mx-auto mt-2"></div>
         </div>
 
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-2xl mx-auto">
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 max-w-2xl mx-auto">
           <div
             v-for="(scale, idx) in colorScale"
             :key="idx"
-            class="flex items-center gap-3 p-2 rounded-lg bg-white/50 hover:bg-white/70 transition-colors"
+            class="flex items-center gap-4 px-4 py-3 rounded-lg bg-white/50 hover:bg-white/70 transition-colors"
           >
             <div
-              class="w-5 h-5 rounded shadow-sm border border-white"
+              class="w-6 h-6 rounded shadow-sm border border-white"
               :style="{ background: scale.gradient }"
             />
             <span class="text-sm text-gray-700">{{ scale.label }}</span>
           </div>
-          <div class="flex items-center gap-3 p-2 rounded-lg bg-white/50">
+          <div class="flex items-center gap-4 px-4 py-3 rounded-lg bg-white/50">
             <div
-              class="w-5 h-5 rounded shadow-sm border border-gray-300"
+              class="w-6 h-6 rounded shadow-sm border border-gray-300"
               style="background: linear-gradient(135deg, #f8fafc, #e2e8f0)"
             />
             <span class="text-sm text-gray-500">Belum ada data</span>
