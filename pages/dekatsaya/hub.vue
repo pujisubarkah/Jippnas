@@ -1,37 +1,37 @@
 <template>
-  <div class="container mx-auto p-4">
-    <h1 class="text-2xl font-bold mb-4">Inovasi Dekat Saya - Hub</h1>
+  <div class="container mx-auto px-6 py-10">
+    <h1 class="text-2xl font-bold mb-8">Inovasi Dekat Saya - Hub</h1>
 
     <!-- Survey Results -->
-    <div v-if="loading" class="text-center py-8">
+    <div v-if="loading" class="text-center py-12">
       <p>Loading survey results...</p>
     </div>
 
-    <div v-else-if="error" class="text-center py-8 text-red-600">
+    <div v-else-if="error" class="text-center py-12 text-red-600">
       <p>{{ error }}</p>
     </div>
 
     <div v-else>
       <!-- Overview Dashboard -->
-      <div class="mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
-        <div class="bg-white p-4 rounded-lg shadow border">
-          <h3 class="text-lg font-semibold text-gray-700">Total Instansi</h3>
-          <p class="text-2xl font-bold text-blue-600">{{ surveyResponses.length }}</p>
+      <div class="mb-10 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div class="bg-white px-8 py-8 rounded-xl shadow-md border">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Total Instansi</h3>
+          <p class="text-3xl font-bold text-blue-600">{{ surveyResponses.length }}</p>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow border">
-          <h3 class="text-lg font-semibold text-gray-700">Rata-rata Skor</h3>
-          <p class="text-2xl font-bold text-green-600">{{ averageScore.toFixed(2) }}</p>
+        <div class="bg-white px-8 py-8 rounded-xl shadow-md border">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Rata-rata Skor</h3>
+          <p class="text-3xl font-bold text-green-600">{{ averageScore.toFixed(2) }}</p>
         </div>
-        <div class="bg-white p-4 rounded-lg shadow border">
-          <h3 class="text-lg font-semibold text-gray-700">Status Terbaik</h3>
-          <p class="text-2xl font-bold text-purple-600">{{ bestStatus }}</p>
+        <div class="bg-white px-8 py-8 rounded-xl shadow-md border">
+          <h3 class="text-lg font-semibold text-gray-700 mb-3">Status Terbaik</h3>
+          <p class="text-3xl font-bold text-purple-600">{{ bestStatus }}</p>
         </div>
       </div>
 
       <!-- Grid of Small Radar Charts -->
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        <div v-for="response in paginatedResponses" :key="response.responseId" class="bg-white p-4 rounded-lg shadow border hover:shadow-lg transition">
-          <h3 class="text-lg font-semibold mb-2 text-center">{{ response.instansi }}</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div v-for="response in paginatedResponses" :key="response.responseId" class="bg-white px-8 py-8 rounded-xl shadow-md border hover:shadow-lg transition">
+          <h3 class="text-lg font-semibold mb-4 text-center">{{ response.instansi }}</h3>
           <div class="w-full cursor-pointer" @click="openModal(response)">
             <ClientOnly>
               <apexchart
@@ -42,19 +42,19 @@
               />
             </ClientOnly>
           </div>
-          <div class="mt-2 text-center">
-            <p class="text-sm text-gray-600">Total Skor: <span class="font-bold text-blue-600">{{ response.totalFinalScore.toFixed(2) }}</span></p>
+          <div class="mt-4 text-center">
+            <p class="text-sm text-gray-600 mb-2">Total Skor: <span class="font-bold text-blue-600">{{ response.totalFinalScore.toFixed(2) }}</span></p>
             <p class="text-xs text-gray-500">{{ getStatusText(response.totalFinalScore) }}</p>
           </div>
         </div>
       </div>
 
       <!-- Pagination -->
-      <div class="flex justify-center items-center mt-6 space-x-2">
+      <div class="flex justify-center items-center mt-10 space-x-3">
         <button
           v-if="currentPage > 1"
           @click="prevPage"
-          class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          class="px-5 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium shadow-md hover:shadow-lg transition"
         >
           Previous
         </button>
@@ -62,14 +62,14 @@
           v-for="page in visiblePages"
           :key="page"
           @click="goToPage(page)"
-          :class="page === currentPage ? 'px-3 py-2 bg-blue-700 text-white rounded' : 'px-3 py-2 bg-gray-200 text-gray-700 rounded hover:bg-gray-300'"
+          :class="page === currentPage ? 'px-4 py-3 bg-blue-700 text-white rounded-lg font-medium shadow-md' : 'px-4 py-3 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 font-medium transition'"
         >
           {{ page }}
         </button>
         <button
           v-if="currentPage < totalPages"
           @click="nextPage"
-          class="px-3 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+          class="px-5 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600 font-medium shadow-md hover:shadow-lg transition">
         >
           Next
         </button>
@@ -78,8 +78,8 @@
 
     <!-- Modal for Full Radar Chart -->
     <div v-if="showModal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click="closeModal">
-      <div class="bg-white p-6 rounded-lg max-w-2xl w-full mx-4" @click.stop>
-        <div class="flex justify-between items-center mb-4">
+      <div class="bg-white px-10 py-10 rounded-xl max-w-2xl w-full mx-4" @click.stop>
+        <div class="flex justify-between items-center mb-6">
           <h2 class="text-xl font-bold">{{ selectedResponse?.instansi }}</h2>
           <button @click="closeModal" class="text-gray-500 hover:text-gray-700">
             <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -97,9 +97,9 @@
             />
           </ClientOnly>
         </div>
-        <div class="mt-4 text-center">
-          <p class="text-sm text-gray-600">Total Skor: <span class="font-bold text-blue-600">{{ selectedResponse?.totalFinalScore.toFixed(2) }}</span></p>
-          <p class="text-xs text-gray-500 mt-1">{{ getStatusText(selectedResponse?.totalFinalScore || 0) }}</p>
+        <div class="mt-6 text-center">
+          <p class="text-sm text-gray-600 mb-2">Total Skor: <span class="font-bold text-blue-600">{{ selectedResponse?.totalFinalScore.toFixed(2) }}</span></p>
+          <p class="text-xs text-gray-500 mt-2">{{ getStatusText(selectedResponse?.totalFinalScore || 0) }}</p>
         </div>
       </div>
     </div>
