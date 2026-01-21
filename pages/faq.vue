@@ -2,25 +2,25 @@
   <div class="min-h-screen bg-linear-to-br from-blue-50 via-white to-purple-50">
     <!-- Hero Section -->
     <div class="bg-linear-to-r from-blue-600 to-purple-600 text-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20">
         <div class="text-center">
-          <div class="flex justify-center mb-6">
-            <div class="p-4 bg-white/20 rounded-full backdrop-blur-sm">
+          <div class="flex justify-center mb-8">
+            <div class="p-6 bg-white/20 rounded-full backdrop-blur-sm">
               <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
             </div>
           </div>
-          <h1 class="text-4xl md:text-5xl font-bold mb-4">Hal Yang Sering Ditanyakan</h1>
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">Hal Yang Sering Ditanyakan</h1>
           <p class="text-xl text-blue-100 max-w-2xl mx-auto">Temukan jawaban untuk pertanyaan umum tentang JIPPNAS dan inovasi pelayanan publik</p>
         </div>
       </div>
     </div>
 
     <!-- Content -->
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <div class="max-w-4xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
       <!-- Search Section -->
-      <div class="mb-12">
+      <div class="mb-16">
         <div class="max-w-2xl mx-auto">
           <div class="relative">
             <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
@@ -31,7 +31,7 @@
             <input
               type="text"
               v-model="searchQuery"
-              class="w-full pl-12 pr-4 py-4 border-0 rounded-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm text-lg placeholder-gray-500"
+              class="w-full pl-12 pr-4 py-5 border-0 rounded-2xl shadow-lg focus:outline-none focus:ring-4 focus:ring-blue-500/20 bg-white/80 backdrop-blur-sm text-lg placeholder-gray-500"
               placeholder="Cari pertanyaan..."
               @input="filterFaqs"
             />
@@ -40,7 +40,7 @@
       </div>
 
       <!-- FAQ List -->
-      <div class="space-y-6" id="contentFaq">
+      <div class="space-y-8" id="contentFaq">
         <div v-if="loading" class="text-center py-12">
           <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
           <p class="mt-4 text-gray-600">Memuat FAQ...</p>
@@ -62,10 +62,10 @@
           <div class="bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 group-hover:border-blue-200">
             <button
               @click="toggleFaq(faq.id)"
-              class="w-full px-8 py-6 text-left flex items-center justify-between hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200"
+              class="w-full px-10 py-8 text-left flex items-center justify-between hover:bg-linear-to-r hover:from-blue-50 hover:to-purple-50 focus:outline-none focus:ring-4 focus:ring-blue-500/20 transition-all duration-200"
               :aria-expanded="faq.isOpen"
             >
-              <div class="flex items-center space-x-6">
+              <div class="flex items-center space-x-8">
                 <div class="shrink-0 w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center shadow-md border-2 border-blue-300">
                   <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" :d="getFaqIcon(faq.id)"/>
@@ -88,10 +88,10 @@
 
             <div
               v-show="faq.isOpen"
-              class="px-8 pb-6 border-t border-gray-100 bg-linear-to-r from-gray-50 to-blue-50/30"
+              class="px-10 pb-8 border-t border-gray-100 bg-linear-to-r from-gray-50 to-blue-50/30"
               :class="{ 'animate-slide-down': faq.isOpen }"
             >
-              <div class="pt-6">
+              <div class="pt-8">
                 <div class="flex items-start space-x-4">
                   <div class="shrink-0 w-8 h-8 bg-linear-to-br from-green-400 to-blue-500 rounded-lg flex items-center justify-center mt-1">
                     <svg class="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -109,10 +109,10 @@
       </div>
 
       <!-- Load More Button -->
-      <div v-if="!loading && !error && hasMore" class="text-center mt-12">
+      <div v-if="!loading && !error && hasMore" class="text-center mt-16">
         <button
           type="button"
-          class="bg-linear-to-r from-blue-600 to-purple-600 text-white px-8 py-4 rounded-2xl hover:from-blue-700 hover:to-purple-700 focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 inline-flex items-center gap-3"
+          class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-2xl focus:outline-none focus:ring-4 focus:ring-blue-500/30 transition-all duration-300 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center gap-3"
           @click="loadMoreDataFaq"
         >
           <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -136,14 +136,14 @@
       </div>
 
       <!-- Stats Section -->
-      <div class="mt-16 bg-white rounded-2xl shadow-lg p-8">
+      <div class="mt-20 bg-white rounded-2xl shadow-lg px-10 py-12">
         <div class="text-center">
-          <h3 class="text-2xl font-bold text-gray-800 mb-4">Butuh Bantuan Lebih Lanjut?</h3>
-          <p class="text-gray-600 mb-6">Jika pertanyaan Anda tidak terjawab di sini, jangan ragu untuk menghubungi tim kami.</p>
+          <h3 class="text-2xl font-bold text-gray-800 mb-6">Butuh Bantuan Lebih Lanjut?</h3>
+          <p class="text-gray-600 mb-8">Jika pertanyaan Anda tidak terjawab di sini, jangan ragu untuk menghubungi tim kami.</p>
           <div class="flex flex-col sm:flex-row gap-4 justify-center">
             <a
               href="/kontak"
-              class="bg-linear-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-xl hover:from-blue-700 hover:to-purple-700 transition-all duration-200 font-semibold shadow-md hover:shadow-lg transform hover:scale-105 inline-flex items-center justify-center gap-2"
+              class="bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white px-8 py-4 rounded-xl transition-all duration-200 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
@@ -152,7 +152,7 @@
             </a>
             <a
               href="/"
-              class="border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl hover:bg-gray-50 transition-all duration-200 font-semibold inline-flex items-center justify-center gap-2"
+              class="border-2 border-gray-300 text-gray-700 px-8 py-4 rounded-xl hover:bg-gray-50 transition-all duration-200 font-semibold hover:border-gray-400 inline-flex items-center justify-center gap-2"
             >
               <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
@@ -164,12 +164,12 @@
       </div>
 
       <!-- Innovation Stats Section -->
-      <div class="mt-12 bg-linear-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white">
-        <div class="text-center mb-8">
-          <h3 class="text-2xl font-bold mb-2">Statistik Inovasi JIPPNas</h3>
+      <div class="mt-16 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl px-10 py-12 text-white">
+        <div class="text-center mb-10">
+          <h3 class="text-2xl font-bold mb-3">Statistik Inovasi JIPPNas</h3>
           <p class="text-blue-100">Data terkini perkembangan inovasi pelayanan publik di Indonesia</p>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
           <div class="text-center">
             <div class="text-3xl font-bold mb-2">500+</div>
             <div class="text-blue-100">Inovasi Terdaftar</div>

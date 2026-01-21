@@ -2,36 +2,36 @@
   <div class="min-h-screen bg-primary">
     <!-- Hero Section -->
     <div class="bg-blue-800 text-white">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+      <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-20">
         <div class="text-center">
-          <div class="flex justify-center mb-6">
-            <div class="p-4 bg-white/20 rounded-full backdrop-blur-sm">
+          <div class="flex justify-center mb-8">
+            <div class="p-6 bg-white/20 rounded-full backdrop-blur-sm">
               <svg class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
               </svg>
             </div>
           </div>
-          <h1 class="text-4xl md:text-5xl font-bold mb-4">{{ $t('pages.contact.title') }}</h1>
+          <h1 class="text-4xl md:text-5xl font-bold mb-6">{{ $t('pages.contact.title') }}</h1>
           <p class="text-xl text-blue-100 max-w-2xl mx-auto">{{ $t('pages.contact.subtitle') }}</p>
         </div>
       </div>
     </div>
 
     <!-- Content -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+    <div class="max-w-7xl mx-auto px-6 sm:px-8 lg:px-12 py-16">
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-10">
         <!-- Contact Form -->
         <div class="lg:col-span-2">
-          <div class="bg-white rounded-2xl shadow-lg p-8 border border-blue-200">
-            <div class="mb-8">
-              <h2 class="text-2xl font-bold text-gray-800 mb-2">Kirim Pesan</h2>
+          <div class="bg-white rounded-2xl shadow-lg px-10 py-12 border border-blue-200">
+            <div class="mb-10">
+              <h2 class="text-2xl font-bold text-gray-800 mb-3">Kirim Pesan</h2>
               <p class="text-gray-600">Isi formulir di bawah ini dan tim kami akan segera merespons pertanyaan Anda</p>
             </div>
 
-            <form @submit.prevent="submitForm" class="space-y-6">
-              <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <form @submit.prevent="submitForm" class="space-y-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div class="relative">
-                  <label for="nama" class="block text-sm font-medium text-gray-700 mb-2">Nama Lengkap</label>
+                  <label for="nama" class="block text-sm font-medium text-gray-700 mb-3">Nama Lengkap</label>
                   <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -42,7 +42,7 @@
                       type="text"
                       id="nama"
                       v-model="form.nm_pengirim"
-                      class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
+                      class="w-full pl-12 pr-4 py-5 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
                       placeholder="Masukkan nama lengkap"
                       required
                     />
@@ -50,7 +50,7 @@
                 </div>
 
                 <div class="relative">
-                  <label for="email" class="block text-sm font-medium text-gray-700 mb-2">Email</label>
+                  <label for="email" class="block text-sm font-medium text-gray-700 mb-3">Email</label>
                   <div class="relative">
                     <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                       <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -61,7 +61,7 @@
                       type="email"
                       id="email"
                       v-model="form.email_pengirim"
-                      class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
+                      class="w-full pl-12 pr-4 py-5 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
                       placeholder="Masukkan alamat email"
                       required
                     />
@@ -70,7 +70,7 @@
               </div>
 
               <div class="relative">
-                <label for="judul" class="block text-sm font-medium text-gray-700 mb-2">Judul Pertanyaan</label>
+                <label for="judul" class="block text-sm font-medium text-gray-700 mb-3">Judul Pertanyaan</label>
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -81,7 +81,7 @@
                     type="text"
                     id="judul"
                     v-model="form.judul"
-                    class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
+                    class="w-full pl-12 pr-4 py-5 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-gray-50/50 hover:bg-white"
                     placeholder="Masukkan judul pertanyaan"
                     required
                   />
@@ -89,7 +89,7 @@
               </div>
 
               <div class="relative">
-                <label for="jenis" class="block text-sm font-medium text-gray-700 mb-2">Jenis Pertanyaan</label>
+                <label for="jenis" class="block text-sm font-medium text-gray-700 mb-3">Jenis Pertanyaan</label>
                 <div class="relative">
                   <div class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -99,7 +99,7 @@
                   <select
                     id="jenis"
                     v-model="form.jenis"
-                    class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white appearance-none cursor-pointer"
+                    class="w-full pl-12 pr-4 py-5 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 bg-white appearance-none cursor-pointer"
                     required
                   >
                     <option value="">Pilih Jenis Pertanyaan</option>
@@ -115,7 +115,7 @@
               </div>
 
               <div class="relative">
-                <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-2">Deskripsi Lengkap</label>
+                <label for="deskripsi" class="block text-sm font-medium text-gray-700 mb-3">Deskripsi Lengkap</label>
                 <div class="relative">
                   <div class="absolute top-4 left-4 pointer-events-none">
                     <svg class="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -126,18 +126,18 @@
                     id="deskripsi"
                     v-model="form.deskripsi"
                     rows="6"
-                    class="w-full pl-12 pr-4 py-4 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 resize-vertical bg-gray-50/50 hover:bg-white"
+                    class="w-full pl-12 pr-4 py-5 border border-gray-300 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200 resize-vertical bg-gray-50/50 hover:bg-white"
                     placeholder="Jelaskan pertanyaan atau masalah Anda secara detail..."
                     required
                   ></textarea>
                 </div>
               </div>
 
-              <div class="flex flex-col sm:flex-row gap-4 justify-center pt-6">
+              <div class="flex flex-col sm:flex-row gap-4 justify-center pt-8">
                 <button
                   type="submit"
                   :disabled="isSubmitting"
-                  class="bg-primary text-white px-8 py-4 rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2 transition-all duration-200 font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none inline-flex items-center justify-center gap-3"
+                  class="bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white px-8 py-4 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-500/20 focus:ring-offset-2 transition-all duration-200 font-bold shadow-lg hover:shadow-xl transform hover:scale-105 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none inline-flex items-center justify-center gap-3">
                 >
                   <svg v-if="isSubmitting" class="w-5 h-5 animate-spin" fill="none" viewBox="0 0 24 24">
                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
@@ -163,7 +163,7 @@
             </form>
 
             <!-- Success Message -->
-            <div v-if="submitSuccess" class="mt-6 p-6 bg-linear-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl animate-fade-in">
+            <div v-if="submitSuccess" class="mt-8 px-8 py-8 bg-linear-to-r from-green-50 to-emerald-50 border border-green-200 rounded-xl animate-fade-in">
               <div class="flex items-center">
                 <div class="shrink-0 w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                   <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -178,7 +178,7 @@
             </div>
 
             <!-- Error Message -->
-            <div v-if="submitError" class="mt-6 p-6 bg-linear-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl animate-fade-in">
+            <div v-if="submitError" class="mt-8 px-8 py-8 bg-linear-to-r from-red-50 to-pink-50 border border-red-200 rounded-xl animate-fade-in">
               <div class="flex items-center">
                 <div class="shrink-0 w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
                   <svg class="w-6 h-6 text-red-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -195,17 +195,17 @@
         </div>
 
         <!-- Contact Info -->
-        <div class="space-y-6">
+        <div class="space-y-8">
           <!-- Contact Information Card -->
-          <div class="bg-white rounded-2xl shadow-lg p-6 border border-blue-200">
-            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+          <div class="bg-white rounded-2xl shadow-lg px-8 py-10 border border-blue-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-8 flex items-center gap-2">
               <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
               </svg>
               Informasi Kontak
             </h3>
-            <div class="space-y-4">
+            <div class="space-y-6">
               <div class="flex items-start gap-3">
                 <div class="shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
                   <svg class="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -244,17 +244,17 @@
           </div>
 
           <!-- FAQ Link Card -->
-          <div class="bg-white rounded-2xl p-6 border border-blue-200">
-            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div class="bg-white rounded-2xl px-8 py-10 border border-blue-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
               <svg class="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               Pertanyaan Umum
             </h3>
-            <p class="text-gray-600 text-sm mb-4">Temukan jawaban untuk pertanyaan yang sering ditanyakan di halaman FAQ kami.</p>
+            <p class="text-gray-600 text-sm mb-6">Temukan jawaban untuk pertanyaan yang sering ditanyakan di halaman FAQ kami.</p>
             <a
               href="/faq"
-              class="inline-flex items-center gap-2 bg-white text-blue-600 px-4 py-2 rounded-lg hover:bg-blue-50 transition-colors duration-200 font-medium text-sm shadow-sm"
+              class="inline-flex items-center gap-2 bg-white text-blue-600 px-5 py-3 rounded-lg hover:bg-blue-50 transition-colors duration-200 font-medium text-sm shadow-sm"
             >
               <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"/>
@@ -264,14 +264,14 @@
           </div>
 
           <!-- Response Time Card -->
-          <div class="bg-white rounded-2xl p-6 border border-blue-200">
-            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+          <div class="bg-white rounded-2xl px-8 py-10 border border-blue-200">
+            <h3 class="text-xl font-bold text-gray-800 mb-6 flex items-center gap-2">
               <svg class="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
               </svg>
               Waktu Respon
             </h3>
-            <div class="space-y-3">
+            <div class="space-y-4">
               <div class="flex justify-between items-center">
                 <span class="text-sm text-gray-600">Email</span>
                 <span class="text-sm font-medium text-green-700">1-2 hari kerja</span>

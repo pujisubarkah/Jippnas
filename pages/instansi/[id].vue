@@ -2,7 +2,7 @@
   <div class="bg-linear-to-br from-blue-50 to-blue-100 min-h-screen">
     <!-- Header Section with Logo -->
     <section class="bg-linear-to-r from-blue-600 to-blue-700 shadow-lg">
-      <div class="container mx-auto px-4 py-12">
+      <div class="container mx-auto px-6 py-16">
         <div class="flex flex-col items-center">
           <!-- Logo -->
           <v-img
@@ -36,13 +36,13 @@
     </section>
 
     <!-- Statistics Section -->
-    <div v-if="instansiData" class="container mx-auto px-4 py-8">
+    <div v-if="instansiData" class="container mx-auto px-6 py-10">
       <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <!-- Inovasi Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-blue-400 to-blue-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-brrom-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-lightbulb text-3xl text-white"></i>
@@ -50,11 +50,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">{{ stats.inovasi }}</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Inovasi</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Inovasi</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-blue-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-blue-600 text-sm font-medium">
                 <i class="fas fa-arrow-up mr-1"></i>
                 <span>Aktif</span>
               </div>
@@ -65,8 +65,8 @@
         <!-- Replikasi Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-cyan-400 to-cyan-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-cyan-400 to-cyan-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-eye text-3xl text-white"></i>
@@ -74,11 +74,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-cyan-600 to-cyan-800 bg-clip-text text-transparent">{{ stats.replikasi }}</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Replikasi</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Replikasi</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-cyan-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-cyan-600 text-sm font-medium">
                 <i class="fas fa-chart-line mr-1"></i>
                 <span>Dipantau</span>
               </div>
@@ -89,8 +89,8 @@
         <!-- UPP Card -->
         <div class="relative group">
           <div class="absolute inset-0 bg-linear-to-r from-indigo-400 to-indigo-600 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div class="w-16 h-16 bg-linear-to-br from-indigo-400 to-indigo-600 rounded-xl flex items-center justify-center shadow-lg">
                   <i class="fas fa-building text-3xl text-white"></i>
@@ -98,11 +98,11 @@
               </div>
               <div class="text-right">
                 <h1 class="text-5xl font-extrabold bg-linear-to-r from-indigo-600 to-indigo-800 bg-clip-text text-transparent">{{ stats.upp }}</h1>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">UPP</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">UPP</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div class="flex items-center text-indigo-600 text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div class="flex items-center text-indigo-600 text-sm font-medium">
                 <i class="fas fa-users mr-1"></i>
                 <span>Unit Layanan</span>
               </div>
@@ -113,8 +113,8 @@
         <!-- Hub Status Card -->
         <div class="relative group">
           <div :class="instansiData.stshub ? 'bg-linear-to-r from-green-400 to-green-600' : 'bg-linear-to-r from-orange-400 to-orange-600'" class="absolute inset-0 rounded-2xl blur opacity-25 group-hover:opacity-40 transition duration-300"></div>
-          <div class="relative bg-white rounded-2xl shadow-xl p-6 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
-            <div class="flex items-center justify-between">
+          <div class="relative bg-white rounded-2xl shadow-xl px-8 py-10 hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-1">
+            <div class="flex items-center justify-between mb-10">
               <div class="shrink-0">
                 <div :class="instansiData.stshub ? 'bg-linear-to-br from-green-400 to-green-600' : 'bg-linear-to-br from-orange-400 to-orange-600'" class="w-16 h-16 rounded-xl flex items-center justify-center shadow-lg">
                   <i 
@@ -130,11 +130,11 @@
                 >
                   {{ instansiData.stshub ? 'Hub Aktif' : 'Belum Hub' }}
                 </p>
-                <p class="text-gray-600 text-sm mt-1 font-semibold">Status Hub JIPP</p>
+                <p class="text-gray-600 text-sm mt-4 font-semibold">Status Hub JIPP</p>
               </div>
             </div>
-            <div class="mt-4 pt-4 border-t border-gray-100">
-              <div :class="instansiData.stshub ? 'text-green-600' : 'text-orange-600'" class="flex items-center text-xs font-medium">
+            <div class="mt-10 pt-8 border-t border-gray-200">
+              <div :class="instansiData.stshub ? 'text-green-600' : 'text-orange-600'" class="flex items-center text-sm font-medium">
                 <i :class="instansiData.stshub ? 'fas fa-check' : 'fas fa-hourglass-half'" class="mr-1"></i>
                 <span>{{ instansiData.stshub ? 'Terverifikasi' : 'Dalam Proses' }}</span>
               </div>
@@ -145,21 +145,21 @@
     </div>
 
     <!-- Main Content with Sidebar Layout -->
-    <div v-if="instansiData" class="container mx-auto px-4 py-8">
+    <div v-if="instansiData" class="container mx-auto px-6 py-10">
       <div class="flex flex-col lg:flex-row gap-8">
         <!-- Sidebar: Filter Section -->
         <aside class="lg:w-80 shrink-0">
-          <div class="bg-white rounded-2xl shadow-xl p-6 sticky top-4">
-            <div class="flex items-center mb-6">
+          <div class="bg-white rounded-2xl shadow-xl px-12 py-12 sticky top-4">
+            <div class="flex items-center mb-12">
               <div class="w-1 h-8 bg-linear-to-b from-blue-500 to-blue-700 rounded mr-4"></div>
               <h3 class="text-xl font-bold text-gray-800">Filter Inovasi</h3>
             </div>
             
             <!-- Pemangku Kepentingan -->
-            <div class="mb-6">
+            <div class="mb-8">
               <button 
                 @click="toggleCollapse('pemangku')" 
-                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-4 py-3 rounded-lg transition-all duration-200 border border-blue-200"
+                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-6 py-4 rounded-lg transition-all duration-200 border border-blue-200">
               >
                 <span class="font-semibold text-blue-800 text-sm">Pemangku Kepentingan</span>
                 <i 
@@ -167,12 +167,12 @@
                   :class="{ 'rotate-180': collapsedStates.pemangku }"
                 ></i>
               </button>
-              <div v-show="collapsedStates.pemangku" class="mt-3 pl-3">
-                <div class="space-y-3">
+              <div v-show="collapsedStates.pemangku" class="mt-4 pl-4">
+                <div class="space-y-4">
                   <div 
                     v-for="pemangku in pemangkuList" 
                     :key="pemangku.id" 
-                    class="flex items-center gap-3 p-3 bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-300 transition-all cursor-pointer"
+                    class="flex items-center gap-4 p-4 bg-blue-50 rounded-lg border-2 border-transparent hover:border-blue-300 transition-all cursor-pointer"
                   >
                     <img 
                       :src="pemangku.logo" 
@@ -192,10 +192,10 @@
             </div>
 
             <!-- Unit Pelayanan Publik -->
-            <div class="mb-6">
+            <div class="mb-8">
               <button 
                 @click="toggleCollapse('upp')" 
-                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-4 py-3 rounded-lg transition-all duration-200 border border-blue-200"
+                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-6 py-4 rounded-lg transition-all duration-200 border border-blue-200">
               >
                 <span class="font-semibold text-blue-800 text-sm">Unit Pelayanan Publik</span>
                 <i 
@@ -203,21 +203,21 @@
                   :class="{ 'rotate-180': collapsedStates.upp }"
                 ></i>
               </button>
-              <div v-show="collapsedStates.upp" class="mt-3 pl-3">
+              <div v-show="collapsedStates.upp" class="mt-4 pl-4">
                 <input 
                   type="text" 
                   v-model="uppInput"
                   placeholder="Masukkan UPP" 
-                  class="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                  class="w-full px-5 py-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
                 >
               </div>
             </div>
 
             <!-- Inovator -->
-            <div class="mb-6">
+            <div class="mb-8">
               <button 
                 @click="toggleCollapse('inovator')" 
-                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-4 py-3 rounded-lg transition-all duration-200 border border-blue-200"
+                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-6 py-4 rounded-lg transition-all duration-200 border border-blue-200">
               >
                 <span class="font-semibold text-blue-800 text-sm">Inovator</span>
                 <i 
@@ -225,21 +225,21 @@
                   :class="{ 'rotate-180': collapsedStates.inovator }"
                 ></i>
               </button>
-              <div v-show="collapsedStates.inovator" class="mt-3 pl-3">
+              <div v-show="collapsedStates.inovator" class="mt-4 pl-4">
                 <input 
                   type="text" 
                   v-model="inovatorInput"
                   placeholder="Masukkan Nama Inovator" 
-                  class="w-full px-4 py-2 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
+                  class="w-full px-5 py-3 border-2 border-blue-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all text-sm"
                 >
               </div>
             </div>
 
             <!-- SDGs -->
-            <div class="mb-6">
+            <div class="mb-8">
               <button 
                 @click="toggleCollapse('sdgs')" 
-                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-4 py-3 rounded-lg transition-all duration-200 border border-blue-200"
+                class="w-full flex items-center justify-between bg-linear-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 px-6 py-4 rounded-lg transition-all duration-200 border border-blue-200">
               >
                 <span class="font-semibold text-blue-800 text-sm">SDGs</span>
                 <i 
@@ -247,8 +247,8 @@
                   :class="{ 'rotate-180': collapsedStates.sdgs }"
                 ></i>
               </button>
-              <div v-show="collapsedStates.sdgs" class="mt-3 pl-3">
-                <div class="grid grid-cols-3 gap-2">
+              <div v-show="collapsedStates.sdgs" class="mt-4 pl-4">
+                <div class="grid grid-cols-3 gap-3">
                   <div 
                     v-for="sdg in sdgsList" 
                     :key="sdg.id" 
@@ -274,10 +274,10 @@
             </div>
 
             <!-- Search Button -->
-            <div class="flex justify-center">
+            <div class="flex justify-center mt-2">
               <button 
                 @click="cariData"
-                class="w-full px-8 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
+                class="w-full px-8 py-4 bg-linear-to-r from-blue-600 to-blue-700 text-white font-bold rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 text-sm"
               >
                 <i class="fas fa-search mr-2"></i>
                 Cari Inovasi
@@ -288,8 +288,8 @@
 
         <!-- Main Content: Daftar Inovasi -->
         <main class="flex-1">
-          <div class="bg-white rounded-2xl shadow-xl p-8">
-            <div class="flex items-center mb-6">
+          <div class="bg-white rounded-2xl shadow-xl px-12 py-12">
+            <div class="flex items-center mb-12">
               <div class="w-1 h-8 bg-linear-to-b from-blue-500 to-blue-700 rounded mr-4"></div>
               <h3 class="text-2xl font-bold text-gray-800">Daftar Inovasi</h3>
             </div>
@@ -299,18 +299,18 @@
               <p class="text-gray-500 text-lg">Tidak ada inovasi ditemukan</p>
             </div>
 
-            <div v-else class="space-y-4">
+            <div v-else class="space-y-6">
               <div 
                 v-for="inovasi in paginatedInovasi" 
                 :key="inovasi.id"
-                class="p-4 bg-red-50 flex flex-col rounded-lg shadow-sm border border-red-200"
+                class="px-10 py-8 bg-red-50 flex flex-col rounded-lg shadow-sm border border-red-200"
               >
-                <h4 class="mb-2 text-red-600 font-bold text-lg">{{ inovasi.judul }}</h4>
-                <p class="font-bold mb-1">
+                <h4 class="mb-3 text-red-600 font-bold text-lg">{{ inovasi.judul }}</h4>
+                <p class="font-bold mb-2">
                   <i class="fas fa-building text-gray-700"></i>
                   <span class="ml-2"></span>{{ inovasi.instansi }}
                 </p>
-                <p class="font-bold text-capitalize mb-1">
+                <p class="font-bold text-capitalize mb-2">
                   <i class="fas fa-certificate text-gray-700"></i>
                   <span class="ml-2"></span>{{ inovasi.penghargaan }}
                 </p>
@@ -318,19 +318,19 @@
                   <i class="fas fa-hashtag text-gray-700"></i>
                   <span class="ml-2"></span>{{ inovasi.kategori }}
                 </p>
-                <p class="text-green-600 mb-1">
+                <p class="text-green-600 mb-2">
                   <i class="fas fa-check"></i>
                   <span class="ml-2"></span>{{ inovasi.status }}
                 </p>
-                <p class="text-gray-500 mb-1">
+                <p class="text-gray-500 mb-2">
                   <i class="fas fa-calendar-alt"></i>
                   <span class="ml-2"></span>{{ inovasi.tanggal }}
                 </p>
-                <p class="font-bold text-capitalize mb-1">
+                <p class="font-bold text-capitalize mb-2">
                   <i class="fas fa-hashtag text-gray-700"></i>
                   <span class="ml-2"></span>{{ inovasi.sdgs }}
                 </p>
-                <p class="font-bold text-capitalize mb-1">
+                <p class="font-bold text-capitalize mb-2">
                   <i class="fas fa-hashtag text-gray-700"></i>
                   <span class="ml-2"></span>{{ inovasi.upp }}
                 </p>
@@ -341,11 +341,11 @@
               </div>
 
               <!-- Load More/Less Buttons -->
-              <div class="flex justify-center mt-6 space-x-4">
+              <div class="flex justify-center mt-8 space-x-4">
                 <button 
                   @click="loadLessInovasi"
                   :disabled="itemsToShow <= 5"
-                  class="px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 font-bold rounded-xl hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
+                  class="px-8 py-4 bg-white text-blue-600 border-2 border-blue-600 font-bold rounded-xl hover:bg-blue-50 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-md hover:shadow-lg flex items-center"
                 >
                   <i class="fas fa-chevron-up mr-2"></i>
                   Muat Lebih Sedikit
@@ -354,7 +354,7 @@
                 <button 
                   @click="loadMoreInovasi"
                   :disabled="itemsToShow >= inovasiList.length"
-                  class="px-6 py-3 bg-linear-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center"
+                  class="px-8 py-4 bg-linear-to-r from-blue-600 to-blue-700 text-white font-bold rounded-xl hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 shadow-lg hover:shadow-xl flex items-center"
                 >
                   <i class="fas fa-chevron-down mr-2"></i>
                   Muat Lebih Banyak
