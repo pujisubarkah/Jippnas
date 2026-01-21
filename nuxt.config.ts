@@ -8,6 +8,11 @@ export default defineNuxtConfig({
   modules: [
     '@nuxtjs/i18n'
   ],
+  runtimeConfig: {
+    public: {
+      googleClientId: process.env.GOOGLE_CLIENT_ID
+    }
+  },
   i18n: {
     locales: [
       { 

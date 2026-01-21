@@ -14,20 +14,21 @@ export default defineEventHandler(async (event) => {
     return { error: 'Token is required.' };
   }
 
-  // Verify the token with Google (simplified, in production use Google's API)
-  // For now, assume token is valid and extract user info
-  // In real implementation, verify with https://oauth2.googleapis.com/tokeninfo?id_token=${token}
-
-  // Mock user data from Google
-  const googleUser = {
-    id: 'google_id',
-    email: 'user@gmail.com',
-    name: 'Google User',
-    picture: 'https://...'
-  };
+  // Verify the token with Google
+  let googleUser;
+  try {
+    const response = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`);
+    if (!response.ok) {
+      throw new Error('Invalid token');
+    }
+    googleUser = await response.json();
+  } catch (error) {
+    console.error('Token verification failed:', error);
+    return { error: 'Invalid Google token.' };
+  }
 
   // Check if user exists by email or google_id
-  let user = await db.select().from(users).where(eq(users.google_id, googleUser.id)).limit(1);
+  let user = await db.select().from(users).where(eq(users.google_id, googleUser.sub)).limit(1);
   
   if (!user || !user.length) {
     user = await db.select().from(users).where(eq(users.email, googleUser.email)).limit(1);
@@ -37,9 +38,10 @@ export default defineEventHandler(async (event) => {
     // Create new user
     const newUser = await db.insert(users).values({
       email: googleUser.email,
-      username: googleUser.name,
-      name: googleUser.name,
-      google_id: googleUser.id,
+      username: googleUser.name || googleUser.email.split('@')[0],
+      name: googleUser.name || googleUser.email,
+      google_id: googleUser.sub,
+      id_peran: 1, // Default role, adjust as needed
       is_active: '1',
       is_del: '0',
       created_at: new Date(),
@@ -53,7 +55,7 @@ export default defineEventHandler(async (event) => {
     await db.update(users)
       .set({ 
         last_login: new Date(),
-        google_id: foundUser.google_id || googleUser.id,
+        google_id: foundUser.google_id || googleUser.sub,
         updated_at: new Date()
       })
       .where(eq(users.id, foundUser.id));
@@ -65,7 +67,21 @@ export default defineEventHandler(async (event) => {
   if (foundUser.is_del === '1' || foundUser.is_active === '0') {
     return { error: 'Account is not active.' };
   }
+
+  // Determine role and redirect path
+  let role = 'user';
+  let redirectPath = '/';
+  
+  if (foundUser.id_peran === 2) {
+    role = 'admin';
+    redirectPath = '/admin/dashboard';
+  } else if (foundUser.id_peran === 1) {
+    redirectPath = '/';
+  } else {
+    // For other roles, redirect to /[role]/dashboard
+    redirectPath = `/${role}/dashboard`;
+  }
   
   const { password: _, ...userData } = foundUser;
-  return { success: true, user: userData };
+  return { success: true, user: userData, role: role, redirectPath: redirectPath };
 });

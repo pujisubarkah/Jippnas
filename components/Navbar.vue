@@ -251,100 +251,102 @@
     </v-container>
 
     <!-- Mobile Drawer -->
-    <v-navigation-drawer v-model="drawer" temporary app width="300">
-      <v-list>
-        <v-list-item
-          v-for="item in navItems"
-          :key="item.href"
-          :to="item.href"
-          @click="drawer = false"
-        >
-          <template #prepend>
-            <v-icon :icon="item.icon" />
-          </template>
-          <v-list-item-title>{{ item.label }}</v-list-item-title>
-        </v-list-item>
-
-        <v-list-group :value="$t('nav.nearby')">
-          <template #activator="{ props }">
-            <v-list-item v-bind="props">
-              <template #prepend>
-                <v-icon>mdi-map-marker</v-icon>
-              </template>
-              <v-list-item-title>{{ $t('nav.nearby') }}</v-list-item-title>
-            </v-list-item>
-          </template>
+    <client-only>
+      <v-navigation-drawer v-model="drawer" temporary app width="300">
+        <v-list>
           <v-list-item
-            v-for="item in menuNearby"
+            v-for="item in navItems"
             :key="item.href"
             :to="item.href"
             @click="drawer = false"
           >
+            <template #prepend>
+              <v-icon :icon="item.icon" />
+            </template>
             <v-list-item-title>{{ item.label }}</v-list-item-title>
           </v-list-item>
-        </v-list-group>
 
-        <v-divider />
-
-        <v-list-group value="Knowledge Center">
-          <template #activator="{ props }">
-            <v-list-item v-bind="props">
-              <template #prepend>
-                <v-icon>mdi-book-open</v-icon>
-              </template>
-              <v-list-item-title>Knowledge Center</v-list-item-title>
+          <v-list-group :value="$t('nav.nearby')">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props">
+                <template #prepend>
+                  <v-icon>mdi-map-marker</v-icon>
+                </template>
+                <v-list-item-title>{{ $t('nav.nearby') }}</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="item in menuNearby"
+              :key="item.href"
+              :to="item.href"
+              @click="drawer = false"
+            >
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>
-          </template>
-          <v-list-item
-            v-for="item in menuKnowledge"
-            :key="item.href"
-            :to="item.href"
-            @click="drawer = false"
-          >
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
-          </v-list-item>
-        </v-list-group>
+          </v-list-group>
 
-        <v-list-group :value="$t('menu.links.related')">
-          <template #activator="{ props }">
-            <v-list-item v-bind="props">
-              <template #prepend>
-                <v-icon>mdi-link</v-icon>
-              </template>
-              <v-list-item-title>{{ $t('menu.links.related') }}</v-list-item-title>
-            </v-list-item>
-          </template>
-          <v-list-item
-            v-for="item in linksTerkait"
-            :key="item.href"
-            :href="item.href"
-            target="_blank"
-            @click="drawer = false"
-          >
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
-          </v-list-item>
-        </v-list-group>
+          <v-divider />
 
-        <v-list-group :value="$t('nav.bantuan')">
-          <template #activator="{ props }">
-            <v-list-item v-bind="props">
-              <template #prepend>
-                <v-icon>mdi-help-circle</v-icon>
-              </template>
-              <v-list-item-title>{{ $t('nav.bantuan') }}</v-list-item-title>
+          <v-list-group value="Knowledge Center">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props">
+                <template #prepend>
+                  <v-icon>mdi-book-open</v-icon>
+                </template>
+                <v-list-item-title>Knowledge Center</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="item in menuKnowledge"
+              :key="item.href"
+              :to="item.href"
+              @click="drawer = false"
+            >
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
             </v-list-item>
-          </template>
-          <v-list-item
-            v-for="item in menuBantuan"
-            :key="item.href"
-            :to="item.href"
-            @click="drawer = false"
-          >
-            <v-list-item-title>{{ item.label }}</v-list-item-title>
-          </v-list-item>
-        </v-list-group>
-      </v-list>
-    </v-navigation-drawer>
+          </v-list-group>
+
+          <v-list-group :value="$t('menu.links.related')">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props">
+                <template #prepend>
+                  <v-icon>mdi-link</v-icon>
+                </template>
+                <v-list-item-title>{{ $t('menu.links.related') }}</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="item in linksTerkait"
+              :key="item.href"
+              :href="item.href"
+              target="_blank"
+              @click="drawer = false"
+            >
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list-group>
+
+          <v-list-group :value="$t('nav.bantuan')">
+            <template #activator="{ props }">
+              <v-list-item v-bind="props">
+                <template #prepend>
+                  <v-icon>mdi-help-circle</v-icon>
+                </template>
+                <v-list-item-title>{{ $t('nav.bantuan') }}</v-list-item-title>
+              </v-list-item>
+            </template>
+            <v-list-item
+              v-for="item in menuBantuan"
+              :key="item.href"
+              :to="item.href"
+              @click="drawer = false"
+            >
+              <v-list-item-title>{{ item.label }}</v-list-item-title>
+            </v-list-item>
+          </v-list-group>
+        </v-list>
+      </v-navigation-drawer>
+    </client-only>
 
     <!-- Modals (unchanged structure, cleaned internals) -->
     <v-dialog v-model="showLoginModal" max-width="500">
@@ -522,7 +524,7 @@ const handleGoogleLogin = async () => {
     await loadGoogleScript()
     if (window.google?.accounts?.id && !window.googleInitialized) {
       window.google.accounts.id.initialize({
-        client_id: process.env.NUXT_PUBLIC_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID',
+        client_id: useRuntimeConfig().public.googleClientId,
         callback: handleGoogleCallback
       })
       window.googleInitialized = true

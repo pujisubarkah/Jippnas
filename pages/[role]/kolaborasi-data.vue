@@ -109,15 +109,87 @@
           <!-- Tab Tuxedovation -->
           <v-window-item value="tuxedovation">
             <div class="py-4">
-              <h2 class="text-h6 mb-4">Data Tuxedovation</h2>
-              <p class="text-body-2 text-grey-darken-1 mb-4">
-                Konten untuk kolaborasi data Tuxedovation akan ditampilkan di sini
-              </p>
-              
-              <!-- Placeholder untuk konten Tuxedovation -->
-              <v-alert type="info" variant="tonal" class="mb-4">
-                Fitur sedang dalam pengembangan
+              <div class="d-flex justify-space-between align-center mb-4">
+                <h2 class="text-h6">Data Tuxedovation</h2>
+                <div class="d-flex ga-2">
+                  <v-btn 
+                    v-if="selectedTuxedovation.length > 0"
+                    color="success" 
+                    variant="flat"
+                    @click="uploadTuxedovationToDatabase"
+                    :loading="uploadingTuxedovation"
+                    prepend-icon="mdi-cloud-upload"
+                  >
+                    Upload {{ selectedTuxedovation.length }} Data
+                  </v-btn>
+                  <v-btn 
+                    color="primary" 
+                    variant="flat"
+                    @click="fetchTuxedovationData"
+                    :loading="loadingTuxedovation"
+                    prepend-icon="mdi-refresh"
+                  >
+                    Refresh Data
+                  </v-btn>
+                </div>
+              </div>
+
+              <v-alert v-if="errorTuxedovation" type="error" variant="tonal" class="mb-4" closable @click:close="errorTuxedovation = null">
+                {{ errorTuxedovation }}
               </v-alert>
+
+              <v-alert v-if="!loadingTuxedovation && tuxedovationData.length === 0 && !errorTuxedovation" type="info" variant="tonal" class="mb-4">
+                Total data: {{ tuxedovationData.length }}
+              </v-alert>
+
+              <v-data-table
+                :headers="tuxedovationHeaders"
+                :items="tuxedovationData"
+                :loading="loadingTuxedovation"
+                class="elevation-1"
+                :items-per-page="10"
+                :search="searchTuxedovation"
+                v-model="selectedTuxedovation"
+                show-select
+                item-value="id"
+              >
+                <template v-slot:top>
+                  <v-toolbar flat color="white">
+                    <v-text-field
+                      v-model="searchTuxedovation"
+                      prepend-inner-icon="mdi-magnify"
+                      label="Cari data..."
+                      single-line
+                      hide-details
+                      clearable
+                      variant="outlined"
+                      density="compact"
+                      class="mb-2"
+                    ></v-text-field>
+                  </v-toolbar>
+                </template>
+
+                <template v-slot:item.image="{ item }">
+                  <v-avatar size="40">
+                    <img :src="item.image" :alt="item.title" />
+                  </v-avatar>
+                </template>
+
+                <template v-slot:item.date="{ item }">
+                  <span>{{ formatDate(item.date) }}</span>
+                </template>
+
+                <template v-slot:loading>
+                  <v-skeleton-loader type="table-row@10"></v-skeleton-loader>
+                </template>
+
+                <template v-slot:no-data>
+                  <div class="text-center py-8">
+                    <v-icon size="64" color="grey-lighten-1">mdi-database-off</v-icon>
+                    <p class="text-body-1 text-grey mt-4">Tidak ada data tersedia</p>
+                  </div>
+                </template>
+              </v-data-table>
             </div>
           </v-window-item>
 
@@ -217,6 +289,40 @@
 </template>
 
 <script setup>
+// Tuxedovation selection and upload state
+const selectedTuxedovation = ref([])
+const uploadingTuxedovation = ref(false)
+
+const uploadTuxedovationToDatabase = async () => {
+  if (selectedTuxedovation.value.length === 0) return
+  uploadingTuxedovation.value = true
+  try {
+    // Get full data for selected items
+    const itemsToUpload = tuxedovationData.value
+      .filter(item => selectedTuxedovation.value.includes(item.id))
+      .map(item => ({
+        external_id: item.id,
+        title: item.title,
+        image: item.image,
+        pemda: item.pemda,
+        date: item.date,
+        raw_data: item
+      }))
+    const response = await $fetch('/api/kolaborasi/tuxedovation', {
+      method: 'POST',
+      body: { items: itemsToUpload }
+    })
+    if (response.success) {
+      alert(`Berhasil menyimpan ${response.data.length} data ke database`)
+      selectedTuxedovation.value = []
+    }
+  } catch (error) {
+    console.error('Error uploading Tuxedovation data:', error)
+    alert('Gagal menyimpan data ke database')
+  } finally {
+    uploadingTuxedovation.value = false
+  }
+}
 import { ref, onMounted } from 'vue'
 
 definePageMeta({
@@ -262,6 +368,48 @@ const inovasiProperHeaders = [
   { title: 'Deskripsi', key: 'deskripsi', sortable: false }
 ]
 
+// Tuxedovation Data
+const tuxedovationData = ref([])
+const loadingTuxedovation = ref(false)
+const errorTuxedovation = ref(null)
+const searchTuxedovation = ref('')
+
+const tuxedovationHeaders = [
+  { title: 'Judul', key: 'title', sortable: true },
+  { title: 'Gambar', key: 'image', sortable: false },
+  { title: 'Pemda', key: 'pemda', sortable: true },
+  { title: 'Tanggal', key: 'date', sortable: true }
+]
+
+const fetchTuxedovationData = async () => {
+  loadingTuxedovation.value = true
+  errorTuxedovation.value = null
+  try {
+    const data = await $fetch('/api/tuxedovation?offset=0')
+    if (data && Array.isArray(data.inovasi)) {
+      tuxedovationData.value = data.inovasi.map(item => ({
+        id: item.id,
+        title: item.title,
+        image: item.image || '/placeholder-image.jpg',
+        pemda: item.pemda,
+        date: item.date
+      }))
+    } else {
+      throw new Error('Format data tidak sesuai')
+    }
+  } catch (error) {
+    errorTuxedovation.value = `Gagal mengambil data: ${error.message}`
+  } finally {
+    loadingTuxedovation.value = false
+  }
+}
+
+function formatDate(dateStr) {
+  if (!dateStr) return '-'
+  const d = new Date(dateStr)
+  return d.toLocaleDateString('id-ID', { year: 'numeric', month: 'short', day: 'numeric' })
+}
+
 const fetchInolandData = async () => {
   loadingInoland.value = true
   errorInoland.value = null
@@ -293,7 +441,7 @@ const fetchInolandData = async () => {
     console.error('Error fetching Inoland data:', error)
     errorInoland.value = `Gagal mengambil data: ${error.message}`
   } finally {
-    loadingInoland.value = false
+    loadingInoland.value = false;
   }
 }
 
@@ -426,6 +574,7 @@ const uploadInovasiProperToDatabase = async () => {
 onMounted(() => {
   fetchInolandData()
   fetchInovasiProperData()
+  fetchTuxedovationData()
 })
 </script>
 
