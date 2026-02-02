@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const tautan = pgTable('tautan', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const tautan = jippnasSchema.table('tautan', {
   id: serial('id').primaryKey(),
   nama: varchar('nama', { length: 255 }),
   tautan: text('tautan'),

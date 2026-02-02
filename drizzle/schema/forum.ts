@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, boolean, timestamp, integer, inet, pgEnum } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, boolean, timestamp, integer, inet, pgEnum } from 'drizzle-orm/pg-core';
 
-export const forumCategories = pgTable('forum_categories', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const forumCategories = jippnasSchema.table('forum_categories', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 100 }).notNull(),
   description: text('description'),
@@ -13,7 +15,7 @@ export const forumCategories = pgTable('forum_categories', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumUsers = pgTable('forum_users', {
+export const forumUsers = jippnasSchema.table('forum_users', {
   id: serial('id').primaryKey(),
   userId: integer('user_id'),
   username: varchar('username', { length: 50 }).notNull(),
@@ -31,7 +33,7 @@ export const forumUsers = pgTable('forum_users', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumThreads = pgTable('forum_threads', {
+export const forumThreads = jippnasSchema.table('forum_threads', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   content: text('content').notNull(),
@@ -51,7 +53,7 @@ export const forumThreads = pgTable('forum_threads', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumReplies: any = pgTable('forum_replies', {
+export const forumReplies: any = jippnasSchema.table('forum_replies', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   authorId: integer('author_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -66,7 +68,7 @@ export const forumReplies: any = pgTable('forum_replies', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumThreadVotes = pgTable('forum_thread_votes', {
+export const forumThreadVotes = jippnasSchema.table('forum_thread_votes', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -74,7 +76,7 @@ export const forumThreadVotes = pgTable('forum_thread_votes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumReplyVotes = pgTable('forum_reply_votes', {
+export const forumReplyVotes = jippnasSchema.table('forum_reply_votes', {
   id: serial('id').primaryKey(),
   replyId: integer('reply_id').references(() => forumReplies.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -82,7 +84,7 @@ export const forumReplyVotes = pgTable('forum_reply_votes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumThreadLikes = pgTable('forum_thread_likes', {
+export const forumThreadLikes = jippnasSchema.table('forum_thread_likes', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -90,7 +92,7 @@ export const forumThreadLikes = pgTable('forum_thread_likes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumReplyLikes = pgTable('forum_reply_likes', {
+export const forumReplyLikes = jippnasSchema.table('forum_reply_likes', {
   id: serial('id').primaryKey(),
   replyId: integer('reply_id').references(() => forumReplies.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
@@ -98,7 +100,7 @@ export const forumReplyLikes = pgTable('forum_reply_likes', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumThreadViews = pgTable('forum_thread_views', {
+export const forumThreadViews = jippnasSchema.table('forum_thread_views', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'set null' }),
@@ -107,14 +109,14 @@ export const forumThreadViews = pgTable('forum_thread_views', {
   viewedAt: timestamp('viewed_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumBookmarks = pgTable('forum_bookmarks', {
+export const forumBookmarks = jippnasSchema.table('forum_bookmarks', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumReports = pgTable('forum_reports', {
+export const forumReports = jippnasSchema.table('forum_reports', {
   id: serial('id').primaryKey(),
   reporterId: integer('reporter_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
@@ -128,7 +130,7 @@ export const forumReports = pgTable('forum_reports', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumTags = pgTable('forum_tags', {
+export const forumTags = jippnasSchema.table('forum_tags', {
   id: serial('id').primaryKey(),
   name: varchar('name', { length: 50 }).notNull(),
   color: varchar('color', { length: 20 }).default('#6B7280'),
@@ -136,14 +138,14 @@ export const forumTags = pgTable('forum_tags', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumThreadTags = pgTable('forum_thread_tags', {
+export const forumThreadTags = jippnasSchema.table('forum_thread_tags', {
   id: serial('id').primaryKey(),
   threadId: integer('thread_id').references(() => forumThreads.id, { onDelete: 'cascade' }),
   tagId: integer('tag_id').references(() => forumTags.id, { onDelete: 'cascade' }),
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const forumNotifications = pgTable('forum_notifications', {
+export const forumNotifications = jippnasSchema.table('forum_notifications', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').references(() => forumUsers.id, { onDelete: 'cascade' }),
   notificationType: varchar('notification_type', { length: 50 }).notNull(),

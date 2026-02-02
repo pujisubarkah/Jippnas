@@ -1,7 +1,9 @@
-import { pgTable, serial, varchar, text, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, timestamp, integer } from 'drizzle-orm/pg-core';
+
+const jippnasSchema = pgSchema('jippnas_new');
 
 // Tabel untuk menyimpan data dari Inoland
-export const kolaborasiInoland = pgTable('kolaborasi_inoland', {
+export const kolaborasiInoland = jippnasSchema.table('kolaborasi_inoland', {
   id: serial('id').primaryKey(),
   external_id: integer('external_id'), // ID dari API eksternal
   judul_inovasi: text('judul_inovasi'),
@@ -22,7 +24,7 @@ export const kolaborasiInoland = pgTable('kolaborasi_inoland', {
 });
 
 // Tabel untuk menyimpan data dari Inovasi Proper Peserta
-export const kolaborasiInovasiProper = pgTable('kolaborasi_inovasi_proper', {
+export const kolaborasiInovasiProper = jippnasSchema.table('kolaborasi_inovasi_proper', {
   id: serial('id').primaryKey(),
   external_id: integer('external_id'), // ID dari API eksternal
   judul: text('judul'),

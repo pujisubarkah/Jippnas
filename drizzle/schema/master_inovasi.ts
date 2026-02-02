@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const masterInovasi = pgTable('master_inovasi', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const masterInovasi = jippnasSchema.table('master_inovasi', {
   id: serial('id').primaryKey(),
   judul: varchar('judul'),
   gambar: varchar('gambar'),

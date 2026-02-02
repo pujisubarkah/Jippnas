@@ -1,6 +1,8 @@
-import { pgTable, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-export const instansi = pgTable('master_instansi', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const instansi = jippnasSchema.table('master_instansi', {
   id: varchar('id', { length: 100 }).primaryKey(),
   id_wilayah: varchar('id_wilayah', { length: 100 }),
   nama: text('nama'),

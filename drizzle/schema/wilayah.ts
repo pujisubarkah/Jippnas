@@ -1,6 +1,8 @@
-import { pgTable, varchar, doublePrecision, real, smallint, text } from 'drizzle-orm/pg-core';
+import { pgSchema, varchar, doublePrecision, real, smallint, text } from 'drizzle-orm/pg-core';
 
-export const wilayah = pgTable('master_wilayah', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const wilayah = jippnasSchema.table('master_wilayah', {
   kode: varchar('kode').primaryKey(),
   nama: varchar('nama').notNull(),
   ibukota: varchar('ibukota'),

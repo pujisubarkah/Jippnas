@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { serial, varchar, text, timestamp, pgSchema } from 'drizzle-orm/pg-core';
 
-export const course = pgTable('course', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const course = jippnasSchema.table('course', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   category: varchar('category', { length: 100 }).notNull(),

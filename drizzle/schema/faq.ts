@@ -1,6 +1,8 @@
-import { pgTable, serial, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-export const faq = pgTable('faq', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const faq = jippnasSchema.table('faq', {
   id: serial('id').primaryKey(),
   pertanyaan: text('pertanyaan'),
   jawaban: text('jawaban'),

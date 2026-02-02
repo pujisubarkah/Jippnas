@@ -1,6 +1,8 @@
-import { pgTable, serial, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, integer, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const provinsi = pgTable('provinsi', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const provinsi = jippnasSchema.table('provinsi', {
   id: serial('id').primaryKey(),
   nama: varchar('nama'),
   svg_path: text('svg_path'),

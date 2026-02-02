@@ -1,6 +1,8 @@
-import { pgTable, bigint, varchar, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, bigint, varchar, timestamp } from 'drizzle-orm/pg-core';
 
-export const masterPeran = pgTable('master_peran', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const masterPeran = jippnasSchema.table('master_peran', {
   id: bigint('id', { mode: 'number' }).primaryKey(),
   nama: varchar('nama'),
   keterangan: varchar('keterangan'),

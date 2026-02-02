@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, boolean, timestamp, integer } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, boolean, timestamp, integer } from 'drizzle-orm/pg-core';
 
-export const notifications = pgTable('notifications', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const notifications = jippnasSchema.table('notifications', {
   id: serial('id').primaryKey(),
   userId: integer('user_id').notNull(),
   title: varchar('title', { length: 255 }).notNull(),
@@ -11,7 +13,7 @@ export const notifications = pgTable('notifications', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const messages = pgTable('messages', {
+export const messages = jippnasSchema.table('messages', {
   id: serial('id').primaryKey(),
   senderId: integer('sender_id').notNull(),
   recipientId: integer('recipient_id').notNull(),

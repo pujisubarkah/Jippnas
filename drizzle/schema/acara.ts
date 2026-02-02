@@ -1,6 +1,7 @@
-import { pgTable, serial, date, time, text, integer, varchar, char, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, date, time, text, integer, varchar, char, timestamp } from 'drizzle-orm/pg-core';
+const jippnasSchema = pgSchema('jippnas_new');
 
-export const acara = pgTable('acara', {
+export const acara = jippnasSchema.table('acara', {
   id: serial('id').primaryKey(),
   tgl_acara: date('tgl_acara'),
   jam_acara: time('jam_acara'),

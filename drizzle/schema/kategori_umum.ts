@@ -1,6 +1,8 @@
-import { pgTable, bigserial, bigint, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, bigserial, bigint, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const kategoriUmum = pgTable('master_kategori', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const kategoriUmum = jippnasSchema.table('master_kategori', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
   id_jenis: bigint('id_jenis', { mode: 'number' }),
   nm_jenis: varchar('nm_jenis'),

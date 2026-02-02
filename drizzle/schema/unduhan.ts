@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, timestamp } from 'drizzle-orm/pg-core';
 
-export const unduhan = pgTable('unduhan', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const unduhan = jippnasSchema.table('unduhan', {
   id: serial('id').primaryKey(),
   judul: varchar('judul'),
   gambar: text('gambar'),

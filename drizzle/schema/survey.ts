@@ -1,6 +1,8 @@
-import { pgTable, serial, varchar, text, boolean, timestamp, integer, pgEnum, numeric } from 'drizzle-orm/pg-core';
+import { pgSchema, serial, varchar, text, boolean, timestamp, integer, pgEnum, numeric } from 'drizzle-orm/pg-core';
 
-export const surveyInstruments = pgTable('survey_instruments', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const surveyInstruments = jippnasSchema.table('survey_instruments', {
   id: serial('id').primaryKey(),
   title: varchar('title', { length: 255 }).notNull(),
   description: text('description'),
@@ -9,7 +11,7 @@ export const surveyInstruments = pgTable('survey_instruments', {
   updatedAt: timestamp('updated_at', { withTimezone: true }).defaultNow(),
 });
 
-export const instrumentAspects = pgTable('instrument_aspects', {
+export const instrumentAspects = jippnasSchema.table('instrument_aspects', {
   id: serial('id').primaryKey(),
   instrumentId: integer('instrument_id').references(() => surveyInstruments.id, { onDelete: 'cascade' }),
   name: varchar('name', { length: 255 }).notNull(),
@@ -18,7 +20,7 @@ export const instrumentAspects = pgTable('instrument_aspects', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const instrumentQuestions = pgTable('instrument_questions', {
+export const instrumentQuestions = jippnasSchema.table('instrument_questions', {
   id: serial('id').primaryKey(),
   aspectId: integer('aspect_id').references(() => instrumentAspects.id, { onDelete: 'cascade' }),
   questionText: text('question_text').notNull(),
@@ -31,7 +33,7 @@ export const instrumentQuestions = pgTable('instrument_questions', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const questionOptions = pgTable('question_options', {
+export const questionOptions = jippnasSchema.table('question_options', {
   id: serial('id').primaryKey(),
   questionId: integer('question_id').references(() => instrumentQuestions.id, { onDelete: 'cascade' }),
   optionText: text('option_text').notNull(),
@@ -41,7 +43,7 @@ export const questionOptions = pgTable('question_options', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const instrumentResponses = pgTable('instrument_responses', {
+export const instrumentResponses = jippnasSchema.table('instrument_responses', {
   id: serial('id').primaryKey(),
   instrumentId: integer('instrument_id').references(() => surveyInstruments.id, { onDelete: 'cascade' }),
   instansi: varchar('instansi', { length: 255 }).notNull(),
@@ -52,7 +54,7 @@ export const instrumentResponses = pgTable('instrument_responses', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const responseAnswers = pgTable('response_answers', {
+export const responseAnswers = jippnasSchema.table('response_answers', {
   id: serial('id').primaryKey(),
   responseId: integer('response_id').references(() => instrumentResponses.id, { onDelete: 'cascade' }),
   questionId: integer('question_id').references(() => instrumentQuestions.id, { onDelete: 'cascade' }),
@@ -64,7 +66,7 @@ export const responseAnswers = pgTable('response_answers', {
   createdAt: timestamp('created_at', { withTimezone: true }).defaultNow(),
 });
 
-export const answerVerifications = pgTable('answer_verifications', {
+export const answerVerifications = jippnasSchema.table('answer_verifications', {
   id: serial('id').primaryKey(),
   answerId: integer('answer_id').references(() => responseAnswers.id, { onDelete: 'cascade' }),
   verifiedOptionIds: integer('verified_option_ids').array(),

@@ -1,6 +1,8 @@
-import { pgTable, bigserial, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
+import { pgSchema, bigserial, varchar, text, boolean, timestamp } from 'drizzle-orm/pg-core';
 
-export const masterOecd = pgTable('master_oecd', {
+const jippnasSchema = pgSchema('jippnas_new');
+
+export const masterOecd = jippnasSchema.table('master_oecd', {
   id: bigserial('id', { mode: 'number' }).primaryKey(),
   nama: varchar('nama', { length: 255 }).notNull(),
   keterangan: text('keterangan'),
